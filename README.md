@@ -16,18 +16,14 @@ Features:
 ## Setup
 
 ```bash
-# 1. Clone the repo
-git clone <repo-url>
+# 1. Clone your fork
+git clone <your-fork-url>
 cd contact_mapping
 
-# 2. Create a virtual environment and install dependencies
-python3 -m venv .venv
-pip install -r code/requirements.txt
+# 2. Install dependencies and build the DXCC reference (downloads CTY.DAT)
+./setup
 
-# 3. Build the DXCC entity reference (one-time; downloads CTY.DAT)
-python code/build_dxcc_reference.py
-
-# 4. Configure your callsign and home grid square
+# 3. Configure your callsign and home grid square
 #    Edit site/config.js — change callsign and homeGrid to your values.
 ```
 
@@ -53,10 +49,53 @@ python3 -m http.server 8000
 # http://localhost:8000/site/index.html
 ```
 
+## Publishing your own dashboard
+
+Two deploy paths — pick whichever fits, or use both.
+
+### GitHub Pages (no AWS account needed)
+
+```bash
+./gh_pages_deploy
+```
+
+Pushes `site/` plus your generated `data_output/`/`data_reference/` JSON to a `gh-pages`
+branch. First time: enable it in your fork's **Settings → Pages → Source: Deploy from
+branch → `gh-pages` / (root)**. Your dashboard will be live at
+`https://<your-username>.github.io/<repo-name>/`.
+
+Re-run `./gh_pages_deploy` any time you refresh your data (after `./lotw_fetch`) or change
+the site.
+
+### S3 (if you already have an AWS account)
+
+```bash
+cp deploy.conf.example deploy.conf
+# edit deploy.conf: set BUCKET, REGION, PUBLIC_URL to your own
+
+./aws_deploy_site   # full deploy: site code + data
+./aws_deploy_data   # data-only refresh, after re-running ./lotw_fetch
+```
+
+`deploy.conf` is gitignored — it holds your personal bucket, not something to share.
+
+## Forking this to track your own callsign
+
+1. Fork the repo, clone it, run `./setup`.
+2. Edit `site/config.js` with your callsign and home grid.
+3. Run `./lotw_fetch --full` (prompts for LoTW credentials once, stored in your OS keychain).
+4. Optionally run `./qrz_fetch` for coordinate enrichment on unconfirmed QSOs.
+5. Deploy with `./gh_pages_deploy` (easiest, no AWS account) or the S3 scripts above.
+
 ## Project structure
 
 ```
 contact_mapping/
+├── setup                          # One-time: venv + deps + DXCC reference build
+├── gh_pages_deploy                # Deploy to GitHub Pages (no AWS account needed)
+├── aws_deploy_site / aws_deploy_data  # Deploy to S3 (needs deploy.conf)
+├── deploy.conf.example            # Copy to deploy.conf and fill in your S3 bucket
+├── LICENSE
 ├── code/
 │   ├── lotw_fetch.py              # LoTW → JSON data pipeline
 │   ├── build_dxcc_reference.py    # Builds DXCC entity reference from CTY.DAT

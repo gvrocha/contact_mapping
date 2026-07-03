@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DIR="$(cd "$(dirname "$0")" && pwd)"
+BRANCH="gh-pages"
+WORKTREE_DIR="$(mktemp -d)"
+cd "${DIR}"
+
+cleanup() {
+    git worktree remove "${WORKTREE_DIR}" --force 2>/dev/null || true
+}
+trap cleanup EXIT
+
+echo "Preparing ${BRANCH} worktree..."
+if git show-ref --verify --quiet "refs/heads/${BRANCH}"; then
+    git worktree add "${WORKTREE_DIR}" "${BRANCH}"
+else
+    git worktree add --orphan -b "${BRANCH}" "${WORKTREE_DIR}"
+fi
+
+echo "Syncing site + data into ${BRANCH}..."
+rsync -a --delete --exclude ".git" "${DIR}/site/" "${WORKTREE_DIR}/"
+
+mkdir -p "${WORKTREE_DIR}/data_output" "${WORKTREE_DIR}/data_reference"
+cp "${DIR}/data_output/lotw_contacts.json" "${WORKTREE_DIR}/data_output/lotw_contacts.json"
+if [ -f "${DIR}/data_output/qrz_cache.json" ]; then
+    cp "${DIR}/data_output/qrz_cache.json" "${WORKTREE_DIR}/data_output/qrz_cache.json"
+fi
+cp "${DIR}/data_reference/dxcc_entities.json" "${WORKTREE_DIR}/data_reference/dxcc_entities.json"
+
+cd "${WORKTREE_DIR}"
+git add -A
+if git diff --cached --quiet; then
+    echo "No changes to deploy."
+else
+    git commit -m "Deploy $(date -u +'%Y-%m-%dT%H:%M:%SZ')" --quiet
+    git push origin "${BRANCH}"
+fi
+
+echo "Done. If GitHub Pages isn't enabled yet: Settings -> Pages -> Source: Deploy from branch '${BRANCH}' / (root)."

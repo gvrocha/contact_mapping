@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(cd "$(dirname "$0")" && pwd)"
+
+python3 -m venv .venv
+.venv/bin/pip install -r code/requirements.txt
+.venv/bin/python code/build_dxcc_reference.py
+
+echo "Setup done. Next: edit site/config.js with your callsign and home grid."
