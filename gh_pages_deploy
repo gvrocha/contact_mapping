@@ -20,6 +20,7 @@ fi
 
 echo "Syncing site + data into ${BRANCH}..."
 rsync -a --delete --exclude ".git" "${DIR}/site/" "${WORKTREE_DIR}/"
+touch "${WORKTREE_DIR}/.nojekyll"
 
 mkdir -p "${WORKTREE_DIR}/data_output" "${WORKTREE_DIR}/data_reference"
 cp "${DIR}/data_output/lotw_contacts.json" "${WORKTREE_DIR}/data_output/lotw_contacts.json"
