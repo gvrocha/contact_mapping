@@ -11,12 +11,16 @@ Personal dashboard, publicly visible, reproducible from source.
 
 **v0.9 is done as of 2026-07-03.**
 
-## Next milestone: v1.0
+## Current milestone: v1.0
 MVP = "other hams can use this to publish their own contacts."
 
-- [ ] `LICENSE` file (MIT)
-- [ ] GitHub Pages deploy path (zero-AWS-account option, alongside existing S3 path)
-- [ ] README section: "fork this to track your own callsign"
+- [x] `setup` script (venv + deps + DXCC reference build in one command)
+- [x] `LICENSE` file (MIT)
+- [x] GitHub Pages deploy path: `gh_pages_deploy` pushes to a `gh-pages` branch; GitHub auto-enabled Pages on push
+- [x] README: documents both deploy paths (Pages + S3) and a "forking this for your own callsign" walkthrough
+- [ ] **Pending verification:** first Pages build still shows 404 as of 2026-07-03 ~15:20Z (build status was "building" with no error — likely just needs more time). Re-check `https://gvrocha.github.io/contact_mapping/` before calling v1.0 fully done.
+
+## After that: v1.1
 
 ## After that: v1.1
 Automated data refresh (GitHub Actions, scheduled `lotw_fetch`/`qrz_fetch` → commit → redeploy).
