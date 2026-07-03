@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DXCC Dashboard</title>
+  <link rel="stylesheet" href="vendor/maplibre-gl.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #111827;
+      color: #d1d5db;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      flex: 0 0 auto;
+      padding: 10px 16px;
+      background: #1f2937;
+      border-bottom: 1px solid #374151;
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+    header h1 { font-size: 1.05rem; color: #f9fafb; letter-spacing: 0.03em; }
+    #stats { font-size: 0.8rem; color: #9ca3af; }
+
+    #tab-bar {
+      flex: 0 0 auto;
+      display: flex;
+      background: #1f2937;
+      border-bottom: 1px solid #374151;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    #tab-bar::-webkit-scrollbar { display: none; }
+    .tab {
+      padding: 7px 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #6b7280;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+    }
+    .tab:hover { color: #d1d5db; }
+    .tab.active { color: #f9fafb; border-bottom-color: #34d399; }
+
+    .tab-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+    .tab-panel.active { display: flex; }
+
+    #map { flex: 1; }
+
+    #legend {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 5px 12px;
+      background: #1f2937;
+      border-top: 1px solid #374151;
+      font-size: 0.72rem;
+      color: #9ca3af;
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-swatch {
+      width: 20px;
+      height: 12px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+    .unit-btn {
+      background: none;
+      border: 1px solid #374151;
+      color: #6b7280;
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .unit-btn.active { border-color: #34d399; color: #34d399; }
+
+    #scoreboard {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+    thead tr {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #1f2937;
+    }
+    th {
+      padding: 6px 8px;
+      text-align: left;
+      border-bottom: 1px solid #374151;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    th.band-col { text-align: center; }
+    td {
+      padding: 3px 8px;
+      border-bottom: 1px solid #1f2937;
+    }
+    tr:hover td { background: #1f2937; }
+    td.cont { color: #6b7280; font-size: 0.72rem; }
+    td.band-cell { text-align: center; font-size: 0.72rem; font-weight: 600; }
+
+    #tab-callsigns, #tab-milestones, #tab-states, #tab-canada,
+    #tab-europe, #tab-sa, #tab-af, #tab-as, #tab-oc { overflow-y: auto; padding: 20px 24px; }
+
+    .region-count {
+      font-size: 0.85rem; color: #9ca3af; margin-bottom: 14px;
+    }
+    .region-count strong { color: #34d399; }
+    .region-note { font-size: 0.74rem; color: #4b5563; margin-top: 8px; }
+
+    #callsigns-table, #milestones-table, #states-table, #canada-table,
+    #europe-table, #sa-table, #af-table, #as-table, #oc-table {
+      width: 100%; max-width: 900px; border-collapse: collapse; font-size: 0.82rem;
+    }
+    #callsigns-table th, #milestones-table th, #states-table th, #canada-table th,
+    #europe-table th, #sa-table th, #af-table th, #as-table th, #oc-table th {
+      text-align: left; padding: 6px 12px; border-bottom: 1px solid #374151;
+      font-weight: 600; color: #9ca3af; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    #callsigns-table td, #milestones-table td, #states-table td, #canada-table td,
+    #europe-table td, #sa-table td, #af-table td, #as-table td, #oc-table td {
+      padding: 6px 12px; border-bottom: 1px solid #1f2937;
+    }
+    #callsigns-table tr:hover td, #milestones-table tr:hover td, #states-table tr:hover td, #canada-table tr:hover td,
+    #europe-table tr:hover td, #sa-table tr:hover td, #af-table tr:hover td,
+    #as-table tr:hover td, #oc-table tr:hover td { background: #1f2937; }
+    td.m-label { color: #f9fafb; }
+    td.m-date  { color: #d1d5db; font-variant-numeric: tabular-nums; }
+    td.m-date.pending { color: #4b5563; font-style: italic; }
+    tr.m-section td {
+      padding-top: 14px; padding-bottom: 2px;
+      color: #6b7280; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      border-bottom: none;
+    }
+
+    footer {
+      flex: 0 0 auto;
+      padding: 5px 16px;
+      background: #1f2937;
+      border-top: 1px solid #374151;
+      font-size: 0.72rem;
+      color: #6b7280;
+    }
+
+    @keyframes pulse-ring {
+      0%   { transform: scale(1);   opacity: 0.9; }
+      100% { transform: scale(2.8); opacity: 0;   }
+    }
+    .spotlight {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid currentColor;
+      animation: pulse-ring 1.6s ease-out infinite;
+      pointer-events: none;
+    }
+
+    .g-tip {
+      background: #1f2937; color: #d1d5db; padding: 6px 10px;
+      border: 1px solid #374151; border-radius: 4px; font-size: 0.78rem;
+      pointer-events: none;
+    }
+    .g-tip b { color: #f9fafb; }
+
+    .maplibregl-popup-content {
+      background: #1f2937;
+      color: #d1d5db;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      padding: 8px 10px;
+    }
+    .maplibregl-popup-tip { border-top-color: #1f2937; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 id="page-title">DXCC Dashboard</h1>
+    <span id="stats">Loading…</span>
+  </header>
+
+  <div id="tab-bar">
+    <button class="tab active" data-tab="map">Map</button>
+    <button class="tab" data-tab="globe">Globe</button>
+    <button class="tab" data-tab="callsigns">Call sign table</button>
+    <button class="tab" data-tab="table">Entity table</button>
+    <button class="tab" data-tab="milestones">Milestones</button>
+    <button class="tab" data-tab="states">US States</button>
+    <button class="tab" data-tab="canada">Canada</button>
+    <button class="tab" data-tab="europe">Europe</button>
+    <button class="tab" data-tab="sa">S. America</button>
+    <button class="tab" data-tab="af">Africa</button>
+    <button class="tab" data-tab="as">Asia</button>
+    <button class="tab" data-tab="oc">Oceania</button>
+  </div>
+
+  <div id="tab-globe" class="tab-panel">
+    <div id="globe" style="flex:1;background:#0b0b19;position:relative">
+      <div id="globe-status" style="position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:10;background:#1f2937cc;color:#6b7280;font-size:0.72rem;padding:3px 8px;border-radius:3px;white-space:nowrap;pointer-events:none">Globe.gl — waiting for tab click…</div>
+    </div>
+  </div>
+
+  <div id="tab-map" class="tab-panel active">
+    <div id="map"></div>
+    <div id="legend">
+      <span>Table cells:</span>
+      <span class="legend-item">
+        <span class="legend-swatch" style="background:#34d39940;border:1px solid #34d399"></span> Confirmed
+      </span>
+      <span class="legend-item">
+        <span class="legend-swatch" style="background:#fbbf2430;border:1px solid #fbbf24"></span> Worked (unconfirmed)
+      </span>
+      <span style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        Map: <span style="color:#34d399">●</span> confirmed &nbsp;
+             <span style="color:#fbbf24">●</span> worked &nbsp;
+             <span style="color:#ef4444;font-weight:900">✕</span> home
+        &nbsp;
+        <button class="unit-btn active" data-unit="km">km</button><button class="unit-btn" data-unit="mi">mi</button>
+      </span>
+    </div>
+  </div>
+
+  <div id="tab-callsigns" class="tab-panel">
+    <p class="region-count" id="callsigns-summary"></p>
+    <table id="callsigns-table">
+      <thead><tr>
+        <th>No.</th><th>Call sign</th><th>Grid</th><th>Country</th><th>#</th>
+        <th>First QSO</th><th>First QSL</th><th>Last QSO</th><th>Last QSL</th>
+      </tr></thead>
+      <tbody id="callsigns-body"></tbody>
+    </table>
+  </div>
+
+  <div id="tab-table" class="tab-panel">
+    <div id="scoreboard">
+      <table>
+        <thead id="table-head"></thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="tab-milestones" class="tab-panel">
+    <table id="milestones-table">
+      <thead>
+        <tr>
+          <th>Milestone</th>
+          <th>First QSO</th>
+          <th>First QSL</th>
+        </tr>
+      </thead>
+      <tbody id="milestones-body"></tbody>
+    </table>
+  </div>
+
+  <div id="tab-states" class="tab-panel">
+    <p class="region-count" id="states-summary"></p>
+    <table id="states-table">
+      <thead><tr>
+        <th>State</th><th>First QSO</th><th>First QSL</th>
+      </tr></thead>
+      <tbody id="states-body"></tbody>
+    </table>
+    <p class="region-note" id="states-note"></p>
+  </div>
+
+  <div id="tab-canada" class="tab-panel">
+    <p class="region-count" id="canada-summary"></p>
+    <table id="canada-table">
+      <thead><tr>
+        <th>Province / Territory</th><th>First QSO</th><th>First QSL</th>
+      </tr></thead>
+      <tbody id="canada-body"></tbody>
+    </table>
+    <p class="region-note" id="canada-note"></p>
+  </div>
+
+  <div id="tab-europe" class="tab-panel">
+    <p class="region-count" id="eu-summary"></p>
+    <table id="europe-table">
+      <thead><tr><th>Entity</th><th>First QSO</th><th>First QSL</th></tr></thead>
+      <tbody id="eu-body"></tbody>
+    </table>
+  </div>
+
+  <div id="tab-sa" class="tab-panel">
+    <p class="region-count" id="sa-summary"></p>
+    <table id="sa-table">
+      <thead><tr><th>Entity</th><th>First QSO</th><th>First QSL</th></tr></thead>
+      <tbody id="sa-body"></tbody>
+    </table>
+  </div>
+
+  <div id="tab-af" class="tab-panel">
+    <p class="region-count" id="af-summary"></p>
+    <table id="af-table">
+      <thead><tr><th>Entity</th><th>First QSO</th><th>First QSL</th></tr></thead>
+      <tbody id="af-body"></tbody>
+    </table>
+  </div>
+
+  <div id="tab-as" class="tab-panel">
+    <p class="region-count" id="as-summary"></p>
+    <table id="as-table">
+      <thead><tr><th>Entity</th><th>First QSO</th><th>First QSL</th></tr></thead>
+      <tbody id="as-body"></tbody>
+    </table>
+  </div>
+
+  <div id="tab-oc" class="tab-panel">
+    <p class="region-count" id="oc-summary"></p>
+    <table id="oc-table">
+      <thead><tr><th>Entity</th><th>First QSO</th><th>First QSL</th></tr></thead>
+      <tbody id="oc-body"></tbody>
+    </table>
+  </div>
+
+  <footer id="footer-msg"></footer>
+
+  <script src="vendor/maplibre-gl.js"></script>
+  <script src="vendor/globe.gl.min.js"></script>
+  <script src="config.js"></script>
+  <script src="app.js?v=20260701p"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# Copy this file to deploy.conf and fill in your own values.
+# deploy.conf is gitignored — it holds your personal deployment target,
+# not something to share/commit.
+
+BUCKET="s3://your-bucket-name/your-path"
+REGION="us-west-2"
+PUBLIC_URL="http://your-domain.example/your-path/index.html"

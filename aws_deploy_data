@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DIR="$(cd "$(dirname "$0")" && pwd)"
+
+if [ ! -f "${DIR}/deploy.conf" ]; then
+    echo "Missing deploy.conf — copy deploy.conf.example to deploy.conf and fill in your bucket/region." >&2
+    exit 1
+fi
+# shellcheck source=/dev/null
+source "${DIR}/deploy.conf"
+
+echo "Pushing data files to ${BUCKET} ..."
+
+aws s3 cp "${DIR}/data_output/lotw_contacts.json" "${BUCKET}/data_output/lotw_contacts.json" \
+    --region "${REGION}"
+
+if [ -f "${DIR}/data_output/qrz_cache.json" ]; then
+    aws s3 cp "${DIR}/data_output/qrz_cache.json" "${BUCKET}/data_output/qrz_cache.json" \
+        --region "${REGION}"
+fi
+
+echo "Done. Data updated at ${PUBLIC_URL}"

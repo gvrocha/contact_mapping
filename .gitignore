@@ -1,0 +1,21 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Data — contains personal QSO logs and QRZ cache; never commit these.
+# Run ./lotw_fetch --full and optionally ./qrz_fetch to regenerate locally.
+data_output/
+
+# Vendored JS/CSS bundles — regenerate with the curl commands in README
+site/vendor/
+
+# macOS
+.DS_Store
+
+# Local deploy target (bucket/region/URL) — copy deploy.conf.example instead
+deploy.conf
+
+# Local Claude Code tooling config
+.claude/

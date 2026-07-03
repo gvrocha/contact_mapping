@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DIR="$(cd "$(dirname "$0")" && pwd)"
+
+if [ ! -f "${DIR}/deploy.conf" ]; then
+    echo "Missing deploy.conf — copy deploy.conf.example to deploy.conf and fill in your bucket/region." >&2
+    exit 1
+fi
+# shellcheck source=/dev/null
+source "${DIR}/deploy.conf"
+
+echo "Deploying site to ${BUCKET} ..."
+
+# Static site files (HTML, JS, CSS, vendor assets).
+# --delete removes stale site files but excludes the data folders
+# so they are never wiped by a sync that doesn't cover them.
+aws s3 sync "${DIR}/site/" "${BUCKET}/" \
+    --region "${REGION}" \
+    --exclude ".DS_Store" \
+    --exclude "data_output/*" \
+    --exclude "data_reference/*" \
+    --delete
+
+# Data files (served alongside the site)
+aws s3 cp "${DIR}/data_output/lotw_contacts.json" "${BUCKET}/data_output/lotw_contacts.json" \
+    --region "${REGION}"
+
+aws s3 cp "${DIR}/data_reference/dxcc_entities.json" "${BUCKET}/data_reference/dxcc_entities.json" \
+    --region "${REGION}"
+
+if [ -f "${DIR}/data_output/qrz_cache.json" ]; then
+    aws s3 cp "${DIR}/data_output/qrz_cache.json" "${BUCKET}/data_output/qrz_cache.json" \
+        --region "${REGION}"
+fi
+
+echo "Done. Site live at ${PUBLIC_URL}"
