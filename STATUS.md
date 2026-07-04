@@ -22,12 +22,30 @@ MVP = "other hams can use this to publish their own contacts."
 
 **v1.0 is done as of 2026-07-03.**
 
-## After that: v1.1
+## Current milestone: v1.1
+Automated data refresh: GitHub Actions fetches LoTW/QRZ data on a schedule and deploys to
+both GitHub Pages and S3, no manual step required.
 
-## After that: v1.1
-Automated data refresh (GitHub Actions, scheduled `lotw_fetch`/`qrz_fetch` → commit → redeploy).
-Requires an explicit decision on credential storage (OS keychain vs. GitHub Actions secrets) before implementation — not yet decided.
+- [x] Credential model decided: GitHub Actions Secrets (not keychain, not a self-hosted runner)
+- [x] `lotw_fetch.py`/`qrz_fetch.py` accept credentials via env vars (`LOTW_USERNAME`/`LOTW_PASSWORD`,
+      `QRZ_USERNAME`/`QRZ_PASSWORD`); keychain remains the local-dev default
+- [x] Fixed a latent bug affecting every fresh clone (not just CI): neither script created
+      `data_output/` if missing, and it's gitignored — first run on any fresh checkout crashed
+- [x] Scoped IAM user `contact-mapping-ci-deploy` created (policy limited to the `hamradio_contacts/*`
+      prefix in the `www.w7gvr.com` bucket — not the whole bucket, and not the account root key)
+- [x] GitHub Secrets set: `LOTW_USERNAME`, `LOTW_PASSWORD`, `QRZ_USERNAME`, `QRZ_PASSWORD`,
+      `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`. Repo variable `USE_QRZ=true` toggles the
+      QRZ step (a fork without QRZ can set it to `false`).
+- [x] Workflow `.github/workflows/refresh-data.yml`: daily schedule + manual `workflow_dispatch`,
+      full LoTW/QRZ refetch (ephemeral runner has no incremental state across runs), then deploys
+      to both `gh-pages` and S3.
+- [x] Verified end-to-end: manually triggered run succeeded, both https://gvrocha.github.io/contact_mapping/
+      and http://www.w7gvr.com/hamradio_contacts/index.html serve the freshly-fetched data.
+
+**v1.1 is done as of 2026-07-04.**
 
 ## Notes
-- No CI/CD yet — deploys are still manual (`./aws_deploy_site`, `./aws_deploy_data`).
 - `data_output/`, `.claude/`, `site/vendor/` are gitignored by design (personal data, local tooling config, vendored assets regenerated via README instructions).
+- CI does a full refetch (`--full`) every run rather than incremental, since the GitHub-hosted
+  runner has no state persisted between runs. Fine at personal scale; revisit if LoTW history
+  grows large enough that this gets slow or hits rate limits.
