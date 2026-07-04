@@ -15,6 +15,7 @@ Usage:
 import argparse
 import getpass
 import json
+import os
 import sys
 import time
 import xml.etree.ElementTree as ET
@@ -29,6 +30,8 @@ DATA_DIR        = Path(__file__).parent.parent / "data_output"
 CONTACTS_FILE   = DATA_DIR / "lotw_contacts.json"
 CACHE_FILE      = DATA_DIR / "qrz_cache.json"
 
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+
 # Seconds between API calls — stay well within QRZ's unpublished rate limit.
 REQUEST_DELAY = 1.0
 
@@ -38,8 +41,10 @@ REQUEST_DELAY = 1.0
 # ---------------------------------------------------------------------------
 
 def get_credentials():
-    username = keyring.get_password(KEYRING_SERVICE, "username")
-    password = keyring.get_password(KEYRING_SERVICE, "password") if username else None
+    username = os.environ.get("QRZ_USERNAME") or keyring.get_password(KEYRING_SERVICE, "username")
+    password = os.environ.get("QRZ_PASSWORD") or (
+        keyring.get_password(KEYRING_SERVICE, "password") if username else None
+    )
 
     if not username or not password:
         print("QRZ credentials not found in keychain. Enter them once to store securely.")

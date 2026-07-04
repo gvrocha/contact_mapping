@@ -1,0 +1,62 @@
+name: Refresh contact data
+
+on:
+  schedule:
+    - cron: "17 13 * * *"   # ~06:17 Pacific / 13:17 UTC, daily
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r code/requirements.txt
+
+      - name: Fetch LoTW data
+        env:
+          LOTW_USERNAME: ${{ secrets.LOTW_USERNAME }}
+          LOTW_PASSWORD: ${{ secrets.LOTW_PASSWORD }}
+        # Ephemeral runner has no state from prior runs, so always do a full pull.
+        run: python code/lotw_fetch.py --full
+
+      - name: Fetch QRZ enrichment
+        if: ${{ vars.USE_QRZ == 'true' }}
+        env:
+          QRZ_USERNAME: ${{ secrets.QRZ_USERNAME }}
+          QRZ_PASSWORD: ${{ secrets.QRZ_PASSWORD }}
+        run: python code/qrz_fetch.py --full
+
+      - name: Configure git identity
+        run: |
+          git config user.name "contact-mapping-ci"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: Fetch existing gh-pages branch
+        run: git fetch origin gh-pages:gh-pages
+
+      - name: Deploy to GitHub Pages
+        run: ./gh_pages_deploy
+
+      - name: Deploy data to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-west-2
+        run: |
+          cat > deploy.conf <<'CFG'
+          BUCKET="s3://www.w7gvr.com/hamradio_contacts"
+          REGION="us-west-2"
+          PUBLIC_URL="http://www.w7gvr.com/hamradio_contacts/index.html"
+          CFG
+          ./aws_deploy_data

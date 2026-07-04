@@ -11,6 +11,7 @@ Usage:
 import argparse
 import getpass
 import json
+import os
 import re
 import sys
 from datetime import datetime, timezone
@@ -25,6 +26,8 @@ DATA_DIR      = Path(__file__).parent.parent / "data_output"
 REF_FILE      = Path(__file__).parent.parent / "data_reference" / "dxcc_entities.json"
 STATE_FILE    = DATA_DIR / "lotw_state.json"
 OUTPUT_FILE   = DATA_DIR / "lotw_contacts.json"
+
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # ---------------------------------------------------------------------------
@@ -58,8 +61,10 @@ def lookup_entity_by_call(call, prefix_lookup):
 # ---------------------------------------------------------------------------
 
 def get_credentials():
-    username = keyring.get_password(KEYRING_SERVICE, "username")
-    password = keyring.get_password(KEYRING_SERVICE, "password") if username else None
+    username = os.environ.get("LOTW_USERNAME") or keyring.get_password(KEYRING_SERVICE, "username")
+    password = os.environ.get("LOTW_PASSWORD") or (
+        keyring.get_password(KEYRING_SERVICE, "password") if username else None
+    )
 
     if not username or not password:
         print("LoTW credentials not found in keychain. Enter them once to store securely.")
