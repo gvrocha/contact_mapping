@@ -336,22 +336,6 @@
     "itu_zone": ""
   },
   {
-    "call": "WA7LNW",
-    "datetime": "2026-06-25T03:42:00",
-    "lotw_upload_datetime": "2026-06-25T05:20:04",
-    "qsl_date": null,
-    "band": "20m",
-    "mode": "FT8",
-    "dxcc": "",
-    "country": "",
-    "continent": "NA",
-    "confirmed": false,
-    "gridsquare": "",
-    "state": "",
-    "cq_zone": "",
-    "itu_zone": ""
-  },
-  {
     "call": "KA0UTI",
     "datetime": "2026-06-25T03:37:00",
     "lotw_upload_datetime": "2026-06-25T05:20:04",
@@ -366,6 +350,22 @@
     "state": "",
     "cq_zone": "",
     "itu_zone": ""
+  },
+  {
+    "call": "WA7LNW",
+    "datetime": "2026-06-25T03:42:00",
+    "lotw_upload_datetime": "2026-06-25T05:20:04",
+    "qsl_date": "2026-07-05T21:38:28",
+    "band": "20m",
+    "mode": "FT8",
+    "dxcc": "291",
+    "country": "UNITED STATES OF AMERICA",
+    "continent": "NA",
+    "confirmed": true,
+    "gridsquare": "DM37GD",
+    "state": "UT",
+    "cq_zone": "03",
+    "itu_zone": "06"
   },
   {
     "call": "V31DL",
