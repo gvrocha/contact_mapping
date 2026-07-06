@@ -131,7 +131,7 @@
 
     #callsigns-table, #milestones-table, #states-table, #canada-table,
     #europe-table, #sa-table, #af-table, #as-table, #oc-table {
-      width: 100%; max-width: 900px; border-collapse: collapse; font-size: 0.82rem;
+      width: 100%; max-width: 1200px; border-collapse: collapse; font-size: 0.82rem;
     }
     #callsigns-table th, #milestones-table th, #states-table th, #canada-table th,
     #europe-table th, #sa-table th, #af-table th, #as-table th, #oc-table th {
@@ -278,9 +278,7 @@
   <div id="tab-states" class="tab-panel">
     <p class="region-count" id="states-summary"></p>
     <table id="states-table">
-      <thead><tr>
-        <th>State</th><th>First QSO</th><th>First QSL</th>
-      </tr></thead>
+      <thead id="states-head"></thead>
       <tbody id="states-body"></tbody>
     </table>
     <p class="region-note" id="states-note"></p>
@@ -289,9 +287,7 @@
   <div id="tab-canada" class="tab-panel">
     <p class="region-count" id="canada-summary"></p>
     <table id="canada-table">
-      <thead><tr>
-        <th>Province / Territory</th><th>First QSO</th><th>First QSL</th>
-      </tr></thead>
+      <thead id="canada-head"></thead>
       <tbody id="canada-body"></tbody>
     </table>
     <p class="region-note" id="canada-note"></p>
@@ -300,7 +296,7 @@
   <div id="tab-europe" class="tab-panel">
     <p class="region-count" id="eu-summary"></p>
     <table id="europe-table">
-      <thead><tr><th>Entity</th><th>First QSO</th><th>First QSL</th></tr></thead>
+      <thead id="eu-head"></thead>
       <tbody id="eu-body"></tbody>
     </table>
   </div>
@@ -308,7 +304,7 @@
   <div id="tab-sa" class="tab-panel">
     <p class="region-count" id="sa-summary"></p>
     <table id="sa-table">
-      <thead><tr><th>Entity</th><th>First QSO</th><th>First QSL</th></tr></thead>
+      <thead id="sa-head"></thead>
       <tbody id="sa-body"></tbody>
     </table>
   </div>
@@ -316,7 +312,7 @@
   <div id="tab-af" class="tab-panel">
     <p class="region-count" id="af-summary"></p>
     <table id="af-table">
-      <thead><tr><th>Entity</th><th>First QSO</th><th>First QSL</th></tr></thead>
+      <thead id="af-head"></thead>
       <tbody id="af-body"></tbody>
     </table>
   </div>
@@ -324,7 +320,7 @@
   <div id="tab-as" class="tab-panel">
     <p class="region-count" id="as-summary"></p>
     <table id="as-table">
-      <thead><tr><th>Entity</th><th>First QSO</th><th>First QSL</th></tr></thead>
+      <thead id="as-head"></thead>
       <tbody id="as-body"></tbody>
     </table>
   </div>
@@ -332,7 +328,7 @@
   <div id="tab-oc" class="tab-panel">
     <p class="region-count" id="oc-summary"></p>
     <table id="oc-table">
-      <thead><tr><th>Entity</th><th>First QSO</th><th>First QSL</th></tr></thead>
+      <thead id="oc-head"></thead>
       <tbody id="oc-body"></tbody>
     </table>
   </div>
@@ -342,6 +338,6 @@
   <script src="vendor/maplibre-gl.js"></script>
   <script src="vendor/globe.gl.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=20260701p"></script>
+  <script src="app.js?v=20260706a"></script>
 </body>
 </html>

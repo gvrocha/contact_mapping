@@ -1104,52 +1104,47 @@ const US_STATE_NAMES = {
 function buildUsStates(contacts, qrzCache) {
     const summary = document.getElementById('states-summary');
     const note    = document.getElementById('states-note');
-    const tbody   = document.getElementById('states-body');
 
-    const sorted    = [...contacts].filter(q => q.datetime).sort((a, b) => a.datetime.localeCompare(b.datetime));
-    const byQslDate = sorted.filter(q => q.confirmed && q.qsl_date).sort((a, b) => a.qsl_date.localeCompare(b.qsl_date));
-
-    const firstQso = {}, firstQsl = {};
-    for (const qso of sorted) {
+    const agg = {};
+    for (const qso of contacts) {
         if (!isUS(qso)) continue;
         const st = regionStateOf(qso, qrzCache);
         if (!st || !US_STATES.includes(st)) continue;
-        if (!firstQso[st]) firstQso[st] = qso;
-    }
-    for (const qso of byQslDate) {
-        if (!isUS(qso)) continue;
-        const st = regionStateOf(qso, qrzCache);
-        if (!st || !US_STATES.includes(st)) continue;
-        if (!firstQsl[st]) firstQsl[st] = qso;
+        if (!agg[st]) agg[st] = { qsoCount: 0, qslCount: 0, bands: {}, firstQso: null, lastQso: null, firstQsl: null, lastQsl: null };
+        const e = agg[st];
+        e.qsoCount++;
+        if (qso.band) e.bands[qso.band] = true;
+        if (qso.datetime) {
+            if (!e.firstQso || qso.datetime < e.firstQso.datetime)
+                e.firstQso = { datetime: qso.datetime, band: qso.band };
+            if (!e.lastQso  || qso.datetime > e.lastQso.datetime)
+                e.lastQso  = { datetime: qso.datetime, band: qso.band };
+        }
+        if (qso.confirmed) {
+            e.qslCount++;
+            if (qso.qsl_date) {
+                if (!e.firstQsl || qso.qsl_date < e.firstQsl.datetime)
+                    e.firstQsl = { datetime: qso.qsl_date, band: qso.band };
+                if (!e.lastQsl  || qso.qsl_date > e.lastQsl.datetime)
+                    e.lastQsl  = { datetime: qso.qsl_date, band: qso.band };
+            }
+        }
     }
 
-    const hasQrz        = Object.keys(qrzCache).length > 0;
-    const workedCount   = US_STATES.filter(s => firstQso[s]).length;
-    const confirmedCount = US_STATES.filter(s => firstQsl[s]).length;
+    const hasQrz         = Object.keys(qrzCache).length > 0;
+    const rows           = US_STATES.map(st => ({
+        label: `${US_STATE_NAMES[st]} (${st})`,
+        ...(agg[st] || { qsoCount: 0, qslCount: 0, bands: {}, firstQso: null, lastQso: null, firstQsl: null, lastQsl: null }),
+    }));
+    const workedCount    = rows.filter(r => r.qsoCount > 0).length;
+    const confirmedCount = rows.filter(r => r.qslCount > 0).length;
 
     summary.innerHTML = (hasQrz && workedCount > 0)
         ? `<strong>${workedCount}</strong> / 50 states worked &nbsp;·&nbsp; <strong>${confirmedCount}</strong> confirmed`
         : '';
     note.textContent = !hasQrz ? 'State data requires QRZ lookup — run ./qrz_fetch then reload.' : '';
 
-    const stateRows = US_STATES.slice().sort((a, b) => {
-        const da = firstQso[a]?.datetime, db = firstQso[b]?.datetime;
-        if (da && db) return da.localeCompare(db);
-        if (da) return -1;
-        if (db) return 1;
-        return (US_STATE_NAMES[a] || a).localeCompare(US_STATE_NAMES[b] || b);
-    });
-
-    for (const st of stateRows) {
-        const tr = document.createElement('tr');
-        const label = document.createElement('td');
-        label.className = 'm-label';
-        label.textContent = `${US_STATE_NAMES[st]} (${st})`;
-        tr.appendChild(label);
-        tr.appendChild(makeContactCell(firstQso[st] || null, 'datetime'));
-        tr.appendChild(makeContactCell(firstQsl[st] || null, 'qsl_date'));
-        tbody.appendChild(tr);
-    }
+    buildRegionTable({ theadId: 'states-head', tbodyId: 'states-body', rows, nameLabel: 'State' });
 }
 
 // ---------------------------------------------------------------------------
@@ -1167,52 +1162,156 @@ const CA_PROVINCE_NAMES = {
 function buildCanadaProvinces(contacts, qrzCache) {
     const summary = document.getElementById('canada-summary');
     const note    = document.getElementById('canada-note');
-    const tbody   = document.getElementById('canada-body');
 
-    const sorted    = [...contacts].filter(q => q.datetime).sort((a, b) => a.datetime.localeCompare(b.datetime));
-    const byQslDate = sorted.filter(q => q.confirmed && q.qsl_date).sort((a, b) => a.qsl_date.localeCompare(b.qsl_date));
-
-    const firstQso = {}, firstQsl = {};
-    for (const qso of sorted) {
+    const agg = {};
+    for (const qso of contacts) {
         if (!isCanada(qso)) continue;
         const prov = regionStateOf(qso, qrzCache);
         if (!prov || !CA_PROVINCES.includes(prov)) continue;
-        if (!firstQso[prov]) firstQso[prov] = qso;
-    }
-    for (const qso of byQslDate) {
-        if (!isCanada(qso)) continue;
-        const prov = regionStateOf(qso, qrzCache);
-        if (!prov || !CA_PROVINCES.includes(prov)) continue;
-        if (!firstQsl[prov]) firstQsl[prov] = qso;
+        if (!agg[prov]) agg[prov] = { qsoCount: 0, qslCount: 0, bands: {}, firstQso: null, lastQso: null, firstQsl: null, lastQsl: null };
+        const e = agg[prov];
+        e.qsoCount++;
+        if (qso.band) e.bands[qso.band] = true;
+        if (qso.datetime) {
+            if (!e.firstQso || qso.datetime < e.firstQso.datetime)
+                e.firstQso = { datetime: qso.datetime, band: qso.band };
+            if (!e.lastQso  || qso.datetime > e.lastQso.datetime)
+                e.lastQso  = { datetime: qso.datetime, band: qso.band };
+        }
+        if (qso.confirmed) {
+            e.qslCount++;
+            if (qso.qsl_date) {
+                if (!e.firstQsl || qso.qsl_date < e.firstQsl.datetime)
+                    e.firstQsl = { datetime: qso.qsl_date, band: qso.band };
+                if (!e.lastQsl  || qso.qsl_date > e.lastQsl.datetime)
+                    e.lastQsl  = { datetime: qso.qsl_date, band: qso.band };
+            }
+        }
     }
 
-    const hasQrz        = Object.keys(qrzCache).length > 0;
-    const workedCount   = CA_PROVINCES.filter(p => firstQso[p]).length;
-    const confirmedCount = CA_PROVINCES.filter(p => firstQsl[p]).length;
+    const hasQrz         = Object.keys(qrzCache).length > 0;
+    const rows           = CA_PROVINCES.map(prov => ({
+        label: `${CA_PROVINCE_NAMES[prov]} (${prov})`,
+        ...(agg[prov] || { qsoCount: 0, qslCount: 0, bands: {}, firstQso: null, lastQso: null, firstQsl: null, lastQsl: null }),
+    }));
+    const workedCount    = rows.filter(r => r.qsoCount > 0).length;
+    const confirmedCount = rows.filter(r => r.qslCount > 0).length;
 
     summary.innerHTML = (hasQrz && workedCount > 0)
         ? `<strong>${workedCount}</strong> / 13 provinces & territories worked &nbsp;·&nbsp; <strong>${confirmedCount}</strong> confirmed`
         : '';
     note.textContent = !hasQrz ? 'Province data requires QRZ lookup — run ./qrz_fetch then reload.' : '';
 
-    const provRows = CA_PROVINCES.slice().sort((a, b) => {
-        const da = firstQso[a]?.datetime, db = firstQso[b]?.datetime;
-        if (da && db) return da.localeCompare(db);
-        if (da) return -1;
-        if (db) return 1;
-        return (CA_PROVINCE_NAMES[a] || a).localeCompare(CA_PROVINCE_NAMES[b] || b);
-    });
+    buildRegionTable({ theadId: 'canada-head', tbodyId: 'canada-body', rows, nameLabel: 'Province / Territory' });
+}
 
-    for (const prov of provRows) {
-        const tr = document.createElement('tr');
-        const label = document.createElement('td');
-        label.className = 'm-label';
-        label.textContent = `${CA_PROVINCE_NAMES[prov]} (${prov})`;
-        tr.appendChild(label);
-        tr.appendChild(makeContactCell(firstQso[prov] || null, 'datetime'));
-        tr.appendChild(makeContactCell(firstQsl[prov] || null, 'qsl_date'));
-        tbody.appendChild(tr);
+// ---------------------------------------------------------------------------
+// Shared sortable region table builder (states, provinces, continent entities)
+// ---------------------------------------------------------------------------
+
+function buildRegionTable({ theadId, tbodyId, rows, nameLabel = 'Entity', hasFlag = false }) {
+    const thead = document.getElementById(theadId);
+    const tbody = document.getElementById(tbodyId);
+    if (!thead || !tbody) return;
+
+    const COLS = [
+        { key: 'name',     label: nameLabel,   cls: '',         defaultDir:  1, get: r => r.label },
+        { key: 'qsos',     label: 'QSOs',      cls: 'band-col', defaultDir: -1, get: r => r.qsoCount },
+        { key: 'qsls',     label: 'QSLs',      cls: 'band-col', defaultDir: -1, get: r => r.qslCount },
+        { key: 'bands',    label: 'Bands',     cls: '',         defaultDir: -1, get: r => Object.keys(r.bands).length },
+        { key: 'firstQso', label: 'First QSO', cls: '',         defaultDir:  1, get: r => r.firstQso?.datetime ?? null },
+        { key: 'firstQsl', label: 'First QSL', cls: '',         defaultDir:  1, get: r => r.firstQsl?.datetime ?? null },
+        { key: 'lastQso',  label: 'Last QSO',  cls: '',         defaultDir: -1, get: r => r.lastQso?.datetime  ?? null },
+        { key: 'lastQsl',  label: 'Last QSL',  cls: '',         defaultDir: -1, get: r => r.lastQsl?.datetime  ?? null },
+    ];
+
+    const getters = Object.fromEntries(COLS.map(c => [c.key, c.get]));
+
+    thead.innerHTML = '';
+    const headerRow = document.createElement('tr');
+    const thEls = {};
+    for (const col of COLS) {
+        const th = document.createElement('th');
+        if (col.cls) th.className = col.cls;
+        th.style.cursor = 'pointer';
+        th.title = `Sort by ${col.label}`;
+        th.addEventListener('click', () => {
+            if (sortKey === col.key) sortDir = -sortDir;
+            else { sortKey = col.key; sortDir = col.defaultDir; }
+            renderRows();
+        });
+        thEls[col.key] = { el: th, label: col.label };
+        headerRow.appendChild(th);
     }
+    thead.appendChild(headerRow);
+
+    let sortKey = 'qsls';
+    let sortDir = -1;
+
+    const cmpVal = (a, b, key, dir) => {
+        const av = getters[key](a), bv = getters[key](b);
+        if (av == null && bv == null) return 0;
+        if (av == null) return 1;
+        if (bv == null) return -1;
+        if (typeof av === 'number') return dir * (av - bv);
+        return dir * String(av).localeCompare(String(bv));
+    };
+
+    const renderRows = () => {
+        for (const col of COLS) {
+            const { el, label } = thEls[col.key];
+            el.textContent = sortKey === col.key ? `${label} ${sortDir === 1 ? '▲' : '▼'}` : label;
+            el.style.color  = sortKey === col.key ? '#34d399' : '';
+        }
+
+        const sorted = [...rows].sort((a, b) => {
+            const p = cmpVal(a, b, sortKey, sortDir);
+            if (p !== 0) return p;
+            if (sortKey !== 'qsls') { const c = cmpVal(a, b, 'qsls', -1); if (c) return c; }
+            if (sortKey !== 'qsos') { const c = cmpVal(a, b, 'qsos', -1); if (c) return c; }
+            if (sortKey !== 'name') { const c = cmpVal(a, b, 'name',  1); if (c) return c; }
+            return 0;
+        });
+
+        tbody.innerHTML = '';
+        for (const row of sorted) {
+            const tr = document.createElement('tr');
+
+            const tdName = document.createElement('td');
+            tdName.className = 'm-label';
+            tdName.textContent = (hasFlag && row.flag) ? `${row.flag} ${row.label}` : row.label;
+            tr.appendChild(tdName);
+
+            const tdQso = document.createElement('td');
+            tdQso.className = 'band-cell';
+            tdQso.textContent = row.qsoCount || '—';
+            tdQso.style.color = row.qsoCount ? '#fbbf24' : '#4b5563';
+            tr.appendChild(tdQso);
+
+            const tdQsl = document.createElement('td');
+            tdQsl.className = 'band-cell';
+            tdQsl.textContent = row.qslCount || '—';
+            tdQsl.style.color = row.qslCount ? '#34d399' : '#4b5563';
+            tr.appendChild(tdQsl);
+
+            const tdBands = document.createElement('td');
+            tdBands.className = 'm-date';
+            tdBands.textContent = [
+                ...BAND_ORDER.filter(b => row.bands[b]),
+                ...Object.keys(row.bands).filter(b => !BAND_ORDER.includes(b)).sort(),
+            ].join(' · ') || '—';
+            tr.appendChild(tdBands);
+
+            tr.appendChild(makeEntityDateCell(row.firstQso));
+            tr.appendChild(makeEntityDateCell(row.firstQsl));
+            tr.appendChild(makeEntityDateCell(row.lastQso));
+            tr.appendChild(makeEntityDateCell(row.lastQsl));
+
+            tbody.appendChild(tr);
+        }
+    };
+
+    renderRows();
 }
 
 // ---------------------------------------------------------------------------
@@ -1229,52 +1328,52 @@ function entityKeyFor(qso, prefixLookup) {
 function buildContinentEntities(contacts, refEntities, prefixLookup, contCode) {
     const id      = contCode.toLowerCase();
     const summary = document.getElementById(`${id}-summary`);
-    const tbody   = document.getElementById(`${id}-body`);
-    if (!summary || !tbody) return;
+    if (!summary) return;
 
-    const sorted    = [...contacts].filter(q => q.datetime && q.continent === contCode)
-        .sort((a, b) => a.datetime.localeCompare(b.datetime));
-    const byQslDate = sorted.filter(q => q.confirmed && q.qsl_date)
-        .sort((a, b) => a.qsl_date.localeCompare(b.qsl_date));
-
-    const firstQso = {}, firstQsl = {};
-    for (const qso of sorted) {
+    const agg = {};
+    for (const qso of contacts) {
+        if (qso.continent !== contCode) continue;
         const key = entityKeyFor(qso, prefixLookup);
-        if (key && !firstQso[key]) firstQso[key] = qso;
-    }
-    for (const qso of byQslDate) {
-        const key = entityKeyFor(qso, prefixLookup);
-        if (key && !firstQsl[key]) firstQsl[key] = qso;
+        if (!key) continue;
+        if (!agg[key]) agg[key] = { qsoCount: 0, qslCount: 0, bands: {}, firstQso: null, lastQso: null, firstQsl: null, lastQsl: null };
+        const e = agg[key];
+        e.qsoCount++;
+        if (qso.band) e.bands[qso.band] = true;
+        if (qso.datetime) {
+            if (!e.firstQso || qso.datetime < e.firstQso.datetime)
+                e.firstQso = { datetime: qso.datetime, band: qso.band };
+            if (!e.lastQso  || qso.datetime > e.lastQso.datetime)
+                e.lastQso  = { datetime: qso.datetime, band: qso.band };
+        }
+        if (qso.confirmed) {
+            e.qslCount++;
+            if (qso.qsl_date) {
+                if (!e.firstQsl || qso.qsl_date < e.firstQsl.datetime)
+                    e.firstQsl = { datetime: qso.qsl_date, band: qso.band };
+                if (!e.lastQsl  || qso.qsl_date > e.lastQsl.datetime)
+                    e.lastQsl  = { datetime: qso.qsl_date, band: qso.band };
+            }
+        }
     }
 
-    const contEntities = (refEntities || [])
+    const rows = (refEntities || [])
         .filter(e => e.continent === contCode)
-        .map(e => { const display = displayName(e.name) || e.name; return { display, key: display.toUpperCase() }; })
-        .sort((a, b) => a.display.localeCompare(b.display));
+        .map(e => {
+            const display = displayName(e.name) || e.name;
+            const key     = display.toUpperCase();
+            return {
+                label: display,
+                flag:  countryFlag(display),
+                ...(agg[key] || { qsoCount: 0, qslCount: 0, bands: {}, firstQso: null, lastQso: null, firstQsl: null, lastQsl: null }),
+            };
+        });
 
-    const workedCount    = contEntities.filter(e => firstQso[e.key]).length;
-    const confirmedCount = contEntities.filter(e => firstQsl[e.key]).length;
+    const workedCount    = rows.filter(r => r.qsoCount > 0).length;
+    const confirmedCount = rows.filter(r => r.qslCount > 0).length;
 
-    summary.innerHTML = `<strong>${workedCount}</strong> / ${contEntities.length} ${CONT_NAMES[contCode] || contCode} entities worked &nbsp;·&nbsp; <strong>${confirmedCount}</strong> confirmed`;
+    summary.innerHTML = `<strong>${workedCount}</strong> / ${rows.length} ${CONT_NAMES[contCode] || contCode} entities worked &nbsp;·&nbsp; <strong>${confirmedCount}</strong> confirmed`;
 
-    const sortedEntities = contEntities.slice().sort((a, b) => {
-        const da = firstQso[a.key]?.datetime, db = firstQso[b.key]?.datetime;
-        if (da && db) return da.localeCompare(db);
-        if (da) return -1;
-        if (db) return 1;
-        return a.display.localeCompare(b.display);
-    });
-
-    for (const entity of sortedEntities) {
-        const tr = document.createElement('tr');
-        const label = document.createElement('td');
-        label.className = 'm-label';
-        label.textContent = entity.display;
-        tr.appendChild(label);
-        tr.appendChild(makeContactCell(firstQso[entity.key] || null, 'datetime'));
-        tr.appendChild(makeContactCell(firstQsl[entity.key] || null, 'qsl_date'));
-        tbody.appendChild(tr);
-    }
+    buildRegionTable({ theadId: `${id}-head`, tbodyId: `${id}-body`, rows, nameLabel: 'Entity', hasFlag: true });
 }
 
 // ---------------------------------------------------------------------------
