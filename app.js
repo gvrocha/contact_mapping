@@ -583,11 +583,18 @@ function makeEntityDateCell(obj) {
     return td;
 }
 
-function buildTable(entities) {
-    const thead = document.getElementById('table-head');
-    const tbody = document.getElementById('table-body');
+function buildTable(entities, refEntities) {
+    const thead   = document.getElementById('table-head');
+    const tbody   = document.getElementById('table-body');
+    const summary = document.getElementById('entity-summary');
 
-    const rows = Object.values(entities);
+    const rows         = Object.values(entities);
+    const workedCount  = rows.length;
+    const confirmedCount = rows.filter(e => e.qslCount > 0).length;
+    const totalCount   = (refEntities || []).length;
+    if (summary) {
+        summary.innerHTML = `<strong>${workedCount}</strong>${totalCount ? ` / ${totalCount}` : ''} entities worked &nbsp;·&nbsp; <strong>${confirmedCount}</strong> confirmed`;
+    }
 
     const COLS = [
         { key: 'name',     label: 'Entity',    cls: '',         defaultDir:  1, get: e => e.name },
@@ -1594,7 +1601,7 @@ async function main() {
     // Populate all data panels (each wrapped so one failure cannot block others).
     const builders = [
         () => buildCallsignTable(contacts, qrzCache),
-        () => buildTable(entities),
+        () => buildTable(entities, refEntities),
         () => buildMilestones(contacts),
         () => buildUsStates(contacts, qrzCache),
         () => buildCanadaProvinces(contacts, qrzCache),
