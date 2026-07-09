@@ -204,6 +204,7 @@
   <div id="tab-bar">
     <button class="tab active" data-tab="map">Map</button>
     <button class="tab" data-tab="globe">Globe</button>
+    <button class="tab" data-tab="grid">Grid coverage</button>
     <button class="tab" data-tab="callsigns">Call sign table</button>
     <button class="tab" data-tab="table">Entity table</button>
     <button class="tab" data-tab="milestones">Milestones</button>
@@ -219,6 +220,23 @@
   <div id="tab-globe" class="tab-panel">
     <div id="globe" style="flex:1;background:#0b0b19;position:relative">
       <div id="globe-status" style="position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:10;background:#1f2937cc;color:#6b7280;font-size:0.72rem;padding:3px 8px;border-radius:3px;white-space:nowrap;pointer-events:none">Globe.gl — waiting for tab click…</div>
+    </div>
+  </div>
+
+  <div id="tab-grid" class="tab-panel">
+    <p class="region-count" id="grid-summary" style="padding:8px 16px 4px;flex:0 0 auto"></p>
+    <div id="grid-map" style="flex:1;position:relative;min-height:0"></div>
+    <div style="flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:5px 12px;background:#1f2937;border-top:1px solid #374151;font-size:0.72rem;color:#9ca3af;">
+      <span>Maidenhead (4-char squares · 2°×1°)</span>
+      <span style="display:flex;align-items:center;gap:5px">
+        <span style="width:20px;height:12px;background:rgba(52,211,153,0.42);border:1px solid #34d399;border-radius:2px;display:inline-block"></span> QSL confirmed
+      </span>
+      <span style="display:flex;align-items:center;gap:5px">
+        <span style="width:20px;height:12px;background:rgba(251,191,36,0.42);border:1px solid #fbbf24;border-radius:2px;display:inline-block"></span> Worked
+      </span>
+      <span style="display:flex;align-items:center;gap:5px">
+        <span style="width:20px;height:12px;background:rgba(75,85,99,0.18);border:1px solid #4b5563;border-radius:2px;display:inline-block"></span> No contact
+      </span>
     </div>
   </div>
 
@@ -339,6 +357,6 @@
   <script src="vendor/maplibre-gl.js"></script>
   <script src="vendor/globe.gl.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=20260709a"></script>
+  <script src="app.js?v=20260709b"></script>
 </body>
 </html>
