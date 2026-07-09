@@ -1679,6 +1679,23 @@ function initGridMap(contacts, qrzCache) {
             }
             ctx.restore();
         }
+
+        // ------ Home marker — drawn on canvas so it repeats across world copies ------
+        if (homeCoords) {
+            const [homeLon, homeLat] = homeCoords;
+            // Iterate over every world copy visible in the current viewport
+            const startOffset = Math.floor((west - homeLon) / 360) * 360;
+            for (let off = startOffset; homeLon + off < east; off += 360) {
+                const px = map.project([homeLon + off, homeLat]);
+                ctx.save();
+                ctx.font         = 'bold 17px system-ui,sans-serif';
+                ctx.textAlign    = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle    = '#ef4444';
+                ctx.fillText('✕', px.x, px.y);
+                ctx.restore();
+            }
+        }
     }
 
     // ------ Hover tooltip (listens through the map, not the canvas) ------
@@ -1706,13 +1723,6 @@ function initGridMap(contacts, qrzCache) {
     resizeCvs();
     map.on('load', () => {
         resizeCvs();
-        if (homeCoords) {
-            const el = document.createElement('div');
-            el.innerHTML = '<span style="color:#ef4444;font-weight:900;font-size:18px">✕</span>';
-            new maplibregl.Marker({ element: el, anchor: 'center' })
-                .setLngLat(homeCoords)
-                .addTo(map);
-        }
         drawGrid();
     });
     map.on('render', drawGrid);
