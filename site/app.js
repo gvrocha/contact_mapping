@@ -1533,24 +1533,36 @@ function buildGridCoverage(contacts, qrzCache) {
         if (!raw || raw.length < 4) continue;
         const g = raw.slice(0, 4).toUpperCase();
         if (!/^[A-R]{2}[0-9]{2}$/.test(g)) continue;
-        if (!status[g]) status[g] = { worked: false, confirmed: false };
-        status[g].worked    = true;
-        if (qso.confirmed) status[g].confirmed = true;
+        if (!status[g]) status[g] = {
+            qsoCount: 0, qslCount: 0,
+            bands: {},
+            firstQso: null, lastQso: null,
+            firstQsl: null, lastQsl: null,
+        };
+        const e = status[g];
+        e.qsoCount++;
+        if (qso.band) e.bands[qso.band] = true;
+        if (qso.datetime) {
+            if (!e.firstQso || qso.datetime < e.firstQso.datetime)
+                e.firstQso = { datetime: qso.datetime, band: qso.band };
+            if (!e.lastQso  || qso.datetime > e.lastQso.datetime)
+                e.lastQso  = { datetime: qso.datetime, band: qso.band };
+        }
+        if (qso.confirmed) {
+            e.qslCount++;
+            if (qso.qsl_date) {
+                if (!e.firstQsl || qso.qsl_date < e.firstQsl.datetime)
+                    e.firstQsl = { datetime: qso.qsl_date, band: qso.band };
+                if (!e.lastQsl  || qso.qsl_date > e.lastQsl.datetime)
+                    e.lastQsl  = { datetime: qso.qsl_date, band: qso.band };
+            }
+        }
     }
     return status;
 }
 
 function initGridMap(contacts, qrzCache) {
-    const gridStatus     = buildGridCoverage(contacts, qrzCache);
-    const workedCount    = Object.values(gridStatus).filter(s => s.worked).length;
-    const confirmedCount = Object.values(gridStatus).filter(s => s.confirmed).length;
-
-    const summaryEl = document.getElementById('grid-summary');
-    if (summaryEl) {
-        summaryEl.innerHTML =
-            `<strong>${workedCount}</strong> grids worked &nbsp;·&nbsp; <strong>${confirmedCount}</strong> confirmed`;
-    }
-
+    const gridStatus = buildGridCoverage(contacts, qrzCache);
     const homeGrid   = (typeof CONFIG !== 'undefined' && CONFIG.homeGrid) ? CONFIG.homeGrid : 'EM69';
     const homeCoords = maidenheadToLatLon(homeGrid);
 
@@ -1601,10 +1613,10 @@ function initGridMap(contacts, qrzCache) {
                 if (w < 0.5 || h < 0.5) continue; // sub-pixel — skip
 
                 ctx.fillStyle = !info
-                    ? 'rgba(75,85,99,0.18)'         // gray  — no contact
-                    : info.confirmed
-                        ? 'rgba(52,211,153,0.42)'   // green — QSL confirmed
-                        : 'rgba(251,191,36,0.42)';  // amber — worked, no QSL
+                    ? 'rgba(75,85,99,0.18)'              // gray  — no contact
+                    : info.qslCount > 0
+                        ? 'rgba(52,211,153,0.42)'        // green — QSL confirmed
+                        : 'rgba(251,191,36,0.42)';       // amber — worked, no QSL
                 ctx.fillRect(x, y, w, h);
 
                 if (w >= 2) {
@@ -1677,7 +1689,7 @@ function initGridMap(contacts, qrzCache) {
         const g    = lonLatToGrid4(e.lngLat.lng, e.lngLat.lat);
         const info = gridStatus[g];
         if (!info) { tip.style.display = 'none'; return; }
-        const status = info.confirmed
+        const status = info.qslCount > 0
             ? `<span style="color:#34d399">✓ QSL confirmed</span>`
             : `<span style="color:#fbbf24">Worked — no QSL</span>`;
         tip.innerHTML = `<b>${g}</b>&nbsp; ${status}`;
@@ -1705,6 +1717,23 @@ function initGridMap(contacts, qrzCache) {
     map.on('resize', resizeCvs);
 
     return map;
+}
+
+function buildGridTable(contacts, qrzCache) {
+    const gridStatus     = buildGridCoverage(contacts, qrzCache);
+    const workedCount    = Object.values(gridStatus).filter(e => e.qsoCount > 0).length;
+    const confirmedCount = Object.values(gridStatus).filter(e => e.qslCount > 0).length;
+    const totalGrids     = 18 * 18 * 10 * 10; // 32,400 valid 4-char Maidenhead squares
+
+    const summary = document.getElementById('grid-summary');
+    if (summary) {
+        summary.innerHTML =
+            `<strong>${workedCount}</strong> / ${totalGrids.toLocaleString()} grids worked` +
+            ` &nbsp;·&nbsp; <strong>${confirmedCount}</strong> confirmed`;
+    }
+
+    const rows = Object.entries(gridStatus).map(([grid, e]) => ({ label: grid, ...e }));
+    buildRegionTable({ theadId: 'grid-head', tbodyId: 'grid-body', rows, nameLabel: 'Grid' });
 }
 
 // ---------------------------------------------------------------------------
@@ -1842,6 +1871,7 @@ async function main() {
         () => buildCanadaProvinces(contacts, qrzCache),
         ...['EU', 'SA', 'AF', 'AS', 'OC'].map(c =>
             () => buildContinentEntities(contacts, refEntities, prefixLookup, c)),
+        () => buildGridTable(contacts, qrzCache),
     ];
     for (const fn of builders) {
         try { fn(); } catch (err) { console.error('Builder error:', err); }

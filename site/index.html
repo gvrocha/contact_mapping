@@ -130,21 +130,22 @@
     .region-note { font-size: 0.74rem; color: #4b5563; margin-top: 8px; }
 
     #callsigns-table, #milestones-table, #states-table, #canada-table,
-    #europe-table, #sa-table, #af-table, #as-table, #oc-table {
+    #europe-table, #sa-table, #af-table, #as-table, #oc-table, #grid-table {
       width: 100%; max-width: 1200px; border-collapse: collapse; font-size: 0.82rem;
     }
     #callsigns-table th, #milestones-table th, #states-table th, #canada-table th,
-    #europe-table th, #sa-table th, #af-table th, #as-table th, #oc-table th {
+    #europe-table th, #sa-table th, #af-table th, #as-table th, #oc-table th, #grid-table th {
       text-align: left; padding: 6px 12px; border-bottom: 1px solid #374151;
       font-weight: 600; color: #9ca3af; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em;
     }
     #callsigns-table td, #milestones-table td, #states-table td, #canada-table td,
-    #europe-table td, #sa-table td, #af-table td, #as-table td, #oc-table td {
+    #europe-table td, #sa-table td, #af-table td, #as-table td, #oc-table td, #grid-table td {
       padding: 6px 12px; border-bottom: 1px solid #1f2937;
     }
     #callsigns-table tr:hover td, #milestones-table tr:hover td, #states-table tr:hover td, #canada-table tr:hover td,
     #europe-table tr:hover td, #sa-table tr:hover td, #af-table tr:hover td,
-    #as-table tr:hover td, #oc-table tr:hover td { background: #1f2937; }
+    #as-table tr:hover td, #oc-table tr:hover td, #grid-table tr:hover td { background: #1f2937; }
+    #grid-table thead tr { position: sticky; top: 0; z-index: 1; background: #1f2937; }
     td.m-label { color: #f9fafb; }
     td.m-date  { color: #d1d5db; font-variant-numeric: tabular-nums; }
     td.m-date.pending { color: #4b5563; font-style: italic; }
@@ -224,10 +225,10 @@
   </div>
 
   <div id="tab-grid" class="tab-panel">
-    <p class="region-count" id="grid-summary" style="padding:8px 16px 4px;flex:0 0 auto"></p>
-    <div id="grid-map" style="flex:1;position:relative;min-height:0"></div>
-    <div style="flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:5px 12px;background:#1f2937;border-top:1px solid #374151;font-size:0.72rem;color:#9ca3af;">
-      <span>Maidenhead (4-char squares · 2°×1°)</span>
+    <p class="region-count" id="grid-summary" style="padding:8px 16px 4px;flex:0 0 auto;margin:0"></p>
+    <div id="grid-map" style="flex:0 0 42vh;position:relative;min-height:0"></div>
+    <div style="flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:5px 12px;background:#1f2937;border-top:1px solid #374151;border-bottom:1px solid #374151;font-size:0.72rem;color:#9ca3af;">
+      <span>Maidenhead (4-char · 2°×1°)</span>
       <span style="display:flex;align-items:center;gap:5px">
         <span style="width:20px;height:12px;background:rgba(52,211,153,0.42);border:1px solid #34d399;border-radius:2px;display:inline-block"></span> QSL confirmed
       </span>
@@ -237,6 +238,12 @@
       <span style="display:flex;align-items:center;gap:5px">
         <span style="width:20px;height:12px;background:rgba(75,85,99,0.18);border:1px solid #4b5563;border-radius:2px;display:inline-block"></span> No contact
       </span>
+    </div>
+    <div style="flex:1;overflow-y:auto;overflow-x:auto;padding:0 0 8px;min-height:0">
+      <table id="grid-table">
+        <thead id="grid-head"></thead>
+        <tbody id="grid-body"></tbody>
+      </table>
     </div>
   </div>
 
@@ -357,6 +364,6 @@
   <script src="vendor/maplibre-gl.js"></script>
   <script src="vendor/globe.gl.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=20260709b"></script>
+  <script src="app.js?v=20260709c"></script>
 </body>
 </html>
