@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Fetch fresh data from LoTW + QRZ, then deploy to both websites.
+#
+# Usage:
+#   ./refresh_and_deploy          # incremental LoTW + QRZ fetch
+#   ./refresh_and_deploy --full   # re-download everything from scratch
+#
+# The script stops immediately if any step fails (set -e).
+set -euo pipefail
+
+DIR="$(cd "$(dirname "$0")" && pwd)"
+
+FULL=""
+if [[ "${1:-}" == "--full" ]]; then
+    FULL="--full"
+fi
+
+echo "=== Step 1/4: Fetch LoTW data ${FULL:-(incremental)} ==="
+"${DIR}/lotw_fetch" ${FULL}
+
+echo ""
+echo "=== Step 2/4: Fetch QRZ enrichment ${FULL:-(incremental)} ==="
+"${DIR}/qrz_fetch" ${FULL}
+
+echo ""
+echo "=== Step 3/4: Deploy to w7gvr.com (S3) ==="
+"${DIR}/aws_deploy_site"
+
+echo ""
+echo "=== Step 4/4: Deploy to GitHub Pages ==="
+"${DIR}/gh_pages_deploy"
+
+echo ""
+echo "=== Done. Both sites are live. ==="

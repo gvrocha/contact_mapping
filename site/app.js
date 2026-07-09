@@ -118,6 +118,16 @@ function buildPrefixLookup(refEntities) {
     return lookup;
 }
 
+// Maps each CTY entity's display name → entity object, for resolving LoTW country strings.
+function buildNameLookup(refEntities) {
+    const lookup = {};
+    for (const entity of refEntities) {
+        const dn = (displayName(entity.name) || entity.name).toUpperCase();
+        lookup[dn] = entity;
+    }
+    return lookup;
+}
+
 // Longest-prefix match: tries W1ABC → W1AB → W1A → W1 → W.
 function lookupEntityByCall(call, prefixLookup) {
     call = call.toUpperCase();
@@ -135,16 +145,28 @@ function lookupEntityByCall(call, prefixLookup) {
 // Group contacts by DXCC entity and accumulate per-band worked/confirmed status.
 // qrzCache: optional {CALL: {lat, lon, grid}} from qrz_fetch — improves marker
 // placement for contacts that LoTW didn't supply a gridsquare for.
-function aggregate(contacts, prefixLookup, qrzCache = {}) {
+// nameLookup: displayName→entity map used to resolve LoTW country strings to CTY entities.
+function aggregate(contacts, prefixLookup, qrzCache = {}, nameLookup = {}) {
     const entities = {};
 
+    // First pass: LoTW is the authoritative DXCC source. For any callsign that has
+    // at least one confirmed QSO, derive the canonical entity key from LoTW's country
+    // field rather than the CTY prefix lookup. This fixes cases like KG4OJT, which
+    // CTY classifies as Guantanamo Bay but LoTW correctly identifies as USA.
+    const callKey = {};
     for (const qso of contacts) {
-        // Always resolve the entity via prefix lookup so confirmed contacts
-        // (which carry a DXCC number) and unconfirmed ones (which don't) land
-        // in the same bucket. ref.prefix is stable across both cases; DXCC
-        // number and country name are only present on confirmed records.
+        if (qso.confirmed && qso.country && !callKey[qso.call]) {
+            const dn = displayName(qso.country);
+            const e  = dn && nameLookup[dn.toUpperCase()];
+            if (e) callKey[qso.call] = e.prefix;
+        }
+    }
+
+    for (const qso of contacts) {
+        // Use the LoTW-derived key when available; fall back to CTY prefix lookup so
+        // confirmed and unconfirmed contacts from the same callsign land in one bucket.
         const ref = lookupEntityByCall(qso.call, prefixLookup);
-        const key = (ref && ref.prefix) || qso.dxcc || qso.country || qso.call.slice(0, 3);
+        const key = callKey[qso.call] || (ref && ref.prefix) || qso.dxcc || qso.country || qso.call.slice(0, 3);
 
         if (!entities[key]) {
             const rawName = qso.country || (ref && ref.name) || key;
@@ -1525,7 +1547,8 @@ async function main() {
     }
 
     const prefixLookup = buildPrefixLookup(refEntities || []);
-    const entities     = aggregate(contacts, prefixLookup, qrzCache);
+    const nameLookup   = buildNameLookup(refEntities || []);
+    const entities     = aggregate(contacts, prefixLookup, qrzCache, nameLookup);
     const entityList   = Object.values(entities);
 
     // Collect bands present in the data, keeping canonical order; append any

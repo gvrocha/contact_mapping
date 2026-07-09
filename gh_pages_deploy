@@ -12,7 +12,11 @@ cleanup() {
 trap cleanup EXIT
 
 echo "Preparing ${BRANCH} worktree..."
+# Sync local branch to remote so our push is always a fast-forward.
+# CI also pushes to this branch, so the local pointer may be stale.
+git fetch origin "${BRANCH}" 2>/dev/null || true
 if git show-ref --verify --quiet "refs/heads/${BRANCH}"; then
+    git branch -f "${BRANCH}" "origin/${BRANCH}" 2>/dev/null || true
     git worktree add "${WORKTREE_DIR}" "${BRANCH}"
 else
     git worktree add --orphan -b "${BRANCH}" "${WORKTREE_DIR}"
