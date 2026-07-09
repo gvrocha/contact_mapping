@@ -86,6 +86,18 @@ const CONT_ORDER = ['NA','SA','EU','AF','AS','OC','AN'];
 // Coordinate helpers
 // ---------------------------------------------------------------------------
 
+// [lon, lat] (any point inside a 4-char square) → 4-char Maidenhead grid code.
+function lonLatToGrid4(lon, lat) {
+    lon = ((lon + 180) % 360 + 360) % 360 - 180; // normalise to [-180, 180)
+    lat = Math.max(-90, Math.min(89.9999, lat));
+    const A   = 65; // 'A'.charCodeAt(0)
+    const fL  = Math.floor((lon + 180) / 20);
+    const fA  = Math.floor((lat + 90)  / 10);
+    const sL  = Math.floor(((lon + 180) % 20) / 2);
+    const sA  = Math.floor(((lat + 90)  % 10));
+    return String.fromCharCode(A + fL) + String.fromCharCode(A + fA) + sL + sA;
+}
+
 // Maidenhead grid square → [lon, lat] (center of square).
 function maidenheadToLatLon(grid) {
     if (!grid || grid.length < 4) return null;
@@ -1509,6 +1521,193 @@ function initGlobeView(entities, contacts, qrzCache) {
 }
 
 // ---------------------------------------------------------------------------
+// Maidenhead grid coverage tab
+// ---------------------------------------------------------------------------
+
+// {grid4: {worked, confirmed}} — LoTW gridsquare first, QRZ fallback.
+function buildGridCoverage(contacts, qrzCache) {
+    const status = {};
+    for (const qso of contacts) {
+        let raw = qso.gridsquare;
+        if (!raw && qrzCache[qso.call]) raw = qrzCache[qso.call].grid;
+        if (!raw || raw.length < 4) continue;
+        const g = raw.slice(0, 4).toUpperCase();
+        if (!/^[A-R]{2}[0-9]{2}$/.test(g)) continue;
+        if (!status[g]) status[g] = { worked: false, confirmed: false };
+        status[g].worked    = true;
+        if (qso.confirmed) status[g].confirmed = true;
+    }
+    return status;
+}
+
+function initGridMap(contacts, qrzCache) {
+    const gridStatus     = buildGridCoverage(contacts, qrzCache);
+    const workedCount    = Object.values(gridStatus).filter(s => s.worked).length;
+    const confirmedCount = Object.values(gridStatus).filter(s => s.confirmed).length;
+
+    const summaryEl = document.getElementById('grid-summary');
+    if (summaryEl) {
+        summaryEl.innerHTML =
+            `<strong>${workedCount}</strong> grids worked &nbsp;·&nbsp; <strong>${confirmedCount}</strong> confirmed`;
+    }
+
+    const homeGrid   = (typeof CONFIG !== 'undefined' && CONFIG.homeGrid) ? CONFIG.homeGrid : 'EM69';
+    const homeCoords = maidenheadToLatLon(homeGrid);
+
+    const map = new maplibregl.Map({
+        container: 'grid-map',
+        style: 'https://tiles.openfreemap.org/styles/liberty',
+        center: homeCoords || [-90, 40],
+        zoom: 4,
+    });
+    map.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+    // ------ Canvas overlay for the grid squares ------
+    const container = document.getElementById('grid-map');
+    const cvs = document.createElement('canvas');
+    cvs.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;';
+    container.appendChild(cvs);
+
+    function resizeCvs() {
+        cvs.width  = container.clientWidth;
+        cvs.height = container.clientHeight;
+    }
+
+    function drawGrid() {
+        const ctx    = cvs.getContext('2d');
+        const zoom   = map.getZoom();
+        const bounds = map.getBounds();
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+        // Clamp to valid Maidenhead coordinate space
+        const west  = Math.max(-180, Math.floor(bounds.getWest()  / 2) * 2);
+        const east  = Math.min(180,  Math.ceil (bounds.getEast()  / 2) * 2);
+        const south = Math.max(-90,  Math.floor(bounds.getSouth()));
+        const north = Math.min(90,   Math.ceil (bounds.getNorth()));
+
+        // ------ 4-char square fills & borders ------
+        for (let lon = west; lon < east; lon += 2) {
+            for (let lat = south; lat < north; lat += 1) {
+                const g    = lonLatToGrid4(lon + 0.001, lat + 0.001);
+                const info = gridStatus[g];
+
+                const sw = map.project([lon,     lat    ]);
+                const ne = map.project([lon + 2, lat + 1]);
+                const x  = Math.min(sw.x, ne.x);
+                const y  = Math.min(sw.y, ne.y);
+                const w  = Math.abs(ne.x - sw.x);
+                const h  = Math.abs(ne.y - sw.y);
+
+                if (w < 0.5 || h < 0.5) continue; // sub-pixel — skip
+
+                ctx.fillStyle = !info
+                    ? 'rgba(75,85,99,0.18)'         // gray  — no contact
+                    : info.confirmed
+                        ? 'rgba(52,211,153,0.42)'   // green — QSL confirmed
+                        : 'rgba(251,191,36,0.42)';  // amber — worked, no QSL
+                ctx.fillRect(x, y, w, h);
+
+                if (w >= 2) {
+                    ctx.strokeStyle = 'rgba(107,114,128,0.35)';
+                    ctx.lineWidth   = 0.5;
+                    ctx.strokeRect(x + 0.25, y + 0.25, w - 0.5, h - 0.5);
+                }
+
+                // Grid label — always on contacted squares when large enough;
+                // on uncontacted squares only at very high zoom
+                if (w > 30 && h > 13 && (info || zoom >= 7)) {
+                    const sz = Math.min(10, Math.max(7, w / 5));
+                    ctx.font         = `bold ${sz}px system-ui,sans-serif`;
+                    ctx.textAlign    = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle    = info
+                        ? 'rgba(17,24,39,0.85)'
+                        : 'rgba(156,163,175,0.7)';
+                    ctx.fillText(g, x + w / 2, y + h / 2);
+                }
+            }
+        }
+
+        // ------ Field-level (2-char, 20°×10°) boundary lines at low zoom ------
+        if (zoom < 5) {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(148,163,184,0.65)';
+            ctx.lineWidth   = zoom < 3 ? 1.5 : 1;
+
+            const fW = Math.max(-180, Math.floor(bounds.getWest()  / 20) * 20);
+            const fE = Math.min(180,  Math.ceil (bounds.getEast()  / 20) * 20);
+            const fS = Math.max(-90,  Math.floor(bounds.getSouth() / 10) * 10);
+            const fN = Math.min(90,   Math.ceil (bounds.getNorth() / 10) * 10);
+
+            for (let lon = fW; lon <= fE; lon += 20) {
+                const p0 = map.project([lon, fS]);
+                const p1 = map.project([lon, fN]);
+                ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+            }
+            for (let lat = fS; lat <= fN; lat += 10) {
+                const p0 = map.project([fW, lat]);
+                const p1 = map.project([fE, lat]);
+                ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+            }
+
+            // 2-char field labels
+            if (zoom >= 1.5) {
+                ctx.fillStyle    = 'rgba(203,213,225,0.6)';
+                ctx.textAlign    = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.font         = `${Math.min(16, Math.max(9, zoom * 3))}px system-ui,sans-serif`;
+                for (let lon = fW; lon < fE; lon += 20) {
+                    for (let lat = fS; lat < fN; lat += 10) {
+                        const c = map.project([lon + 10, lat + 5]);
+                        ctx.fillText(lonLatToGrid4(lon + 10, lat + 5).slice(0, 2), c.x, c.y);
+                    }
+                }
+            }
+            ctx.restore();
+        }
+    }
+
+    // ------ Hover tooltip (listens through the map, not the canvas) ------
+    const tip = document.createElement('div');
+    tip.className = 'g-tip';
+    tip.style.cssText = 'position:absolute;display:none;pointer-events:none;z-index:10;';
+    container.appendChild(tip);
+
+    map.on('mousemove', (e) => {
+        const g    = lonLatToGrid4(e.lngLat.lng, e.lngLat.lat);
+        const info = gridStatus[g];
+        if (!info) { tip.style.display = 'none'; return; }
+        const status = info.confirmed
+            ? `<span style="color:#34d399">✓ QSL confirmed</span>`
+            : `<span style="color:#fbbf24">Worked — no QSL</span>`;
+        tip.innerHTML = `<b>${g}</b>&nbsp; ${status}`;
+        const px = map.project(e.lngLat);
+        tip.style.left    = `${px.x + 14}px`;
+        tip.style.top     = `${px.y - 22}px`;
+        tip.style.display = 'block';
+    });
+    map.on('mouseleave', () => { tip.style.display = 'none'; });
+
+    // ------ Initialise ------
+    resizeCvs();
+    map.on('load', () => {
+        resizeCvs();
+        if (homeCoords) {
+            const el = document.createElement('div');
+            el.innerHTML = '<span style="color:#ef4444;font-weight:900;font-size:18px">✕</span>';
+            new maplibregl.Marker({ element: el, anchor: 'center' })
+                .setLngLat(homeCoords)
+                .addTo(map);
+        }
+        drawGrid();
+    });
+    map.on('render', drawGrid);
+    map.on('resize', resizeCvs);
+
+    return map;
+}
+
+// ---------------------------------------------------------------------------
 // Entry point
 // ---------------------------------------------------------------------------
 
@@ -1598,6 +1797,7 @@ async function main() {
     });
 
     let globeMap = null;
+    let gridMap  = null;
     document.getElementById('tab-bar').addEventListener('click', (ev) => {
         const btn = ev.target.closest('.tab');
         if (!btn) return;
@@ -1617,6 +1817,18 @@ async function main() {
                 }));
             } else {
                 globeMap._resize();
+            }
+        } else if (target === 'grid') {
+            if (!gridMap) {
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    try {
+                        gridMap = initGridMap(contacts, qrzCache);
+                    } catch (err) {
+                        document.getElementById('grid-map').textContent = `Grid map error: ${err.message}`;
+                    }
+                }));
+            } else {
+                gridMap.resize();
             }
         }
     });
