@@ -1591,11 +1591,13 @@ function initGridMap(contacts, qrzCache) {
         const bounds = map.getBounds();
         ctx.clearRect(0, 0, cvs.width, cvs.height);
 
-        // Clamp to valid Maidenhead coordinate space
-        const west  = Math.max(-180, Math.floor(bounds.getWest()  / 2) * 2);
-        const east  = Math.min(180,  Math.ceil (bounds.getEast()  / 2) * 2);
-        const south = Math.max(-90,  Math.floor(bounds.getSouth()));
-        const north = Math.min(90,   Math.ceil (bounds.getNorth()));
+        // Follow the actual viewport bounds without clamping longitude — MapLibre
+        // uses unwrapped coordinates past ±180°, and lonLatToGrid4 / map.project()
+        // both handle them correctly, so the overlay tiles across all world copies.
+        const west  = Math.floor(bounds.getWest()  / 2) * 2;
+        const east  = Math.ceil (bounds.getEast()  / 2) * 2;
+        const south = Math.max(-90, Math.floor(bounds.getSouth()));
+        const north = Math.min(90,  Math.ceil (bounds.getNorth()));
 
         // ------ 4-char square fills & borders ------
         for (let lon = west; lon < east; lon += 2) {
@@ -1646,10 +1648,10 @@ function initGridMap(contacts, qrzCache) {
             ctx.strokeStyle = 'rgba(148,163,184,0.65)';
             ctx.lineWidth   = zoom < 3 ? 1.5 : 1;
 
-            const fW = Math.max(-180, Math.floor(bounds.getWest()  / 20) * 20);
-            const fE = Math.min(180,  Math.ceil (bounds.getEast()  / 20) * 20);
-            const fS = Math.max(-90,  Math.floor(bounds.getSouth() / 10) * 10);
-            const fN = Math.min(90,   Math.ceil (bounds.getNorth() / 10) * 10);
+            const fW = Math.floor(bounds.getWest()  / 20) * 20;
+            const fE = Math.ceil (bounds.getEast()  / 20) * 20;
+            const fS = Math.max(-90, Math.floor(bounds.getSouth() / 10) * 10);
+            const fN = Math.min(90,  Math.ceil (bounds.getNorth() / 10) * 10);
 
             for (let lon = fW; lon <= fE; lon += 20) {
                 const p0 = map.project([lon, fS]);
@@ -1676,6 +1678,23 @@ function initGridMap(contacts, qrzCache) {
                 }
             }
             ctx.restore();
+        }
+
+        // ------ Home marker — drawn on canvas so it repeats across world copies ------
+        if (homeCoords) {
+            const [homeLon, homeLat] = homeCoords;
+            // Iterate over every world copy visible in the current viewport
+            const startOffset = Math.floor((west - homeLon) / 360) * 360;
+            for (let off = startOffset; homeLon + off < east; off += 360) {
+                const px = map.project([homeLon + off, homeLat]);
+                ctx.save();
+                ctx.font         = 'bold 17px system-ui,sans-serif';
+                ctx.textAlign    = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle    = '#ef4444';
+                ctx.fillText('✕', px.x, px.y);
+                ctx.restore();
+            }
         }
     }
 
@@ -1704,13 +1723,6 @@ function initGridMap(contacts, qrzCache) {
     resizeCvs();
     map.on('load', () => {
         resizeCvs();
-        if (homeCoords) {
-            const el = document.createElement('div');
-            el.innerHTML = '<span style="color:#ef4444;font-weight:900;font-size:18px">✕</span>';
-            new maplibregl.Marker({ element: el, anchor: 'center' })
-                .setLngLat(homeCoords)
-                .addTo(map);
-        }
         drawGrid();
     });
     map.on('render', drawGrid);
