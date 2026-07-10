@@ -4,6 +4,11 @@
     "lon": 5.443929,
     "grid": "JM26RE"
   },
+  "8P6GE": {
+    "lat": 13.145833,
+    "lon": -59.541667,
+    "grid": "GK03FD"
+  },
   "9A5E": {
     "lat": 45.8982,
     "lon": 15.709,
@@ -15,11 +20,29 @@
     "grid": "DN61JT",
     "state": "WY"
   },
+  "AD2L": {
+    "lat": 41.743885,
+    "lon": -77.264497,
+    "grid": "FN11IR",
+    "state": "PA"
+  },
   "AD6WL": {
     "lat": 34.872033,
     "lon": -117.058398,
     "grid": "DM14LU",
     "state": "CA"
+  },
+  "AD8J": {
+    "lat": 35.728333,
+    "lon": -82.543333,
+    "grid": "EM85RR",
+    "state": "NC"
+  },
+  "AG0N": {
+    "lat": 41.904144,
+    "lon": -103.557763,
+    "grid": "DN81FV",
+    "state": "NE"
   },
   "AG5PC": {
     "lat": 32.84472,
@@ -38,6 +61,11 @@
     "lon": -119.285752,
     "grid": "DN05IU",
     "state": "OR"
+  },
+  "CU6AB": {
+    "lat": 38.516592,
+    "lon": -28.535161,
+    "grid": "HM58RM"
   },
   "DK7ZT": {
     "lat": 50.815589,
@@ -59,10 +87,25 @@
     "lon": 18.328803,
     "grid": "JN95DA"
   },
+  "EA1AA": {
+    "lat": 43.4166,
+    "lon": -3.854753,
+    "grid": "IN83BJ"
+  },
+  "EA3AKY": {
+    "lat": 41.436667,
+    "lon": 1.873333,
+    "grid": "JN01WK"
+  },
   "EA5D": {
     "lat": 39.978333,
     "lon": -0.043333,
     "grid": "IM99XX"
+  },
+  "EC5M": {
+    "lat": 38.62394,
+    "lon": -0.579862,
+    "grid": "IM98RO"
   },
   "F4BKT": {
     "lat": 48.538004,
@@ -84,6 +127,11 @@
     "lon": 6.368897,
     "grid": "JN36EB"
   },
+  "HA3MQ": {
+    "lat": 45.8588,
+    "lon": 18.3054,
+    "grid": "JN95DU"
+  },
   "HB10GBT": {
     "lat": 45.971891,
     "lon": 8.882404,
@@ -95,6 +143,32 @@
     "lon": 8.104901,
     "grid": "JN46BX"
   },
+  "HB9TIH": {
+    "lat": 46.696857,
+    "lon": 6.975691,
+    "grid": "JN36LQ",
+    "state": "FR"
+  },
+  "HC2GRC": {
+    "lat": -2.688333,
+    "lon": -79.876667,
+    "grid": "FI07BH"
+  },
+  "HI8J": {
+    "lat": 18.462947,
+    "lon": -69.999546,
+    "grid": "FK58AL"
+  },
+  "HI8RMQ": {
+    "lat": 18.450836,
+    "lon": -69.958085,
+    "grid": "FK58AK"
+  },
+  "HK3YL": {
+    "lat": 4.716864,
+    "lon": -74.03701,
+    "grid": "FJ24XR"
+  },
   "IC8JHY": {
     "lat": 40.718483,
     "lon": 13.929886,
@@ -104,6 +178,12 @@
     "lat": 44.527615,
     "lon": 11.338813,
     "grid": "JN54QM"
+  },
+  "IQ4JO": {
+    "lat": 43.9992,
+    "lon": 12.6299,
+    "grid": "JN63HX",
+    "state": "IT"
   },
   "IQ9BF": {
     "lat": 37.620463,
@@ -121,287 +201,6 @@
     "grid": "FK93JF"
   },
   "J99IH": {},
-  "K1SM": {
-    "lat": 42.149853,
-    "lon": -71.442931,
-    "grid": "FN42GD",
-    "state": "MA"
-  },
-  "K4C": {
-    "lat": 25.957482,
-    "lon": -80.238868,
-    "grid": "EL95VW",
-    "state": "FL"
-  },
-  "K4YT": {
-    "lat": 39.020194,
-    "lon": -77.330539,
-    "grid": "FM19IA",
-    "state": "VA"
-  },
-  "K5LJC": {
-    "lat": 29.02591,
-    "lon": -95.42476,
-    "grid": "EL29GA",
-    "state": "TX"
-  },
-  "K6EI": {
-    "lat": 37.39254,
-    "lon": -122.017271,
-    "grid": "CM87XJ",
-    "state": "CA"
-  },
-  "K7L": {
-    "lat": 45.728333,
-    "lon": -122.626667,
-    "grid": "CN85QR",
-    "state": "WA"
-  },
-  "KA0UTI": {
-    "lat": 39.620377,
-    "lon": -104.981764,
-    "grid": "DM79MO",
-    "state": "CO"
-  },
-  "KB1EFS": {
-    "lat": 41.686667,
-    "lon": -71.126667,
-    "grid": "FN41KQ",
-    "state": "MA"
-  },
-  "KC2NJ": {
-    "lat": 40.755748,
-    "lon": -74.308416,
-    "grid": "FN20US",
-    "state": "NJ"
-  },
-  "KF0MSJ": {
-    "lat": 38.445508,
-    "lon": -91.00248,
-    "grid": "EM48LK",
-    "state": "MO"
-  },
-  "KJ7WFN": {
-    "lat": 45.614251,
-    "lon": -111.054563,
-    "grid": "DN45LO",
-    "state": "MT"
-  },
-  "KO4O": {
-    "lat": 34.607209,
-    "lon": -87.074298,
-    "grid": "EM64LO",
-    "state": "AL"
-  },
-  "KZ7K": {
-    "lat": 33.05379,
-    "lon": -112.004917,
-    "grid": "DM33XB",
-    "state": "AZ"
-  },
-  "KZ7Y": {
-    "lat": 25.7571,
-    "lon": -80.24219,
-    "grid": "EL95VS",
-    "state": "FL"
-  },
-  "LZ1KU": {
-    "lat": 42.6875,
-    "lon": 24.291667,
-    "grid": "KN22DQ"
-  },
-  "LZ2KV": {
-    "lat": 43.242926,
-    "lon": 26.572284,
-    "grid": "KN33GF"
-  },
-  "M6JAY": {
-    "lat": 50.905463,
-    "lon": -1.363362,
-    "grid": "IO90HV"
-  },
-  "N1WI": {
-    "lat": 41.575866,
-    "lon": -73.497829,
-    "grid": "FN31GN",
-    "state": "CT"
-  },
-  "N3PAY": {
-    "lat": 41.23338,
-    "lon": -96.04639,
-    "grid": "EN11XF",
-    "state": "NE"
-  },
-  "N5YYF": {
-    "lat": 35.162187,
-    "lon": -106.692644,
-    "grid": "DM65PD",
-    "state": "NM"
-  },
-  "N8PFK": {
-    "lat": 30.701402,
-    "lon": -83.193321,
-    "grid": "EM80JQ",
-    "state": "GA"
-  },
-  "NC7I": {
-    "lat": 40.63884,
-    "lon": -111.83913,
-    "grid": "DN40BP",
-    "state": "UT"
-  },
-  "OD5KU": {
-    "lat": 33.95106,
-    "lon": 35.674077,
-    "grid": "KM73UW"
-  },
-  "OE8DDX": {
-    "lat": 46.895,
-    "lon": 14.79,
-    "grid": "JN76JV"
-  },
-  "OE8DDXNONE": {},
-  "PI4DX": {
-    "lat": 51.386156,
-    "lon": 4.012588,
-    "grid": "JO21AJ"
-  },
-  "SP9UPH": {
-    "lat": 50.313796,
-    "lon": 18.770009,
-    "grid": "JO90JH"
-  },
-  "UR5HMF": {
-    "lat": 49.071874,
-    "lon": 33.410616,
-    "grid": "KN69QB"
-  },
-  "V31DL": {
-    "lat": 17.222135,
-    "lon": -88.91377,
-    "grid": "EK57NF"
-  },
-  "V31MA": {
-    "lat": 17.222193,
-    "lon": -88.914116,
-    "grid": "EK57NF"
-  },
-  "VA2HMD": {
-    "lat": 45.313246,
-    "lon": -73.257767,
-    "grid": "FN35IH"
-  },
-  "VB7F": {
-    "lat": 49.277123,
-    "lon": -123.111999,
-    "grid": "CN89KG",
-    "state": "BC"
-  },
-  "VE3PFW": {
-    "lat": 43.197133,
-    "lon": -79.83524,
-    "grid": "FN03BE"
-  },
-  "VE3UIN": {
-    "lat": 44.2366,
-    "lon": -76.5549,
-    "grid": "FN14RF",
-    "state": "ON"
-  },
-  "VP2MAA": {
-    "lat": 16.728333,
-    "lon": -62.21,
-    "grid": "FK86VR"
-  },
-  "W0DET": {
-    "lat": 39.53863,
-    "lon": -107.751115,
-    "grid": "DM69CM",
-    "state": "CO"
-  },
-  "W4JWS": {
-    "lat": 28.68636,
-    "lon": -81.48974,
-    "grid": "EL98GQ",
-    "state": "FL"
-  },
-  "W6ACT": {
-    "lat": 37.721395,
-    "lon": -121.932865,
-    "grid": "CM97AR",
-    "state": "CA"
-  },
-  "W7OTV": {
-    "lat": 45.489939,
-    "lon": -122.865931,
-    "grid": "CN85NL",
-    "state": "OR"
-  },
-  "W7ZR": {
-    "lat": 36.06,
-    "lon": -115.17,
-    "grid": "DM26JB",
-    "state": "NV"
-  },
-  "WA7LNW": {
-    "lat": 37.226142,
-    "lon": -113.216536,
-    "grid": "DM37JF",
-    "state": "UT"
-  },
-  "WS7M": {
-    "lat": 40.519556,
-    "lon": -105.10433,
-    "grid": "DN70KM",
-    "state": "CO"
-  },
-  "XQ3SK": {
-    "lat": -33.605,
-    "lon": -70.626667,
-    "grid": "FF46QJ"
-  },
-  "AD8J": {
-    "lat": 35.728333,
-    "lon": -82.543333,
-    "grid": "EM85RR",
-    "state": "NC"
-  },
-  "AG0N": {
-    "lat": 41.904144,
-    "lon": -103.557763,
-    "grid": "DN81FV",
-    "state": "NE"
-  },
-  "CU6AB": {
-    "lat": 38.516592,
-    "lon": -28.535161,
-    "grid": "HM58RM"
-  },
-  "EA1AA": {
-    "lat": 43.4166,
-    "lon": -3.854753,
-    "grid": "IN83BJ"
-  },
-  "EC5M": {
-    "lat": 38.62394,
-    "lon": -0.579862,
-    "grid": "IM98RO"
-  },
-  "HA3MQ": {
-    "lat": 45.8588,
-    "lon": 18.3054,
-    "grid": "JN95DU"
-  },
-  "HI8RMQ": {
-    "lat": 18.450836,
-    "lon": -69.958085,
-    "grid": "FK58AK"
-  },
-  "HK3YL": {
-    "lat": 4.716864,
-    "lon": -74.03701,
-    "grid": "FJ24XR"
-  },
   "K0C": {
     "lat": 38.9865,
     "lon": -94.6617,
@@ -414,184 +213,11 @@
     "grid": "EM19UE",
     "state": "KS"
   },
-  "K2A": {
-    "lat": 42.32514,
-    "lon": -74.02992,
-    "grid": "FN22XH",
-    "state": "NY"
-  },
-  "K2H": {
-    "lat": 42.039051,
-    "lon": -72.557773,
-    "grid": "FN32RA",
+  "K1SM": {
+    "lat": 42.149853,
+    "lon": -71.442931,
+    "grid": "FN42GD",
     "state": "MA"
-  },
-  "K2L": {
-    "lat": 34.096243,
-    "lon": -81.037067,
-    "grid": "EM94LC",
-    "state": "SC"
-  },
-  "K4CUL": {
-    "lat": 38.453994,
-    "lon": -77.994922,
-    "grid": "FM18AK",
-    "state": "VA"
-  },
-  "K4TMR": {
-    "lat": 32.522537,
-    "lon": -86.372894,
-    "grid": "EM62TM",
-    "state": "AL"
-  },
-  "KB3Z": {
-    "lat": 40.195975,
-    "lon": -75.462727,
-    "grid": "FN20GE",
-    "state": "PA"
-  },
-  "KB9DED": {
-    "lat": 44.950154,
-    "lon": -89.646364,
-    "grid": "EN54EW",
-    "state": "WI"
-  },
-  "KC0VTJ": {
-    "lat": 38.998317,
-    "lon": -94.657669,
-    "grid": "EM28QX",
-    "state": "KS"
-  },
-  "KG4OJT": {
-    "lat": 38.88863,
-    "lon": -77.326145,
-    "grid": "FM18IV",
-    "state": "VA"
-  },
-  "KK4EB/VE1": {},
-  "KO4YIN": {
-    "lat": 28.67426,
-    "lon": -82.13421,
-    "grid": "EL88WQ",
-    "state": "MO"
-  },
-  "KP4LCA": {
-    "lat": 17.992459,
-    "lon": -66.662149,
-    "grid": "FK67QX",
-    "state": "PR"
-  },
-  "KP4QVQ": {
-    "lat": 18.13741,
-    "lon": -67.12299,
-    "grid": "FK68KD",
-    "state": "PR"
-  },
-  "KR4DWD": {
-    "lat": 28.18127,
-    "lon": -82.16056,
-    "grid": "EL88WE",
-    "state": "FL"
-  },
-  "KR4FJQ": {
-    "lat": 38.98059,
-    "lon": -78.05343,
-    "grid": "FM08XX",
-    "state": "VA"
-  },
-  "N0WOK": {
-    "lat": 43.42071,
-    "lon": -95.096455,
-    "grid": "EN23KK",
-    "state": "IA"
-  },
-  "N3FMC": {
-    "lat": 40.31167,
-    "lon": -75.84626,
-    "grid": "FN20BH",
-    "state": "PA"
-  },
-  "N6BLU": {
-    "lat": 43.082329,
-    "lon": -124.419385,
-    "grid": "CN73SB",
-    "state": "OR"
-  },
-  "NE0A": {
-    "lat": 39.175061,
-    "lon": -94.582163,
-    "grid": "EM29RE",
-    "state": "MO"
-  },
-  "VE3EB": {
-    "lat": 44.395,
-    "lon": -79.71,
-    "grid": "FN04DJ",
-    "state": "ON"
-  },
-  "VO1AW": {
-    "lat": 48.936667,
-    "lon": -54.626667,
-    "grid": "GN28QW",
-    "state": "NL"
-  },
-  "W0ERB": {
-    "lat": 39.202321,
-    "lon": -96.562897,
-    "grid": "EM19RE",
-    "state": "KS"
-  },
-  "W1KP": {
-    "lat": 42.131755,
-    "lon": -70.907783,
-    "grid": "FN42ND",
-    "state": "MA"
-  },
-  "W4PPC": {
-    "lat": 34.77626,
-    "lon": -86.47644,
-    "grid": "EM64SS",
-    "state": "AL"
-  },
-  "WA3MH": {
-    "lat": 38.342616,
-    "lon": -77.5229,
-    "grid": "FM18FI",
-    "state": "VA"
-  },
-  "WD4CNO": {
-    "lat": 27.921684,
-    "lon": -82.512735,
-    "grid": "EL87RW",
-    "state": "FL"
-  },
-  "WE2N": {
-    "lat": 27.282988,
-    "lon": -80.398511,
-    "grid": "EL97TG",
-    "state": "FL"
-  },
-  "WW6W": {
-    "lat": 46.879055,
-    "lon": -102.793524,
-    "grid": "DN86OV",
-    "state": "ND"
-  },
-  "8P6GE": {
-    "lat": 13.145833,
-    "lon": -59.541667,
-    "grid": "GK03FD"
-  },
-  "HB9TIH": {
-    "lat": 46.696857,
-    "lon": 6.975691,
-    "grid": "JN36LQ",
-    "state": "FR"
-  },
-  "HC2GRC": {
-    "lat": -2.688333,
-    "lon": -79.876667,
-    "grid": "FI07BH"
   },
   "K1XE": {
     "lat": 41.941938,
@@ -599,145 +225,23 @@
     "grid": "FN41HW",
     "state": "MA"
   },
+  "K2A": {
+    "lat": 42.32514,
+    "lon": -74.02992,
+    "grid": "FN22XH",
+    "state": "NY"
+  },
   "K2D": {
     "lat": 41.8,
     "lon": -72.8,
     "grid": "FN31OT",
     "state": "CT"
   },
-  "K5EK": {
-    "lat": 36.165017,
-    "lon": -79.99555,
-    "grid": "FM06AD",
-    "state": "NC"
-  },
-  "K6VHF/HR9": {
-    "lat": 16.308701,
-    "lon": -86.579382,
-    "grid": "EK66RH"
-  },
-  "KA3IRT": {
-    "lat": 40.5092,
-    "lon": -80.180048,
-    "grid": "EN90VM",
-    "state": "PA"
-  },
-  "KC5TT": {
-    "lat": 29.77887,
-    "lon": -95.76653,
-    "grid": "EL29CS",
-    "state": "TX"
-  },
-  "KG5FDT": {
-    "lat": 33.601891,
-    "lon": -96.658257,
-    "grid": "EM13QO",
-    "state": "TX"
-  },
-  "KJ4GNR": {
-    "lat": 25.92965,
-    "lon": -80.315022,
-    "grid": "EL95UW",
-    "state": "FL"
-  },
-  "KJ7CMI": {
-    "lat": 37.0739,
-    "lon": -113.55243,
-    "grid": "DM37FB",
-    "state": "UT"
-  },
-  "KZ4ZZ": {
-    "lat": 27.488415,
-    "lon": -82.598975,
-    "grid": "EL87QL",
-    "state": "FL"
-  },
-  "N1MNU": {
-    "lat": 44.4928,
-    "lon": -70.7414,
-    "grid": "FN44PL",
-    "state": "ME"
-  },
-  "N2NDV": {
-    "lat": 40.779484,
-    "lon": -74.027477,
-    "grid": "FN20XS",
-    "state": "NJ"
-  },
-  "N4LDR": {
-    "lat": 38.596257,
-    "lon": -78.433178,
-    "grid": "FM08SO",
-    "state": "VA"
-  },
-  "NV2K": {
-    "lat": 43.02,
-    "lon": -77.71,
-    "grid": "FN13DA",
-    "state": "NY"
-  },
-  "TI5GAX": {
-    "lat": 10.229167,
-    "lon": -84.125,
-    "grid": "EK70WF"
-  },
-  "VE2LBI": {
-    "lat": 45.561667,
-    "lon": -72.96,
-    "grid": "FN35MN",
-    "state": "QC"
-  },
-  "VE6KIX": {
-    "lat": 44.520833,
-    "lon": -79.208333,
-    "grid": "FN04JM",
-    "state": "AB"
-  },
-  "W5C/D": {
-    "lat": 32.747952,
-    "lon": -97.092838,
-    "grid": "EM12KR",
-    "state": "TX"
-  },
-  "WA2HIP": {
-    "lat": 44.762768,
-    "lon": -68.711488,
-    "grid": "FN54PS",
-    "state": "ME"
-  },
-  "WB2BWU": {
-    "lat": 40.720852,
-    "lon": -73.839755,
-    "grid": "FN30BR",
-    "state": "NY"
-  },
-  "WD4AGF": {
-    "lat": 26.27959,
-    "lon": -80.13368,
-    "grid": "EL96WG",
-    "state": "FL"
-  },
-  "XE1AR": {
-    "lat": 19.712061,
-    "lon": -101.224105,
-    "grid": "DK99JR"
-  },
-  "AD2L": {
-    "lat": 41.743885,
-    "lon": -77.264497,
-    "grid": "FN11IR",
-    "state": "PA"
-  },
-  "EA3AKY": {
-    "lat": 41.436667,
-    "lon": 1.873333,
-    "grid": "JN01WK"
-  },
-  "IQ4JO": {
-    "lat": 43.9992,
-    "lon": 12.6299,
-    "grid": "JN63HX",
-    "state": "IT"
+  "K2H": {
+    "lat": 42.039051,
+    "lon": -72.557773,
+    "grid": "FN32RA",
+    "state": "MA"
   },
   "K2I": {
     "lat": 40.601341,
@@ -745,165 +249,53 @@
     "grid": "FN20SO",
     "state": "NJ"
   },
-  "K7IOC": {
-    "lat": 48.1627,
-    "lon": -122.506,
-    "grid": "CN88RD",
-    "state": "WA"
+  "K2L": {
+    "lat": 34.096243,
+    "lon": -81.037067,
+    "grid": "EM94LC",
+    "state": "SC"
   },
-  "K7LNY": {
-    "lat": 37.15638,
-    "lon": -113.52543,
-    "grid": "DM37FD",
-    "state": "UT"
-  },
-  "KB2DSQ": {
-    "lat": 43.120823,
-    "lon": -77.71736,
-    "grid": "FN13DC",
-    "state": "NY"
-  },
-  "KC2HRG": {
-    "lat": 40.888416,
-    "lon": -74.727237,
-    "grid": "FN20PV",
-    "state": "NJ"
-  },
-  "KD9DWU": {
-    "lat": 39.841637,
-    "lon": -85.864081,
-    "grid": "EM79BU",
-    "state": "IN"
-  },
-  "KE2FUM": {
-    "lat": 40.6553,
-    "lon": -75.0826,
-    "grid": "FN20LP",
-    "state": "NJ"
-  },
-  "KF0VDS": {
-    "lat": 39.99782,
-    "lon": -104.80522,
-    "grid": "DM79OX",
-    "state": "CO"
-  },
-  "KR4EBE": {
-    "lat": 28.15448,
-    "lon": -80.59604,
-    "grid": "EL98QD",
+  "K4C": {
+    "lat": 25.957482,
+    "lon": -80.238868,
+    "grid": "EL95VW",
     "state": "FL"
   },
-  "KZ4EK/W1": {
-    "lat": 44.171529,
-    "lon": -70.402284,
-    "grid": "FN44TE",
-    "state": "ME"
-  },
-  "LA8ENA": {
-    "lat": 58.436667,
-    "lon": 8.706667,
-    "grid": "JO48IK"
-  },
-  "N0JDC": {
-    "lat": 39.96642,
-    "lon": -105.1542,
-    "grid": "DM79KX",
-    "state": "CO"
-  },
-  "N5BK": {
-    "lat": 30.389526,
-    "lon": -97.679085,
-    "grid": "EM10DJ",
-    "state": "TX"
-  },
-  "N5WXB": {
-    "lat": 39.53152,
-    "lon": -78.460958,
-    "grid": "FM09SM",
-    "state": "WV"
-  },
-  "ND2K": {
-    "lat": 40.900879,
-    "lon": -74.047594,
-    "grid": "FN20XV",
-    "state": "NJ"
-  },
-  "VA3FMB": {
-    "lat": 43.572942,
-    "lon": -79.599808,
-    "grid": "FN03EN",
-    "state": "ON"
-  },
-  "VA3PHP": {
-    "lat": 44.001544,
-    "lon": -79.444715,
-    "grid": "FN04GA",
-    "state": "ON"
-  },
-  "VE3BNW": {
-    "lat": 43.241991,
-    "lon": -79.79726,
-    "grid": "FN03CF",
-    "state": "ON"
-  },
-  "VE3FSN": {
-    "lat": 45.4018,
-    "lon": -75.659099,
-    "grid": "FN25EJ",
-    "state": "ON"
-  },
-  "VE7RK": {
-    "lat": 49.55704,
-    "lon": -117.25219,
-    "grid": "DN19IN",
-    "state": "BC"
-  },
-  "VE9ZY": {
-    "lat": 47.482419,
-    "lon": -64.924774,
-    "grid": "FN77ML",
-    "state": "NB"
-  },
-  "W3YNI": {
-    "lat": 40.32949,
-    "lon": -79.717782,
-    "grid": "FN00DH",
-    "state": "PA"
-  },
-  "WB6AGE": {
-    "lat": 46.151446,
-    "lon": -123.358618,
-    "grid": "CN86HD",
-    "state": "WA"
-  },
-  "WD4OBP": {
-    "lat": 36.7026,
-    "lon": -76.9949,
-    "grid": "FM16MQ",
+  "K4CUL": {
+    "lat": 38.453994,
+    "lon": -77.994922,
+    "grid": "FM18AK",
     "state": "VA"
-  },
-  "WI1U": {
-    "lat": 42.138424,
-    "lon": -73.226019,
-    "grid": "FN32JD",
-    "state": "MA"
-  },
-  "WW3QB": {
-    "lat": 38.744396,
-    "lon": -75.168651,
-    "grid": "FM28JR",
-    "state": "DE"
-  },
-  "HI8J": {
-    "lat": 18.462947,
-    "lon": -69.999546,
-    "grid": "FK58AL"
   },
   "K4GBI": {
     "lat": 30.23538,
     "lon": -85.6717,
     "grid": "EM70DF",
     "state": "FL"
+  },
+  "K4TMR": {
+    "lat": 32.522537,
+    "lon": -86.372894,
+    "grid": "EM62TM",
+    "state": "AL"
+  },
+  "K4YT": {
+    "lat": 39.020194,
+    "lon": -77.330539,
+    "grid": "FM19IA",
+    "state": "VA"
+  },
+  "K5EK": {
+    "lat": 36.165017,
+    "lon": -79.99555,
+    "grid": "FM06AD",
+    "state": "NC"
+  },
+  "K5LJC": {
+    "lat": 29.02591,
+    "lon": -95.42476,
+    "grid": "EL29GA",
+    "state": "TX"
   },
   "K5PYT": {
     "lat": 29.69319,
@@ -917,16 +309,105 @@
     "grid": "EM20DD",
     "state": "TX"
   },
+  "K6EI": {
+    "lat": 37.39254,
+    "lon": -122.017271,
+    "grid": "CM87XJ",
+    "state": "CA"
+  },
+  "K6VHF/HR9": {
+    "lat": 16.308701,
+    "lon": -86.579382,
+    "grid": "EK66RH"
+  },
+  "K7IOC": {
+    "lat": 48.1627,
+    "lon": -122.506,
+    "grid": "CN88RD",
+    "state": "WA"
+  },
+  "K7L": {
+    "lat": 45.728333,
+    "lon": -122.626667,
+    "grid": "CN85QR",
+    "state": "WA"
+  },
+  "K7LNY": {
+    "lat": 37.15638,
+    "lon": -113.52543,
+    "grid": "DM37FD",
+    "state": "UT"
+  },
+  "KA0UTI": {
+    "lat": 39.620377,
+    "lon": -104.981764,
+    "grid": "DM79MO",
+    "state": "CO"
+  },
+  "KA3IRT": {
+    "lat": 40.5092,
+    "lon": -80.180048,
+    "grid": "EN90VM",
+    "state": "PA"
+  },
+  "KB1EFS": {
+    "lat": 41.686667,
+    "lon": -71.126667,
+    "grid": "FN41KQ",
+    "state": "MA"
+  },
+  "KB2DSQ": {
+    "lat": 43.120823,
+    "lon": -77.71736,
+    "grid": "FN13DC",
+    "state": "NY"
+  },
+  "KB3Z": {
+    "lat": 40.195975,
+    "lon": -75.462727,
+    "grid": "FN20GE",
+    "state": "PA"
+  },
+  "KB9DED": {
+    "lat": 44.950154,
+    "lon": -89.646364,
+    "grid": "EN54EW",
+    "state": "WI"
+  },
   "KB9ELS": {
     "lat": 36.058904,
     "lon": -91.763827,
     "grid": "EM46CB",
     "state": "AR"
   },
+  "KC0VTJ": {
+    "lat": 38.998317,
+    "lon": -94.657669,
+    "grid": "EM28QX",
+    "state": "KS"
+  },
+  "KC2HRG": {
+    "lat": 40.888416,
+    "lon": -74.727237,
+    "grid": "FN20PV",
+    "state": "NJ"
+  },
+  "KC2NJ": {
+    "lat": 40.755748,
+    "lon": -74.308416,
+    "grid": "FN20US",
+    "state": "NJ"
+  },
   "KC5NK": {
     "lat": 33.674599,
     "lon": -96.808526,
     "grid": "EM13OQ",
+    "state": "TX"
+  },
+  "KC5TT": {
+    "lat": 29.77887,
+    "lon": -95.76653,
+    "grid": "EL29CS",
     "state": "TX"
   },
   "KD5QJQ": {
@@ -935,11 +416,47 @@
     "grid": "EM35KG",
     "state": "AR"
   },
+  "KD9DWU": {
+    "lat": 39.841637,
+    "lon": -85.864081,
+    "grid": "EM79BU",
+    "state": "IN"
+  },
   "KD9K": {
     "lat": 36.229691,
     "lon": -86.390566,
     "grid": "EM66TF",
     "state": "TN"
+  },
+  "KE2FUM": {
+    "lat": 40.6553,
+    "lon": -75.0826,
+    "grid": "FN20LP",
+    "state": "NJ"
+  },
+  "KF0MSJ": {
+    "lat": 38.445508,
+    "lon": -91.00248,
+    "grid": "EM48LK",
+    "state": "MO"
+  },
+  "KF0VDS": {
+    "lat": 39.99782,
+    "lon": -104.80522,
+    "grid": "DM79OX",
+    "state": "CO"
+  },
+  "KG4OJT": {
+    "lat": 38.88863,
+    "lon": -77.326145,
+    "grid": "FM18IV",
+    "state": "VA"
+  },
+  "KG5FDT": {
+    "lat": 33.601891,
+    "lon": -96.658257,
+    "grid": "EM13QO",
+    "state": "TX"
   },
   "KG7KDJ": {
     "lat": 32.306393,
@@ -947,6 +464,25 @@
     "grid": "DM42LH",
     "state": "AZ"
   },
+  "KJ4GNR": {
+    "lat": 25.92965,
+    "lon": -80.315022,
+    "grid": "EL95UW",
+    "state": "FL"
+  },
+  "KJ7CMI": {
+    "lat": 37.0739,
+    "lon": -113.55243,
+    "grid": "DM37FB",
+    "state": "UT"
+  },
+  "KJ7WFN": {
+    "lat": 45.614251,
+    "lon": -111.054563,
+    "grid": "DN45LO",
+    "state": "MT"
+  },
+  "KK4EB/VE1": {},
   "KK6KC": {
     "lat": 33.79597,
     "lon": -118.31123,
@@ -977,11 +513,53 @@
     "grid": "DM33WP",
     "state": "AZ"
   },
+  "KO4O": {
+    "lat": 34.607209,
+    "lon": -87.074298,
+    "grid": "EM64LO",
+    "state": "AL"
+  },
+  "KO4YIN": {
+    "lat": 28.67426,
+    "lon": -82.13421,
+    "grid": "EL88WQ",
+    "state": "MO"
+  },
+  "KP4LCA": {
+    "lat": 17.992459,
+    "lon": -66.662149,
+    "grid": "FK67QX",
+    "state": "PR"
+  },
+  "KP4QVQ": {
+    "lat": 18.13741,
+    "lon": -67.12299,
+    "grid": "FK68KD",
+    "state": "PR"
+  },
   "KQ4SID": {
     "lat": 35.01331,
     "lon": -82.24236,
     "grid": "EM85VA",
     "state": "SC"
+  },
+  "KR4DWD": {
+    "lat": 28.18127,
+    "lon": -82.16056,
+    "grid": "EL88WE",
+    "state": "FL"
+  },
+  "KR4EBE": {
+    "lat": 28.15448,
+    "lon": -80.59604,
+    "grid": "EL98QD",
+    "state": "FL"
+  },
+  "KR4FJQ": {
+    "lat": 38.98059,
+    "lon": -78.05343,
+    "grid": "FM08XX",
+    "state": "VA"
   },
   "KY9L": {
     "lat": 38.77262,
@@ -989,17 +567,133 @@
     "grid": "EM48OS",
     "state": "MO"
   },
+  "KZ4EK/W1": {
+    "lat": 44.171529,
+    "lon": -70.402284,
+    "grid": "FN44TE",
+    "state": "ME"
+  },
+  "KZ4ZZ": {
+    "lat": 27.488415,
+    "lon": -82.598975,
+    "grid": "EL87QL",
+    "state": "FL"
+  },
+  "KZ7K": {
+    "lat": 33.05379,
+    "lon": -112.004917,
+    "grid": "DM33XB",
+    "state": "AZ"
+  },
+  "KZ7Y": {
+    "lat": 25.7571,
+    "lon": -80.24219,
+    "grid": "EL95VS",
+    "state": "FL"
+  },
+  "LA8ENA": {
+    "lat": 58.436667,
+    "lon": 8.706667,
+    "grid": "JO48IK"
+  },
+  "LZ1KU": {
+    "lat": 42.6875,
+    "lon": 24.291667,
+    "grid": "KN22DQ"
+  },
+  "LZ2KV": {
+    "lat": 43.242926,
+    "lon": 26.572284,
+    "grid": "KN33GF"
+  },
+  "M6JAY": {
+    "lat": 50.905463,
+    "lon": -1.363362,
+    "grid": "IO90HV"
+  },
+  "N0JDC": {
+    "lat": 39.96642,
+    "lon": -105.1542,
+    "grid": "DM79KX",
+    "state": "CO"
+  },
+  "N0WOK": {
+    "lat": 43.42071,
+    "lon": -95.096455,
+    "grid": "EN23KK",
+    "state": "IA"
+  },
   "N1CLG": {
     "lat": 41.643236,
     "lon": -71.983732,
     "grid": "FN41AP",
     "state": "CT"
   },
+  "N1MNU": {
+    "lat": 44.4928,
+    "lon": -70.7414,
+    "grid": "FN44PL",
+    "state": "ME"
+  },
+  "N1WI": {
+    "lat": 41.575866,
+    "lon": -73.497829,
+    "grid": "FN31GN",
+    "state": "CT"
+  },
+  "N2NDV": {
+    "lat": 40.779484,
+    "lon": -74.027477,
+    "grid": "FN20XS",
+    "state": "NJ"
+  },
+  "N3FMC": {
+    "lat": 40.31167,
+    "lon": -75.84626,
+    "grid": "FN20BH",
+    "state": "PA"
+  },
+  "N3PAY": {
+    "lat": 41.23338,
+    "lon": -96.04639,
+    "grid": "EN11XF",
+    "state": "NE"
+  },
+  "N4LDR": {
+    "lat": 38.596257,
+    "lon": -78.433178,
+    "grid": "FM08SO",
+    "state": "VA"
+  },
+  "N5BK": {
+    "lat": 30.389526,
+    "lon": -97.679085,
+    "grid": "EM10DJ",
+    "state": "TX"
+  },
   "N5TTI": {
     "lat": 34.57277,
     "lon": -92.60433,
     "grid": "EM34QN",
     "state": "AR"
+  },
+  "N5WXB": {
+    "lat": 39.53152,
+    "lon": -78.460958,
+    "grid": "FM09SM",
+    "state": "WV"
+  },
+  "N5YYF": {
+    "lat": 35.162187,
+    "lon": -106.692644,
+    "grid": "DM65PD",
+    "state": "NM"
+  },
+  "N6BLU": {
+    "lat": 43.082329,
+    "lon": -124.419385,
+    "grid": "CN73SB",
+    "state": "OR"
   },
   "N7NHS": {
     "lat": 46.841663,
@@ -1013,17 +707,199 @@
     "grid": "DM34WB",
     "state": "AZ"
   },
+  "N8PFK": {
+    "lat": 44.802479,
+    "lon": -84.885024,
+    "grid": "EN74NT",
+    "state": "GA"
+  },
+  "NC7I": {
+    "lat": 40.63884,
+    "lon": -111.83913,
+    "grid": "DN40BP",
+    "state": "UT"
+  },
+  "ND2K": {
+    "lat": 40.900879,
+    "lon": -74.047594,
+    "grid": "FN20XV",
+    "state": "NJ"
+  },
   "ND9M": {
     "lat": 30.811667,
     "lon": -85.043333,
     "grid": "EM70LT",
     "state": "FL"
   },
+  "NE0A": {
+    "lat": 39.175061,
+    "lon": -94.582163,
+    "grid": "EM29RE",
+    "state": "MO"
+  },
+  "NV2K": {
+    "lat": 43.02,
+    "lon": -77.71,
+    "grid": "FN13DA",
+    "state": "NY"
+  },
+  "OD5KU": {
+    "lat": 33.95106,
+    "lon": 35.674077,
+    "grid": "KM73UW"
+  },
+  "OE8DDX": {
+    "lat": 46.895,
+    "lon": 14.79,
+    "grid": "JN76JV"
+  },
+  "OE8DDXNONE": {},
+  "PI4DX": {
+    "lat": 51.386156,
+    "lon": 4.012588,
+    "grid": "JO21AJ"
+  },
   "PT2ND": {
     "lat": -15.746658,
     "lon": -47.844225,
     "grid": "GH64BG",
     "state": "DF"
+  },
+  "SP9UPH": {
+    "lat": 50.313796,
+    "lon": 18.770009,
+    "grid": "JO90JH"
+  },
+  "TI5GAX": {
+    "lat": 10.229167,
+    "lon": -84.125,
+    "grid": "EK70WF"
+  },
+  "UR5HMF": {
+    "lat": 49.071874,
+    "lon": 33.410616,
+    "grid": "KN69QB"
+  },
+  "V31DL": {
+    "lat": 17.222135,
+    "lon": -88.91377,
+    "grid": "EK57NF"
+  },
+  "V31MA": {
+    "lat": 17.222193,
+    "lon": -88.914116,
+    "grid": "EK57NF"
+  },
+  "VA2HMD": {
+    "lat": 45.313246,
+    "lon": -73.257767,
+    "grid": "FN35IH"
+  },
+  "VA3FMB": {
+    "lat": 43.572942,
+    "lon": -79.599808,
+    "grid": "FN03EN",
+    "state": "ON"
+  },
+  "VA3PHP": {
+    "lat": 44.001544,
+    "lon": -79.444715,
+    "grid": "FN04GA",
+    "state": "ON"
+  },
+  "VB7F": {
+    "lat": 49.277123,
+    "lon": -123.111999,
+    "grid": "CN89KG",
+    "state": "BC"
+  },
+  "VE2LBI": {
+    "lat": 45.561667,
+    "lon": -72.96,
+    "grid": "FN35MN",
+    "state": "QC"
+  },
+  "VE3BNW": {
+    "lat": 43.241991,
+    "lon": -79.79726,
+    "grid": "FN03CF",
+    "state": "ON"
+  },
+  "VE3EB": {
+    "lat": 44.395,
+    "lon": -79.71,
+    "grid": "FN04DJ",
+    "state": "ON"
+  },
+  "VE3FSN": {
+    "lat": 45.4018,
+    "lon": -75.659099,
+    "grid": "FN25EJ",
+    "state": "ON"
+  },
+  "VE3PFW": {
+    "lat": 43.197133,
+    "lon": -79.83524,
+    "grid": "FN03BE"
+  },
+  "VE3UIN": {
+    "lat": 44.2366,
+    "lon": -76.5549,
+    "grid": "FN14RF",
+    "state": "ON"
+  },
+  "VE6KIX": {
+    "lat": 44.520833,
+    "lon": -79.208333,
+    "grid": "FN04JM",
+    "state": "AB"
+  },
+  "VE7RK": {
+    "lat": 49.55704,
+    "lon": -117.25219,
+    "grid": "DN19IN",
+    "state": "BC"
+  },
+  "VE9ZY": {
+    "lat": 47.482419,
+    "lon": -64.924774,
+    "grid": "FN77ML",
+    "state": "NB"
+  },
+  "VO1AW": {
+    "lat": 48.936667,
+    "lon": -54.626667,
+    "grid": "GN28QW",
+    "state": "NL"
+  },
+  "VP2MAA": {
+    "lat": 16.728333,
+    "lon": -62.21,
+    "grid": "FK86VR"
+  },
+  "W0DET": {
+    "lat": 39.53863,
+    "lon": -107.751115,
+    "grid": "DM69CM",
+    "state": "CO"
+  },
+  "W0ERB": {
+    "lat": 39.202321,
+    "lon": -96.562897,
+    "grid": "EM19RE",
+    "state": "KS"
+  },
+  "W1KP": {
+    "lat": 42.131755,
+    "lon": -70.907783,
+    "grid": "FN42ND",
+    "state": "MA"
+  },
+  "W3YNI": {
+    "lat": 40.32949,
+    "lon": -79.717782,
+    "grid": "FN00DH",
+    "state": "PA"
   },
   "W4EVV": {
     "lat": 29.107706,
@@ -1037,11 +913,29 @@
     "grid": "EM74CE",
     "state": "AL"
   },
+  "W4JWS": {
+    "lat": 28.68636,
+    "lon": -81.48974,
+    "grid": "EL98GQ",
+    "state": "FL"
+  },
+  "W4PPC": {
+    "lat": 34.77626,
+    "lon": -86.47644,
+    "grid": "EM64SS",
+    "state": "AL"
+  },
   "W4VNE": {
     "lat": 34.5479,
     "lon": -78.8021,
     "grid": "FM04ON",
     "state": "NC"
+  },
+  "W5C/D": {
+    "lat": 32.747952,
+    "lon": -97.092838,
+    "grid": "EM12KR",
+    "state": "TX"
   },
   "W5COE": {
     "lat": 31.09427,
@@ -1049,11 +943,89 @@
     "grid": "EM11DC",
     "state": "TX"
   },
+  "W6ACT": {
+    "lat": 37.721395,
+    "lon": -121.932865,
+    "grid": "CM97AR",
+    "state": "CA"
+  },
   "W7C": {
     "lat": 47.249564,
     "lon": -122.447153,
     "grid": "CN87SF",
     "state": "WA"
+  },
+  "W7OTV": {
+    "lat": 45.489939,
+    "lon": -122.865931,
+    "grid": "CN85NL",
+    "state": "OR"
+  },
+  "W7ZR": {
+    "lat": 36.06,
+    "lon": -115.17,
+    "grid": "DM26JB",
+    "state": "NV"
+  },
+  "WA2HIP": {
+    "lat": 44.762768,
+    "lon": -68.711488,
+    "grid": "FN54PS",
+    "state": "ME"
+  },
+  "WA3MH": {
+    "lat": 38.342616,
+    "lon": -77.5229,
+    "grid": "FM18FI",
+    "state": "VA"
+  },
+  "WA7LNW": {
+    "lat": 37.226142,
+    "lon": -113.216536,
+    "grid": "DM37JF",
+    "state": "UT"
+  },
+  "WB2BWU": {
+    "lat": 40.720852,
+    "lon": -73.839755,
+    "grid": "FN30BR",
+    "state": "NY"
+  },
+  "WB6AGE": {
+    "lat": 46.151446,
+    "lon": -123.358618,
+    "grid": "CN86HD",
+    "state": "WA"
+  },
+  "WD4AGF": {
+    "lat": 26.27959,
+    "lon": -80.13368,
+    "grid": "EL96WG",
+    "state": "FL"
+  },
+  "WD4CNO": {
+    "lat": 27.921684,
+    "lon": -82.512735,
+    "grid": "EL87RW",
+    "state": "FL"
+  },
+  "WD4OBP": {
+    "lat": 36.7026,
+    "lon": -76.9949,
+    "grid": "FM16MQ",
+    "state": "VA"
+  },
+  "WE2N": {
+    "lat": 27.282988,
+    "lon": -80.398511,
+    "grid": "EL97TG",
+    "state": "FL"
+  },
+  "WI1U": {
+    "lat": 42.138424,
+    "lon": -73.226019,
+    "grid": "FN32JD",
+    "state": "MA"
   },
   "WQ0B": {
     "lat": 39.62435,
@@ -1061,11 +1033,29 @@
     "grid": "DM79OO",
     "state": "CO"
   },
+  "WS7M": {
+    "lat": 40.519556,
+    "lon": -105.10433,
+    "grid": "DN70KM",
+    "state": "CO"
+  },
   "WV2B": {
     "lat": 35.514439,
     "lon": -79.763693,
     "grid": "FM05CM",
     "state": "NC"
+  },
+  "WW3QB": {
+    "lat": 38.744396,
+    "lon": -75.168651,
+    "grid": "FM28JR",
+    "state": "DE"
+  },
+  "WW6W": {
+    "lat": 46.879055,
+    "lon": -102.793524,
+    "grid": "DN86OV",
+    "state": "ND"
   },
   "WX4DAT": {
     "lat": 35.3136,
@@ -1078,6 +1068,16 @@
     "lon": -74.290024,
     "grid": "FN24UQ",
     "state": "NY"
+  },
+  "XE1AR": {
+    "lat": 19.712061,
+    "lon": -101.224105,
+    "grid": "DK99JR"
+  },
+  "XQ3SK": {
+    "lat": -33.605,
+    "lon": -70.626667,
+    "grid": "FF46QJ"
   },
   "Z62NS": {
     "lat": 42.821235,
