@@ -1568,11 +1568,60 @@ function initGridMap(contacts, qrzCache) {
 
     const map = new maplibregl.Map({
         container: 'grid-map',
-        style: 'https://tiles.openfreemap.org/styles/liberty',
+        style: 'https://tiles.openfreemap.org/styles/positron',
         center: homeCoords || [-90, 40],
         zoom: 4,
     });
     map.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+    // Positron is a muted grayscale basemap on purpose — it's the backdrop, the
+    // Maidenhead overlay is the data. On top of that we tone down or remove
+    // several things baked into the style that otherwise compete with the
+    // grid annotations: admin boundaries (state/province lines are barely
+    // visible by default, and only appear at high zoom), place-name labels
+    // (bold black text that fights the grid-square labels for attention),
+    // and roads/rail (irrelevant clutter for a contact-coverage view).
+    const countryLayers = ['label_country_1', 'label_country_2', 'label_country_3'];
+
+    function applyCountryVisibility() {
+        const toggle = document.getElementById('grid-country-toggle');
+        const vis = !toggle || toggle.checked ? 'visible' : 'none';
+        for (const id of countryLayers) {
+            if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', vis);
+        }
+    }
+
+    function tuneBaseStyle() {
+        if (map.getLayer('boundary_3')) {
+            map.setLayerZoomRange('boundary_3', 0, 24);
+            map.setPaintProperty('boundary_3', 'line-color', 'rgba(90,98,110,0.85)');
+            map.setPaintProperty('boundary_3', 'line-dasharray', [1, 0]);
+            map.setPaintProperty('boundary_3', 'line-width',
+                ['interpolate', ['linear'], ['zoom'], 2, 0.5, 6, 0.9, 11, 1.4]);
+        }
+        if (map.getLayer('boundary_2')) {
+            map.setPaintProperty('boundary_2', 'line-color', 'rgba(55,65,81,0.9)');
+        }
+        const labelLayers = [...countryLayers, 'label_state', 'label_city',
+            'label_city_capital', 'label_town', 'label_village', 'label_other'];
+        for (const id of labelLayers) {
+            if (map.getLayer(id)) map.setPaintProperty(id, 'text-opacity', 0.4);
+        }
+        applyCountryVisibility();
+
+        // Roads, rail, and their name/shield labels — hidden entirely regardless
+        // of style version, by source-layer rather than a hardcoded layer-id list.
+        const style = map.getStyle();
+        for (const l of (style && style.layers) || []) {
+            const sl = l['source-layer'];
+            if (sl === 'transportation' || sl === 'transportation_name' || sl === 'aerodrome_label') {
+                map.setLayoutProperty(l.id, 'visibility', 'none');
+            }
+        }
+    }
+
+    const countryToggleEl = document.getElementById('grid-country-toggle');
+    if (countryToggleEl) countryToggleEl.addEventListener('change', applyCountryVisibility);
 
     // ------ Canvas overlay for the grid squares ------
     const container = document.getElementById('grid-map');
@@ -1583,6 +1632,16 @@ function initGridMap(contacts, qrzCache) {
     function resizeCvs() {
         cvs.width  = container.clientWidth;
         cvs.height = container.clientHeight;
+    }
+
+    // Text with a light halo so labels stay legible over any fill color
+    // (green/amber/gray) or basemap feature underneath.
+    function haloText(ctx, text, x, y, fillStyle) {
+        ctx.lineWidth   = 3;
+        ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+        ctx.strokeText(text, x, y);
+        ctx.fillStyle = fillStyle;
+        ctx.fillText(text, x, y);
     }
 
     function drawGrid() {
@@ -1614,39 +1673,45 @@ function initGridMap(contacts, qrzCache) {
 
                 if (w < 0.5 || h < 0.5) continue; // sub-pixel — skip
 
-                ctx.fillStyle = !info
-                    ? 'rgba(75,85,99,0.18)'              // gray  — no contact
-                    : info.qslCount > 0
-                        ? 'rgba(52,211,153,0.42)'        // green — QSL confirmed
-                        : 'rgba(251,191,36,0.42)';       // amber — worked, no QSL
-                ctx.fillRect(x, y, w, h);
-
-                if (w >= 2) {
-                    ctx.strokeStyle = 'rgba(107,114,128,0.35)';
-                    ctx.lineWidth   = 0.5;
-                    ctx.strokeRect(x + 0.25, y + 0.25, w - 0.5, h - 0.5);
+                // No fill at all for uncontacted squares — the basemap shows through
+                // cleanly, and only the red grid line + label mark the square out.
+                if (info) {
+                    ctx.fillStyle = info.qslCount > 0
+                        ? 'rgba(5,150,105,0.75)'   // green — QSL confirmed
+                        : 'rgba(217,119,6,0.75)';  // amber — worked, no QSL
+                    ctx.fillRect(x, y, w, h);
                 }
 
-                // Grid label — always on contacted squares when large enough;
-                // on uncontacted squares only at very high zoom
-                if (w > 30 && h > 13 && (info || zoom >= 7)) {
-                    const sz = Math.min(10, Math.max(7, w / 5));
+                // Thin red line divides every square from its neighbors — a single
+                // consistent hue that reads against both the gray basemap and the
+                // green/amber fills, instead of blending into either.
+                ctx.strokeStyle = 'rgba(220,38,38,0.45)';
+                ctx.lineWidth   = 0.6;
+                ctx.strokeRect(x + 0.3, y + 0.3, w - 0.6, h - 0.6);
+
+                // Grid label — shown on every square once it's big enough on screen,
+                // contacted or not; same red hue as the grid line, darker/opaque
+                // where contacted, muted where not.
+                if (w > 30 && h > 13) {
+                    const sz = Math.min(12, Math.max(8, w / 5));
                     ctx.font         = `bold ${sz}px system-ui,sans-serif`;
                     ctx.textAlign    = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillStyle    = info
-                        ? 'rgba(17,24,39,0.85)'
-                        : 'rgba(156,163,175,0.7)';
-                    ctx.fillText(g, x + w / 2, y + h / 2);
+                    haloText(ctx, g, x + w / 2, y + h / 2, info
+                        ? 'rgba(127,29,29,0.95)'
+                        : 'rgba(185,28,28,0.55)');
                 }
             }
         }
 
-        // ------ Field-level (2-char, 20°×10°) boundary lines at low zoom ------
-        if (zoom < 5) {
+        // ------ Field-level (2-char, 20°×10°) boundary lines ------
+        // Kept visible well past the old low-zoom-only cutoff so the AB field
+        // still reads as a distinct region once the map is zoomed to a
+        // country/state view, not just at whole-world zoom.
+        if (zoom < 9) {
             ctx.save();
-            ctx.strokeStyle = 'rgba(148,163,184,0.65)';
-            ctx.lineWidth   = zoom < 3 ? 1.5 : 1;
+            ctx.strokeStyle = 'rgba(30,41,59,0.8)';
+            ctx.lineWidth   = zoom < 3 ? 2 : zoom < 6 ? 1.5 : 1;
 
             const fW = Math.floor(bounds.getWest()  / 20) * 20;
             const fE = Math.ceil (bounds.getEast()  / 20) * 20;
@@ -1666,14 +1731,14 @@ function initGridMap(contacts, qrzCache) {
 
             // 2-char field labels
             if (zoom >= 1.5) {
-                ctx.fillStyle    = 'rgba(203,213,225,0.6)';
                 ctx.textAlign    = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.font         = `${Math.min(16, Math.max(9, zoom * 3))}px system-ui,sans-serif`;
+                ctx.font         = `bold ${Math.min(20, Math.max(11, zoom * 3.2))}px system-ui,sans-serif`;
                 for (let lon = fW; lon < fE; lon += 20) {
                     for (let lat = fS; lat < fN; lat += 10) {
                         const c = map.project([lon + 10, lat + 5]);
-                        ctx.fillText(lonLatToGrid4(lon + 10, lat + 5).slice(0, 2), c.x, c.y);
+                        haloText(ctx, lonLatToGrid4(lon + 10, lat + 5).slice(0, 2), c.x, c.y,
+                            'rgba(30,41,59,0.85)');
                     }
                 }
             }
@@ -1722,6 +1787,7 @@ function initGridMap(contacts, qrzCache) {
     // ------ Initialise ------
     resizeCvs();
     map.on('load', () => {
+        tuneBaseStyle();
         resizeCvs();
         drawGrid();
     });
@@ -1729,6 +1795,338 @@ function initGridMap(contacts, qrzCache) {
     map.on('resize', resizeCvs);
 
     return map;
+}
+
+// ---------------------------------------------------------------------------
+// Activity tab — cumulative QSOs / QSLs over time. A "Zoom" button row jumps
+// to a trailing N-year window, and a draggable brush (bottom strip) lets you
+// pick any custom window, mirroring the interaction on financial time-series
+// charts (drag the shaded region to pan, drag an edge to resize it).
+// ---------------------------------------------------------------------------
+
+function fmtShortDate(ms) {
+    return new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// Cumulative value of a sorted {t,v} step series at time t (0 before the first point).
+function stepValueAt(points, t) {
+    let v = 0;
+    for (const p of points) {
+        if (p.t > t) break;
+        v = p.v;
+    }
+    return v;
+}
+
+// Screen-space polyline for a step-after series, clipped to [start, end].
+function stepPath(points, start, end, xOf, yOf) {
+    const path = [];
+    let last = 0;
+    for (const p of points) {
+        if (p.t < start) { last = p.v; continue; }
+        if (path.length === 0) path.push([xOf(start), yOf(last)]);
+        if (p.t > end) break;
+        path.push([xOf(p.t), yOf(last)]);
+        path.push([xOf(p.t), yOf(p.v)]);
+        last = p.v;
+    }
+    if (path.length === 0) path.push([xOf(start), yOf(last)]);
+    path.push([xOf(end), yOf(last)]);
+    return path;
+}
+
+function niceCountTicks(maxV) {
+    if (maxV <= 0) return [0, 1];
+    const raw  = maxV / 4;
+    const mag  = Math.pow(10, Math.floor(Math.log10(raw)));
+    const norm = raw / mag;
+    const step = (norm >= 5 ? 5 : norm >= 2 ? 2 : 1) * mag;
+    const ticks = [];
+    for (let v = 0; v <= maxV + step; v += step) ticks.push(Math.round(v));
+    return ticks;
+}
+
+const DAY_MS = 86400000;
+
+function pickTimeStepMs(spanMs) {
+    const candidates = [1, 2, 3, 5, 7, 14, 21].map(n => n * DAY_MS)
+        .concat([1, 2, 3, 6].map(n => n * 30 * DAY_MS))
+        .concat([1, 2, 5, 10, 20, 50].map(n => n * 365 * DAY_MS));
+    for (const c of candidates) {
+        if (spanMs / c <= 7) return c;
+    }
+    return candidates[candidates.length - 1];
+}
+
+function alignedStart(t, stepMs) {
+    const d = new Date(t);
+    if (stepMs < 28 * DAY_MS) { d.setHours(0, 0, 0, 0); return d.getTime(); }
+    if (stepMs < 340 * DAY_MS) { d.setDate(1); d.setHours(0, 0, 0, 0); return d.getTime(); }
+    d.setMonth(0, 1); d.setHours(0, 0, 0, 0);
+    return d.getTime();
+}
+
+function drawTimeAxis(ctx, start, end, xOf, y, plotLeft, plotRight) {
+    const step = pickTimeStepMs(end - start);
+    let t = alignedStart(start, step);
+    ctx.strokeStyle   = 'rgba(55,65,81,0.6)';
+    ctx.fillStyle     = '#6b7280';
+    ctx.font          = '10px system-ui,sans-serif';
+    ctx.textAlign     = 'center';
+    ctx.textBaseline  = 'top';
+    let guard = 0;
+    while (t <= end && guard++ < 200) {
+        if (t >= start) {
+            const x = xOf(t);
+            ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + 4); ctx.stroke();
+            const label = step >= 340 * DAY_MS
+                ? String(new Date(t).getFullYear())
+                : new Date(t).toLocaleDateString('en-US',
+                    { month: 'short', ...(step < 28 * DAY_MS ? { day: 'numeric' } : {}) });
+            ctx.fillText(label, Math.min(Math.max(x, plotLeft + 22), plotRight - 22), y + 6);
+        }
+        if (step < 28 * DAY_MS) {
+            t += step;
+        } else if (step < 340 * DAY_MS) {
+            const d = new Date(t); d.setMonth(d.getMonth() + Math.round(step / (30 * DAY_MS))); t = d.getTime();
+        } else {
+            const d = new Date(t); d.setFullYear(d.getFullYear() + Math.round(step / (365 * DAY_MS))); t = d.getTime();
+        }
+    }
+}
+
+function initActivityChart(contacts) {
+    const qsoPoints = [...contacts]
+        .filter(q => q.datetime)
+        .sort((a, b) => a.datetime.localeCompare(b.datetime))
+        .map((q, i) => ({ t: new Date(q.datetime).getTime(), v: i + 1 }));
+    const qslPoints = [...contacts]
+        .filter(q => q.confirmed && q.qsl_date)
+        .sort((a, b) => a.qsl_date.localeCompare(b.qsl_date))
+        .map((q, i) => ({ t: new Date(q.qsl_date).getTime(), v: i + 1 }));
+
+    const allTimes = [...qsoPoints, ...qslPoints].map(p => p.t);
+    const now      = Date.now();
+    const dataMin  = allTimes.length ? Math.min(...allTimes) : now - DAY_MS;
+    const dataMax  = Math.max(now, ...(allTimes.length ? allTimes : [now]));
+
+    let visStart = dataMin;
+    let visEnd   = dataMax;
+
+    const mainContainer  = document.getElementById('activity-main');
+    const brushContainer = document.getElementById('activity-brush');
+    const rangeLabel     = document.getElementById('activity-range');
+    const zoomBar        = document.getElementById('activity-zoom-bar');
+
+    const mainCvs = document.createElement('canvas');
+    mainCvs.style.cssText = 'position:absolute;top:0;left:0;';
+    mainContainer.appendChild(mainCvs);
+
+    const brushCvs = document.createElement('canvas');
+    brushCvs.style.cssText = 'position:absolute;top:0;left:0;cursor:grab;';
+    brushContainer.appendChild(brushCvs);
+
+    const tip = document.createElement('div');
+    tip.className = 'g-tip';
+    tip.style.cssText = 'position:absolute;display:none;pointer-events:none;z-index:10;';
+    mainContainer.appendChild(tip);
+
+    const PAD = { l: 46, r: 12, t: 10, b: 20 };
+
+    function clampWindow(s, width) {
+        width = Math.min(width, dataMax - dataMin);
+        if (s < dataMin) s = dataMin;
+        if (s + width > dataMax) s = dataMax - width;
+        return s;
+    }
+
+    function setRange(s, e) {
+        const width = e - s;
+        s = clampWindow(s, width);
+        visStart = s;
+        visEnd   = s + width;
+        drawMain();
+        drawBrush();
+    }
+
+    function clearActiveZoomButton() {
+        zoomBar.querySelectorAll('.unit-btn').forEach(b => b.classList.remove('active'));
+    }
+
+    function drawMain() {
+        const ctx = mainCvs.getContext('2d');
+        const W = mainCvs.width, H = mainCvs.height;
+        ctx.clearRect(0, 0, W, H);
+        const plotW = W - PAD.l - PAD.r;
+        const plotH = H - PAD.t - PAD.b;
+        if (plotW <= 0 || plotH <= 0) return;
+
+        const start = visStart, end = Math.max(visEnd, start + 1);
+        const maxV  = Math.max(stepValueAt(qsoPoints, end), stepValueAt(qslPoints, end), 1);
+        const xOf   = t => PAD.l + ((t - start) / (end - start)) * plotW;
+        const yOf   = v => PAD.t + plotH - (v / maxV) * plotH;
+
+        ctx.strokeStyle  = 'rgba(55,65,81,0.6)';
+        ctx.fillStyle    = '#6b7280';
+        ctx.font         = '10px system-ui,sans-serif';
+        ctx.textAlign    = 'right';
+        ctx.textBaseline = 'middle';
+        for (const v of niceCountTicks(maxV)) {
+            const y = yOf(v);
+            ctx.beginPath(); ctx.moveTo(PAD.l, y); ctx.lineTo(W - PAD.r, y); ctx.stroke();
+            ctx.fillText(String(v), PAD.l - 6, y);
+        }
+
+        drawTimeAxis(ctx, start, end, xOf, PAD.t + plotH, PAD.l, W - PAD.r);
+
+        function drawSeries(points, color) {
+            const path = stepPath(points, start, end, xOf, yOf);
+            ctx.strokeStyle = color;
+            ctx.lineWidth   = 1.75;
+            ctx.beginPath();
+            path.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
+            ctx.stroke();
+        }
+        drawSeries(qsoPoints, '#d97706');
+        drawSeries(qslPoints, '#059669');
+
+        rangeLabel.textContent = `${fmtShortDate(start)} – ${fmtShortDate(end)}`;
+    }
+
+    function drawBrush() {
+        const ctx = brushCvs.getContext('2d');
+        const W = brushCvs.width, H = brushCvs.height;
+        ctx.clearRect(0, 0, W, H);
+        const bPad  = { l: PAD.l, r: PAD.r };
+        const plotW = W - bPad.l - bPad.r;
+        if (plotW <= 0 || H <= 0) return;
+
+        const maxV = Math.max(stepValueAt(qsoPoints, dataMax), 1);
+        const xOf  = t => bPad.l + ((t - dataMin) / (dataMax - dataMin)) * plotW;
+        const yOf  = v => 4 + (H - 8) - (v / maxV) * (H - 8);
+
+        const path = stepPath(qsoPoints, dataMin, dataMax, xOf, yOf);
+        ctx.strokeStyle = 'rgba(217,119,6,0.55)';
+        ctx.lineWidth   = 1;
+        ctx.beginPath();
+        path.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
+        ctx.stroke();
+
+        const selX0 = xOf(visStart), selX1 = xOf(visEnd);
+        ctx.fillStyle = 'rgba(96,165,250,0.18)';
+        ctx.fillRect(selX0, 0, selX1 - selX0, H);
+        ctx.strokeStyle = 'rgba(96,165,250,0.9)';
+        ctx.lineWidth   = 1;
+        ctx.strokeRect(selX0 + 0.5, 0.5, (selX1 - selX0) - 1, H - 1);
+
+        const handleW = 5;
+        ctx.fillStyle = 'rgba(96,165,250,0.9)';
+        ctx.fillRect(selX0 - handleW / 2, 0, handleW, H);
+        ctx.fillRect(selX1 - handleW / 2, 0, handleW, H);
+
+        brushCvs._geom = { bPad, plotW, selX0, selX1 };
+    }
+
+    // ------ Brush drag interaction: pan (inside), resize (edges), jump (outside) ------
+    let dragMode = null;   // 'left' | 'right' | 'pan'
+    let dragStartX = 0, dragStartVisStart = 0, dragStartVisEnd = 0;
+
+    function tFromX(x) {
+        const { bPad, plotW } = brushCvs._geom;
+        return dataMin + ((x - bPad.l) / plotW) * (dataMax - dataMin);
+    }
+
+    brushCvs.addEventListener('pointerdown', (e) => {
+        const rect = brushCvs.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const { selX0, selX1 } = brushCvs._geom;
+        const HIT = 8;
+        if (Math.abs(x - selX0) <= HIT)      dragMode = 'left';
+        else if (Math.abs(x - selX1) <= HIT) dragMode = 'right';
+        else if (x > selX0 && x < selX1)     dragMode = 'pan';
+        else {
+            const width  = visEnd - visStart;
+            const center = tFromX(x);
+            clearActiveZoomButton();
+            setRange(center - width / 2, center + width / 2);
+            return;
+        }
+        dragStartX = x;
+        dragStartVisStart = visStart;
+        dragStartVisEnd   = visEnd;
+        brushCvs.setPointerCapture(e.pointerId);
+        clearActiveZoomButton();
+    });
+
+    brushCvs.addEventListener('pointermove', (e) => {
+        if (!dragMode) return;
+        const rect = brushCvs.getBoundingClientRect();
+        const x  = e.clientX - rect.left;
+        const dt = tFromX(x) - tFromX(dragStartX);
+        const minSpan = DAY_MS;
+        if (dragMode === 'left') {
+            visStart = Math.max(dataMin, Math.min(dragStartVisStart + dt, visEnd - minSpan));
+        } else if (dragMode === 'right') {
+            visEnd = Math.min(dataMax, Math.max(dragStartVisEnd + dt, visStart + minSpan));
+        } else {
+            const width = dragStartVisEnd - dragStartVisStart;
+            visStart = clampWindow(dragStartVisStart + dt, width);
+            visEnd   = visStart + width;
+        }
+        drawMain();
+        drawBrush();
+    });
+
+    window.addEventListener('pointerup', () => { dragMode = null; });
+
+    // ------ Zoom preset buttons ------
+    zoomBar.addEventListener('click', (ev) => {
+        const btn = ev.target.closest('.unit-btn');
+        if (!btn) return;
+        zoomBar.querySelectorAll('.unit-btn').forEach(b => b.classList.toggle('active', b === btn));
+        if (btn.dataset.years === 'all') {
+            visStart = dataMin;
+            visEnd   = dataMax;
+        } else {
+            const spanMs = Number(btn.dataset.years) * 365 * DAY_MS;
+            visEnd   = dataMax;
+            visStart = Math.max(dataMin, dataMax - spanMs);
+        }
+        drawMain();
+        drawBrush();
+    });
+
+    // ------ Hover tooltip on the main chart ------
+    mainCvs.addEventListener('mousemove', (e) => {
+        const rect  = mainCvs.getBoundingClientRect();
+        const x     = e.clientX - rect.left;
+        const plotW = mainCvs.width - PAD.l - PAD.r;
+        if (x < PAD.l || x > PAD.l + plotW) { tip.style.display = 'none'; return; }
+        const t   = visStart + ((x - PAD.l) / plotW) * (visEnd - visStart);
+        const qso = stepValueAt(qsoPoints, t);
+        const qsl = stepValueAt(qslPoints, t);
+        tip.innerHTML = `<b>${fmtShortDate(t)}</b><br>` +
+            `<span style="color:#d97706">${qso} QSOs</span><br>` +
+            `<span style="color:#059669">${qsl} QSLs</span>`;
+        tip.style.left    = `${x + 14}px`;
+        tip.style.top     = `20px`;
+        tip.style.display = 'block';
+    });
+    mainCvs.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+
+    function resize() {
+        mainCvs.width   = mainContainer.clientWidth;
+        mainCvs.height  = mainContainer.clientHeight;
+        brushCvs.width  = brushContainer.clientWidth;
+        brushCvs.height = brushContainer.clientHeight;
+        drawMain();
+        drawBrush();
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+
+    return { resize };
 }
 
 function buildGridTable(contacts, qrzCache) {
@@ -1832,7 +2230,7 @@ async function main() {
     // client-side failure unrelated to data. Uncaught, that exception aborts
     // the rest of main() and leaves the page stuck on "Loading…" with none of
     // the (WebGL-independent) tables/tabs ever rendering. Guard it the same
-    // way the Globe/Grid tab builders already are below.
+    // way the Globe/Grid/Activity tab builders already are below.
     let map = null;
     try {
         map = initMap(entities, contacts, qrzCache, spotlight);
@@ -1850,8 +2248,9 @@ async function main() {
         document.querySelectorAll('.unit-btn').forEach(b => b.classList.toggle('active', b.dataset.unit === distUnit));
     });
 
-    let globeMap = null;
-    let gridMap  = null;
+    let globeMap      = null;
+    let gridMap       = null;
+    let activityChart = null;
     document.getElementById('tab-bar').addEventListener('click', (ev) => {
         const btn = ev.target.closest('.tab');
         if (!btn) return;
@@ -1883,6 +2282,18 @@ async function main() {
                 }));
             } else {
                 gridMap.resize();
+            }
+        } else if (target === 'activity') {
+            if (!activityChart) {
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    try {
+                        activityChart = initActivityChart(contacts);
+                    } catch (err) {
+                        document.getElementById('activity-main').textContent = `Activity chart error: ${err.message}`;
+                    }
+                }));
+            } else {
+                activityChart.resize();
             }
         }
     });

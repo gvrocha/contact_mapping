@@ -206,6 +206,7 @@
     <button class="tab active" data-tab="map">Map</button>
     <button class="tab" data-tab="globe">Globe</button>
     <button class="tab" data-tab="grid">Grid coverage</button>
+    <button class="tab" data-tab="activity">Activity</button>
     <button class="tab" data-tab="milestones">Milestones</button>
     <button class="tab" data-tab="gridtable">Grid table</button>
     <button class="tab" data-tab="callsigns">Call sign table</button>
@@ -230,14 +231,40 @@
     <div style="flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:5px 12px;background:#1f2937;border-top:1px solid #374151;font-size:0.72rem;color:#9ca3af;">
       <span>Maidenhead (4-char · 2°×1°)</span>
       <span style="display:flex;align-items:center;gap:5px">
-        <span style="width:20px;height:12px;background:rgba(52,211,153,0.42);border:1px solid #34d399;border-radius:2px;display:inline-block"></span> QSL confirmed
+        <span style="width:20px;height:12px;background:rgba(5,150,105,0.75);border:1px solid #059669;border-radius:2px;display:inline-block"></span> QSL confirmed
       </span>
       <span style="display:flex;align-items:center;gap:5px">
-        <span style="width:20px;height:12px;background:rgba(251,191,36,0.42);border:1px solid #fbbf24;border-radius:2px;display:inline-block"></span> Worked
+        <span style="width:20px;height:12px;background:rgba(217,119,6,0.75);border:1px solid #d97706;border-radius:2px;display:inline-block"></span> Worked
       </span>
       <span style="display:flex;align-items:center;gap:5px">
-        <span style="width:20px;height:12px;background:rgba(75,85,99,0.18);border:1px solid #4b5563;border-radius:2px;display:inline-block"></span> No contact
+        <span style="width:20px;height:12px;background:transparent;border:1px solid rgba(220,38,38,0.55);border-radius:2px;display:inline-block"></span> No contact
       </span>
+      <label style="display:flex;align-items:center;gap:5px;margin-left:auto;cursor:pointer;user-select:none;">
+        <input type="checkbox" id="grid-country-toggle" checked style="cursor:pointer"> Show country names
+      </label>
+    </div>
+  </div>
+
+  <div id="tab-activity" class="tab-panel">
+    <div id="activity-zoom-bar" style="flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 12px;background:#1f2937;border-bottom:1px solid #374151;font-size:0.72rem;color:#9ca3af;">
+      <span>Zoom:</span>
+      <button class="unit-btn" data-years="1">1Y</button>
+      <button class="unit-btn" data-years="3">3Y</button>
+      <button class="unit-btn" data-years="5">5Y</button>
+      <button class="unit-btn" data-years="10">10Y</button>
+      <button class="unit-btn active" data-years="all">All</button>
+      <span id="activity-range" style="margin-left:auto;color:#6b7280"></span>
+    </div>
+    <div id="activity-main" style="flex:1;position:relative;min-height:0"></div>
+    <div id="activity-brush" style="flex:0 0 64px;position:relative;border-top:1px solid #374151"></div>
+    <div style="flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:5px 12px;background:#1f2937;border-top:1px solid #374151;font-size:0.72rem;color:#9ca3af;">
+      <span style="display:flex;align-items:center;gap:5px">
+        <span style="width:20px;height:2px;background:#d97706;display:inline-block"></span> QSOs (cumulative)
+      </span>
+      <span style="display:flex;align-items:center;gap:5px">
+        <span style="width:20px;height:2px;background:#059669;display:inline-block"></span> QSLs (cumulative)
+      </span>
+      <span style="margin-left:auto">Drag the shaded window below, or its edges, to zoom</span>
     </div>
   </div>
 
