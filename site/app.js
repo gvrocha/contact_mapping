@@ -1826,7 +1826,20 @@ async function main() {
         spotlight.confirmed = { coords: topConfirmed.entity.coords };
     }
 
-    const map = initMap(entities, contacts, qrzCache, spotlight);
+    // initMap constructs a maplibregl.Map, which throws synchronously if the
+    // browser can't create a WebGL context (GPU process crashed, hardware
+    // acceleration disabled, driver hiccup, etc.) — an intermittent, purely
+    // client-side failure unrelated to data. Uncaught, that exception aborts
+    // the rest of main() and leaves the page stuck on "Loading…" with none of
+    // the (WebGL-independent) tables/tabs ever rendering. Guard it the same
+    // way the Globe/Grid tab builders already are below.
+    let map = null;
+    try {
+        map = initMap(entities, contacts, qrzCache, spotlight);
+    } catch (err) {
+        console.error('Map init error:', err);
+        document.getElementById('map').textContent = `Map error: ${err.message}`;
+    }
 
     // Register tab handler and km/mi toggle immediately — before any builder
     // runs — so a thrown builder never prevents tab switching from working.
@@ -1846,7 +1859,7 @@ async function main() {
         document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === target));
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `tab-${target}`));
         if (target === 'map') {
-            map.resize();
+            if (map) map.resize();
         } else if (target === 'globe') {
             if (!globeMap) {
                 requestAnimationFrame(() => requestAnimationFrame(() => {
