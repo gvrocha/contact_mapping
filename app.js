@@ -19,27 +19,6 @@ const QRZ_URL  = _base + 'data_output/qrz_cache.json';
 let distUnit = 'km';   // toggled by the km/mi button in the legend
 
 const BAND_ORDER = ['160m','80m','60m','40m','30m','20m','17m','15m','12m','10m','6m','2m'];
-const MODE_ORDER = ['SSB','CW','FT8','FT4','JS8','MFSK','RTTY','PSK31'];
-
-// Sorts a set of band or mode names: known ones first in canonical order, then
-// anything unrecognized appended alphabetically. Shared by every "list of X
-// seen in this region" table cell (Bands, Modes).
-function sortedLabelList(names, order) {
-    return [
-        ...order.filter(x => names.has(x)),
-        ...[...names].filter(x => !order.includes(x)).sort(),
-    ].join(' · ') || '—';
-}
-
-// Default shape for a region/entity row aggregated straight from QSOs (US
-// states, Canada provinces, continent entities, Maidenhead grid squares).
-function emptyRegionRow() {
-    return {
-        qsoCount: 0, qslCount: 0, bands: {}, modes: new Set(),
-        calls: new Set(), callsQsl: new Set(),
-        firstQso: null, lastQso: null, firstQsl: null, lastQsl: null,
-    };
-}
 
 // Normalised display names — covers both LoTW COUNTRY field values and CTY.DAT entity names.
 // Lookup is case-insensitive so LoTW's ALL-CAPS country values match automatically.
@@ -211,9 +190,6 @@ function aggregate(contacts, prefixLookup, qrzCache = {}, nameLookup = {}) {
                 coords:           centroid,   // best overall coords; updated below
                 unconfirmedCoords: centroid,  // coords for amber marker — never overridden by confirmed gridsquare
                 bands:            {},
-                modes:            new Set(),
-                callsWorked:      new Set(),
-                callsConfirmed:   new Set(),
                 qsoCount:         0,
                 qslCount:         0,
                 firstQso:         null,
@@ -263,9 +239,6 @@ function aggregate(contacts, prefixLookup, qrzCache = {}, nameLookup = {}) {
 
         entity.qsoCount++;
         if (qso.confirmed) entity.qslCount++;
-        entity.callsWorked.add(qso.call);
-        if (qso.confirmed) entity.callsConfirmed.add(qso.call);
-        if (qso.mode) entity.modes.add(qso.mode);
 
         if (qso.datetime) {
             if (!entity.firstQso || qso.datetime < entity.firstQso.datetime)
@@ -662,10 +635,7 @@ function buildTable(entities, refEntities) {
         { key: 'cont',     label: 'Cont',      cls: '',         defaultDir:  1, get: e => e.continent },
         { key: 'qsos',     label: 'QSOs',      cls: 'band-col', defaultDir: -1, get: e => e.qsoCount },
         { key: 'qsls',     label: 'QSLs',      cls: 'band-col', defaultDir: -1, get: e => e.qslCount },
-        { key: 'calls',    label: 'Calls',     cls: 'band-col', defaultDir: -1, get: e => e.callsWorked.size },
-        { key: 'callsQsl', label: 'Calls QSL', cls: 'band-col', defaultDir: -1, get: e => e.callsConfirmed.size },
         { key: 'bands',    label: 'Bands',     cls: '',         defaultDir: -1, get: e => Object.keys(e.bands).length },
-        { key: 'modes',    label: 'Modes',     cls: '',         defaultDir: -1, get: e => e.modes.size },
         { key: 'firstQso', label: 'First QSO', cls: '',         defaultDir:  1, get: e => e.firstQso?.datetime ?? null },
         { key: 'firstQsl', label: 'First QSL', cls: '',         defaultDir:  1, get: e => e.firstQsl?.datetime ?? null },
         { key: 'lastQso',  label: 'Last QSO',  cls: '',         defaultDir: -1, get: e => e.lastQso?.datetime  ?? null },
@@ -746,27 +716,13 @@ function buildTable(entities, refEntities) {
             tdQsl.style.color = entity.qslCount ? '#34d399' : '#4b5563';
             tr.appendChild(tdQsl);
 
-            const tdCalls = document.createElement('td');
-            tdCalls.className = 'band-cell';
-            tdCalls.textContent = entity.callsWorked.size || '—';
-            tdCalls.style.color = entity.callsWorked.size ? '#fbbf24' : '#4b5563';
-            tr.appendChild(tdCalls);
-
-            const tdCallsQsl = document.createElement('td');
-            tdCallsQsl.className = 'band-cell';
-            tdCallsQsl.textContent = entity.callsConfirmed.size || '—';
-            tdCallsQsl.style.color = entity.callsConfirmed.size ? '#34d399' : '#4b5563';
-            tr.appendChild(tdCallsQsl);
-
             const tdBands = document.createElement('td');
             tdBands.className = 'm-date';
-            tdBands.textContent = sortedLabelList(new Set(Object.keys(entity.bands)), BAND_ORDER);
+            tdBands.textContent = [
+                ...BAND_ORDER.filter(b => entity.bands[b]),
+                ...Object.keys(entity.bands).filter(b => !BAND_ORDER.includes(b)).sort(),
+            ].join(' · ') || '—';
             tr.appendChild(tdBands);
-
-            const tdModes = document.createElement('td');
-            tdModes.className = 'm-date';
-            tdModes.textContent = sortedLabelList(entity.modes, MODE_ORDER);
-            tr.appendChild(tdModes);
 
             tr.appendChild(makeEntityDateCell(entity.firstQso));
             tr.appendChild(makeEntityDateCell(entity.firstQsl));
@@ -1195,13 +1151,10 @@ function buildUsStates(contacts, qrzCache) {
         if (!isUS(qso)) continue;
         const st = regionStateOf(qso, qrzCache);
         if (!st || !US_STATES.includes(st)) continue;
-        if (!agg[st]) agg[st] = emptyRegionRow();
+        if (!agg[st]) agg[st] = { qsoCount: 0, qslCount: 0, bands: {}, firstQso: null, lastQso: null, firstQsl: null, lastQsl: null };
         const e = agg[st];
         e.qsoCount++;
         if (qso.band) e.bands[qso.band] = true;
-        if (qso.mode) e.modes.add(qso.mode);
-        e.calls.add(qso.call);
-        if (qso.confirmed) e.callsQsl.add(qso.call);
         if (qso.datetime) {
             if (!e.firstQso || qso.datetime < e.firstQso.datetime)
                 e.firstQso = { datetime: qso.datetime, band: qso.band };
@@ -1222,7 +1175,7 @@ function buildUsStates(contacts, qrzCache) {
     const hasQrz         = Object.keys(qrzCache).length > 0;
     const rows           = US_STATES.map(st => ({
         label: `${US_STATE_NAMES[st]} (${st})`,
-        ...(agg[st] || emptyRegionRow()),
+        ...(agg[st] || { qsoCount: 0, qslCount: 0, bands: {}, firstQso: null, lastQso: null, firstQsl: null, lastQsl: null }),
     }));
     const workedCount    = rows.filter(r => r.qsoCount > 0).length;
     const confirmedCount = rows.filter(r => r.qslCount > 0).length;
@@ -1256,13 +1209,10 @@ function buildCanadaProvinces(contacts, qrzCache) {
         if (!isCanada(qso)) continue;
         const prov = regionStateOf(qso, qrzCache);
         if (!prov || !CA_PROVINCES.includes(prov)) continue;
-        if (!agg[prov]) agg[prov] = emptyRegionRow();
+        if (!agg[prov]) agg[prov] = { qsoCount: 0, qslCount: 0, bands: {}, firstQso: null, lastQso: null, firstQsl: null, lastQsl: null };
         const e = agg[prov];
         e.qsoCount++;
         if (qso.band) e.bands[qso.band] = true;
-        if (qso.mode) e.modes.add(qso.mode);
-        e.calls.add(qso.call);
-        if (qso.confirmed) e.callsQsl.add(qso.call);
         if (qso.datetime) {
             if (!e.firstQso || qso.datetime < e.firstQso.datetime)
                 e.firstQso = { datetime: qso.datetime, band: qso.band };
@@ -1283,7 +1233,7 @@ function buildCanadaProvinces(contacts, qrzCache) {
     const hasQrz         = Object.keys(qrzCache).length > 0;
     const rows           = CA_PROVINCES.map(prov => ({
         label: `${CA_PROVINCE_NAMES[prov]} (${prov})`,
-        ...(agg[prov] || emptyRegionRow()),
+        ...(agg[prov] || { qsoCount: 0, qslCount: 0, bands: {}, firstQso: null, lastQso: null, firstQsl: null, lastQsl: null }),
     }));
     const workedCount    = rows.filter(r => r.qsoCount > 0).length;
     const confirmedCount = rows.filter(r => r.qslCount > 0).length;
@@ -1309,10 +1259,7 @@ function buildRegionTable({ theadId, tbodyId, rows, nameLabel = 'Entity', hasFla
         { key: 'name',     label: nameLabel,   cls: '',         defaultDir:  1, get: r => r.label },
         { key: 'qsos',     label: 'QSOs',      cls: 'band-col', defaultDir: -1, get: r => r.qsoCount },
         { key: 'qsls',     label: 'QSLs',      cls: 'band-col', defaultDir: -1, get: r => r.qslCount },
-        { key: 'calls',    label: 'Calls',     cls: 'band-col', defaultDir: -1, get: r => r.calls.size },
-        { key: 'callsQsl', label: 'Calls QSL', cls: 'band-col', defaultDir: -1, get: r => r.callsQsl.size },
         { key: 'bands',    label: 'Bands',     cls: '',         defaultDir: -1, get: r => Object.keys(r.bands).length },
-        { key: 'modes',    label: 'Modes',     cls: '',         defaultDir: -1, get: r => r.modes.size },
         { key: 'firstQso', label: 'First QSO', cls: '',         defaultDir:  1, get: r => r.firstQso?.datetime ?? null },
         { key: 'firstQsl', label: 'First QSL', cls: '',         defaultDir:  1, get: r => r.firstQsl?.datetime ?? null },
         { key: 'lastQso',  label: 'Last QSO',  cls: '',         defaultDir: -1, get: r => r.lastQso?.datetime  ?? null },
@@ -1388,27 +1335,13 @@ function buildRegionTable({ theadId, tbodyId, rows, nameLabel = 'Entity', hasFla
             tdQsl.style.color = row.qslCount ? '#34d399' : '#4b5563';
             tr.appendChild(tdQsl);
 
-            const tdCalls = document.createElement('td');
-            tdCalls.className = 'band-cell';
-            tdCalls.textContent = row.calls.size || '—';
-            tdCalls.style.color = row.calls.size ? '#fbbf24' : '#4b5563';
-            tr.appendChild(tdCalls);
-
-            const tdCallsQsl = document.createElement('td');
-            tdCallsQsl.className = 'band-cell';
-            tdCallsQsl.textContent = row.callsQsl.size || '—';
-            tdCallsQsl.style.color = row.callsQsl.size ? '#34d399' : '#4b5563';
-            tr.appendChild(tdCallsQsl);
-
             const tdBands = document.createElement('td');
             tdBands.className = 'm-date';
-            tdBands.textContent = sortedLabelList(new Set(Object.keys(row.bands)), BAND_ORDER);
+            tdBands.textContent = [
+                ...BAND_ORDER.filter(b => row.bands[b]),
+                ...Object.keys(row.bands).filter(b => !BAND_ORDER.includes(b)).sort(),
+            ].join(' · ') || '—';
             tr.appendChild(tdBands);
-
-            const tdModes = document.createElement('td');
-            tdModes.className = 'm-date';
-            tdModes.textContent = sortedLabelList(row.modes, MODE_ORDER);
-            tr.appendChild(tdModes);
 
             tr.appendChild(makeEntityDateCell(row.firstQso));
             tr.appendChild(makeEntityDateCell(row.firstQsl));
@@ -1443,13 +1376,10 @@ function buildContinentEntities(contacts, refEntities, prefixLookup, contCode) {
         if (qso.continent !== contCode) continue;
         const key = entityKeyFor(qso, prefixLookup);
         if (!key) continue;
-        if (!agg[key]) agg[key] = emptyRegionRow();
+        if (!agg[key]) agg[key] = { qsoCount: 0, qslCount: 0, bands: {}, firstQso: null, lastQso: null, firstQsl: null, lastQsl: null };
         const e = agg[key];
         e.qsoCount++;
         if (qso.band) e.bands[qso.band] = true;
-        if (qso.mode) e.modes.add(qso.mode);
-        e.calls.add(qso.call);
-        if (qso.confirmed) e.callsQsl.add(qso.call);
         if (qso.datetime) {
             if (!e.firstQso || qso.datetime < e.firstQso.datetime)
                 e.firstQso = { datetime: qso.datetime, band: qso.band };
@@ -1475,7 +1405,7 @@ function buildContinentEntities(contacts, refEntities, prefixLookup, contCode) {
             return {
                 label: display,
                 flag:  countryFlag(display),
-                ...(agg[key] || emptyRegionRow()),
+                ...(agg[key] || { qsoCount: 0, qslCount: 0, bands: {}, firstQso: null, lastQso: null, firstQsl: null, lastQsl: null }),
             };
         });
 
@@ -1603,13 +1533,15 @@ function buildGridCoverage(contacts, qrzCache) {
         if (!raw || raw.length < 4) continue;
         const g = raw.slice(0, 4).toUpperCase();
         if (!/^[A-R]{2}[0-9]{2}$/.test(g)) continue;
-        if (!status[g]) status[g] = emptyRegionRow();
+        if (!status[g]) status[g] = {
+            qsoCount: 0, qslCount: 0,
+            bands: {},
+            firstQso: null, lastQso: null,
+            firstQsl: null, lastQsl: null,
+        };
         const e = status[g];
         e.qsoCount++;
         if (qso.band) e.bands[qso.band] = true;
-        if (qso.mode) e.modes.add(qso.mode);
-        e.calls.add(qso.call);
-        if (qso.confirmed) e.callsQsl.add(qso.call);
         if (qso.datetime) {
             if (!e.firstQso || qso.datetime < e.firstQso.datetime)
                 e.firstQso = { datetime: qso.datetime, band: qso.band };
@@ -1872,22 +1804,8 @@ function initGridMap(contacts, qrzCache) {
 // charts (drag the shaded region to pan, drag an edge to resize it).
 // ---------------------------------------------------------------------------
 
-// LoTW datetimes are UTC but carry no 'Z' suffix — parse them as such explicitly
-// rather than letting Date() silently interpret them in the browser's local zone.
-function parseUtcMs(iso) {
-    return new Date(/Z|[+-]\d\d:\d\d$/.test(iso) ? iso : iso + 'Z').getTime();
-}
-
 function fmtShortDate(ms) {
-    return new Date(ms).toLocaleDateString('en-US',
-        { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
-}
-
-function fmtDateTime(ms) {
-    return new Date(ms).toLocaleString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric',
-        hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC',
-    }) + ' UTC';
+    return new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 // Cumulative value of a sorted {t,v} step series at time t (0 before the first point).
@@ -1942,13 +1860,13 @@ function pickTimeStepMs(spanMs) {
 
 function alignedStart(t, stepMs) {
     const d = new Date(t);
-    if (stepMs < 28 * DAY_MS) { d.setUTCHours(0, 0, 0, 0); return d.getTime(); }
-    if (stepMs < 340 * DAY_MS) { d.setUTCDate(1); d.setUTCHours(0, 0, 0, 0); return d.getTime(); }
-    d.setUTCMonth(0, 1); d.setUTCHours(0, 0, 0, 0);
+    if (stepMs < 28 * DAY_MS) { d.setHours(0, 0, 0, 0); return d.getTime(); }
+    if (stepMs < 340 * DAY_MS) { d.setDate(1); d.setHours(0, 0, 0, 0); return d.getTime(); }
+    d.setMonth(0, 1); d.setHours(0, 0, 0, 0);
     return d.getTime();
 }
 
-function drawTimeAxis(ctx, start, end, xOf, tickY, labelY, plotLeft, plotRight) {
+function drawTimeAxis(ctx, start, end, xOf, y, plotLeft, plotRight) {
     const step = pickTimeStepMs(end - start);
     let t = alignedStart(start, step);
     ctx.strokeStyle   = 'rgba(55,65,81,0.6)';
@@ -1960,19 +1878,19 @@ function drawTimeAxis(ctx, start, end, xOf, tickY, labelY, plotLeft, plotRight) 
     while (t <= end && guard++ < 200) {
         if (t >= start) {
             const x = xOf(t);
-            ctx.beginPath(); ctx.moveTo(x, tickY); ctx.lineTo(x, tickY + 4); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + 4); ctx.stroke();
             const label = step >= 340 * DAY_MS
-                ? String(new Date(t).getUTCFullYear())
+                ? String(new Date(t).getFullYear())
                 : new Date(t).toLocaleDateString('en-US',
-                    { month: 'short', timeZone: 'UTC', ...(step < 28 * DAY_MS ? { day: 'numeric' } : {}) });
-            ctx.fillText(label, Math.min(Math.max(x, plotLeft + 22), plotRight - 22), labelY);
+                    { month: 'short', ...(step < 28 * DAY_MS ? { day: 'numeric' } : {}) });
+            ctx.fillText(label, Math.min(Math.max(x, plotLeft + 22), plotRight - 22), y + 6);
         }
         if (step < 28 * DAY_MS) {
             t += step;
         } else if (step < 340 * DAY_MS) {
-            const d = new Date(t); d.setUTCMonth(d.getUTCMonth() + Math.round(step / (30 * DAY_MS))); t = d.getTime();
+            const d = new Date(t); d.setMonth(d.getMonth() + Math.round(step / (30 * DAY_MS))); t = d.getTime();
         } else {
-            const d = new Date(t); d.setUTCFullYear(d.getUTCFullYear() + Math.round(step / (365 * DAY_MS))); t = d.getTime();
+            const d = new Date(t); d.setFullYear(d.getFullYear() + Math.round(step / (365 * DAY_MS))); t = d.getTime();
         }
     }
 }
@@ -1981,11 +1899,11 @@ function initActivityChart(contacts) {
     const qsoPoints = [...contacts]
         .filter(q => q.datetime)
         .sort((a, b) => a.datetime.localeCompare(b.datetime))
-        .map((q, i) => ({ t: parseUtcMs(q.datetime), v: i + 1 }));
+        .map((q, i) => ({ t: new Date(q.datetime).getTime(), v: i + 1 }));
     const qslPoints = [...contacts]
         .filter(q => q.confirmed && q.qsl_date)
         .sort((a, b) => a.qsl_date.localeCompare(b.qsl_date))
-        .map((q, i) => ({ t: parseUtcMs(q.qsl_date), v: i + 1 }));
+        .map((q, i) => ({ t: new Date(q.qsl_date).getTime(), v: i + 1 }));
 
     const allTimes = [...qsoPoints, ...qslPoints].map(p => p.t);
     const now      = Date.now();
@@ -2013,11 +1931,7 @@ function initActivityChart(contacts) {
     tip.style.cssText = 'position:absolute;display:none;pointer-events:none;z-index:10;';
     mainContainer.appendChild(tip);
 
-    const PAD = { l: 46, r: 12, t: 10, b: 40 };
-    const RUG_H = 6;
-
-    const fixYToggle = document.getElementById('activity-fixy-toggle');
-    if (fixYToggle) fixYToggle.addEventListener('change', () => { drawMain(); });
+    const PAD = { l: 46, r: 12, t: 10, b: 20 };
 
     function clampWindow(s, width) {
         width = Math.min(width, dataMax - dataMin);
@@ -2048,8 +1962,7 @@ function initActivityChart(contacts) {
         if (plotW <= 0 || plotH <= 0) return;
 
         const start = visStart, end = Math.max(visEnd, start + 1);
-        const scaleEnd = (fixYToggle && fixYToggle.checked) ? dataMax : end;
-        const maxV  = Math.max(stepValueAt(qsoPoints, scaleEnd), stepValueAt(qslPoints, scaleEnd), 1);
+        const maxV  = Math.max(stepValueAt(qsoPoints, end), stepValueAt(qslPoints, end), 1);
         const xOf   = t => PAD.l + ((t - start) / (end - start)) * plotW;
         const yOf   = v => PAD.t + plotH - (v / maxV) * plotH;
 
@@ -2064,22 +1977,7 @@ function initActivityChart(contacts) {
             ctx.fillText(String(v), PAD.l - 6, y);
         }
 
-        const axisY = PAD.t + plotH;
-        drawTimeAxis(ctx, start, end, xOf, axisY, axisY + 2 * RUG_H + 8, PAD.l, W - PAD.r);
-
-        // Rug: a short tick at the exact time of every QSO / QSL, right below
-        // the axis line — shows event density independent of the cumulative line.
-        function drawRug(points, y, color) {
-            ctx.strokeStyle = color;
-            ctx.lineWidth   = 1;
-            for (const p of points) {
-                if (p.t < start || p.t > end) continue;
-                const x = xOf(p.t);
-                ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + RUG_H); ctx.stroke();
-            }
-        }
-        drawRug(qsoPoints, axisY + 5, 'rgba(217,119,6,0.7)');
-        drawRug(qslPoints, axisY + 5 + RUG_H + 1, 'rgba(5,150,105,0.7)');
+        drawTimeAxis(ctx, start, end, xOf, PAD.t + plotH, PAD.l, W - PAD.r);
 
         function drawSeries(points, color) {
             const path = stepPath(points, start, end, xOf, yOf);
@@ -2207,7 +2105,7 @@ function initActivityChart(contacts) {
         const t   = visStart + ((x - PAD.l) / plotW) * (visEnd - visStart);
         const qso = stepValueAt(qsoPoints, t);
         const qsl = stepValueAt(qslPoints, t);
-        tip.innerHTML = `<b>${fmtDateTime(t)}</b><br>` +
+        tip.innerHTML = `<b>${fmtShortDate(t)}</b><br>` +
             `<span style="color:#d97706">${qso} QSOs</span><br>` +
             `<span style="color:#059669">${qsl} QSLs</span>`;
         tip.style.left    = `${x + 14}px`;
