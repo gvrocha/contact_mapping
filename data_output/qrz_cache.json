@@ -2364,5 +2364,54 @@
     "lon": -75.322358,
     "grid": "FN23IC",
     "state": "NY"
+  },
+  "AA5AT": {
+    "lat": 30.561667,
+    "lon": -91.126667,
+    "grid": "EM40KN",
+    "state": "LA"
+  },
+  "AI4EY": {
+    "lat": 37.052413,
+    "lon": -88.746696,
+    "grid": "EM57PB",
+    "state": "KY"
+  },
+  "JK8PRT": {},
+  "K0DLP": {
+    "lat": 45.57487,
+    "lon": -98.36284,
+    "grid": "EN05TN",
+    "state": "SD"
+  },
+  "K4SYT": {
+    "lat": 30.79674,
+    "lon": -81.64792,
+    "grid": "EM90ET",
+    "state": "GA"
+  },
+  "KD0XD": {
+    "lat": 42.509065,
+    "lon": -96.45885,
+    "grid": "EN12SM",
+    "state": "IA"
+  },
+  "KG5FCZ": {
+    "lat": 31.311667,
+    "lon": -94.793333,
+    "grid": "EM21OH",
+    "state": "TX"
+  },
+  "W2CG": {
+    "lat": 40.560119,
+    "lon": -74.758825,
+    "grid": "FN20ON",
+    "state": "NJ"
+  },
+  "W4DXR": {
+    "lat": 31.068282,
+    "lon": -85.461012,
+    "grid": "EM71GB",
+    "state": "AL"
   }
 }
