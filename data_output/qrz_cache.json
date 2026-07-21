@@ -2449,5 +2449,23 @@
     "lon": -88.285617,
     "grid": "EN51UV",
     "state": "IL"
+  },
+  "KC1WAY": {
+    "lat": 42.32127,
+    "lon": -71.48338,
+    "grid": "FN42GH",
+    "state": "MA"
+  },
+  "N1SK": {
+    "lat": 43.461613,
+    "lon": -72.108632,
+    "grid": "FN33WL",
+    "state": "NH"
+  },
+  "N9AOT": {
+    "lat": 44.262098,
+    "lon": -88.868512,
+    "grid": "EN54NG",
+    "state": "WI"
   }
 }
