@@ -2413,5 +2413,41 @@
     "lon": -85.461012,
     "grid": "EM71GB",
     "state": "AL"
+  },
+  "AD9DU": {
+    "lat": 42.01275,
+    "lon": -88.11029,
+    "grid": "EN52WA",
+    "state": "IL"
+  },
+  "K7ZV": {
+    "lat": 42.466246,
+    "lon": -123.437717,
+    "grid": "CN82GL",
+    "state": "OR"
+  },
+  "K9STL": {
+    "lat": 38.421726,
+    "lon": -89.892985,
+    "grid": "EM58BK",
+    "state": "IL"
+  },
+  "KB9TMT": {
+    "lat": 41.94778,
+    "lon": -87.81407,
+    "grid": "EN61CW",
+    "state": "IL"
+  },
+  "KE0N": {
+    "lat": 44.84846,
+    "lon": -93.450456,
+    "grid": "EN34GU",
+    "state": "MN"
+  },
+  "N9TNY": {
+    "lat": 41.892647,
+    "lon": -88.285617,
+    "grid": "EN51UV",
+    "state": "IL"
   }
 }
