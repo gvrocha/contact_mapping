@@ -3015,5 +3015,142 @@
     "lon": -96.861752,
     "grid": "EM12NO",
     "state": "TX"
+  },
+  "2E0LGL": {
+    "lat": 51.479167,
+    "lon": -0.208333,
+    "grid": "IO91VL"
+  },
+  "AK7ER": {
+    "lat": 47.48561,
+    "lon": -122.241183,
+    "grid": "CN87VL",
+    "state": "WA"
+  },
+  "EI5JL": {
+    "lat": 53.393265,
+    "lon": -6.399906,
+    "grid": "IO63TJ"
+  },
+  "EI9KF": {
+    "lat": 53.26941,
+    "lon": -6.172749,
+    "grid": "IO63VG",
+    "state": "LO"
+  },
+  "HG0NPJ": {
+    "lat": 47.426591,
+    "lon": 19.388231,
+    "grid": "JN97QK"
+  },
+  "HG8LXL": {
+    "lat": 46.71232,
+    "lon": 20.124805,
+    "grid": "KN06BR"
+  },
+  "IS0/IK2YCW": {},
+  "K1MCO": {
+    "lat": 28.361,
+    "lon": -81.383,
+    "grid": "EL98HI",
+    "state": "FL"
+  },
+  "K2XB": {
+    "lat": 39.96191,
+    "lon": -74.14894,
+    "grid": "FM29WX",
+    "state": "NJ"
+  },
+  "K4DSX": {
+    "lat": 35.868919,
+    "lon": -80.081564,
+    "grid": "EM95XU",
+    "state": "NC"
+  },
+  "K5PA": {
+    "lat": 33.5816,
+    "lon": -101.9014,
+    "grid": "DM93BN",
+    "state": "TX"
+  },
+  "KE2CJL": {
+    "lat": 43.02878,
+    "lon": -77.10472,
+    "grid": "FN13KA",
+    "state": "NY"
+  },
+  "KE2EM": {
+    "lat": 43.13905,
+    "lon": -77.61051,
+    "grid": "FN13ED",
+    "state": "NY"
+  },
+  "KG4IIC": {
+    "lat": 43.088139,
+    "lon": -115.713995,
+    "grid": "DN23DC",
+    "state": "ID"
+  },
+  "KG4IJS": {
+    "lat": 27.849399,
+    "lon": -81.433044,
+    "grid": "EL97GU",
+    "state": "FL"
+  },
+  "KG4O": {
+    "lat": 26.630453,
+    "lon": -81.946701,
+    "grid": "EL96AP",
+    "state": "FL"
+  },
+  "NF3R": {
+    "lat": 40.251392,
+    "lon": -75.668659,
+    "grid": "FN20DG",
+    "state": "PA"
+  },
+  "PD4RJ": {
+    "lat": 53.120039,
+    "lon": 7.173808,
+    "grid": "JO33OC"
+  },
+  "PD5MVH": {
+    "lat": 52.040991,
+    "lon": 4.278488,
+    "grid": "JO22DA",
+    "state": "ZH"
+  },
+  "US2YW": {
+    "lat": 49.0625,
+    "lon": 31.458333,
+    "grid": "KN59RB"
+  },
+  "UW8SM": {
+    "lat": 49.0625,
+    "lon": 31.458333,
+    "grid": "KN59RB"
+  },
+  "VE2ZTZ": {
+    "lat": 48.68406,
+    "lon": -71.506598,
+    "grid": "FN48FQ",
+    "state": "QC"
+  },
+  "W3NY": {
+    "lat": 40.11152,
+    "lon": -76.49841,
+    "grid": "FN10SC",
+    "state": "PA"
+  },
+  "WA5RIP": {
+    "lat": 36.233491,
+    "lon": -86.349218,
+    "grid": "EM66TF",
+    "state": "TN"
+  },
+  "YO2MD": {
+    "lat": 46.163496,
+    "lon": 21.404712,
+    "grid": "KN06QD"
   }
 }
