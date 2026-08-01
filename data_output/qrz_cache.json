@@ -3441,5 +3441,136 @@
     "lon": -66.987913,
     "grid": "FK60MK",
     "state": "FL"
+  },
+  "3B9FR": {
+    "lat": -19.729167,
+    "lon": 63.458333,
+    "grid": "MH10RG"
+  },
+  "9A4ZM": {
+    "lat": 44.854167,
+    "lon": 13.875,
+    "grid": "JN64WU"
+  },
+  "9A9TT": {
+    "lat": 46.145,
+    "lon": 15.873333,
+    "grid": "JN76WD"
+  },
+  "CX6TU": {
+    "lat": -34.363525,
+    "lon": -54.068495,
+    "grid": "GF25XP",
+    "state": "RO"
+  },
+  "E75C": {
+    "lat": 43.853333,
+    "lon": 18.29,
+    "grid": "JN93DU"
+  },
+  "F4HTA": {
+    "lat": 50.36493,
+    "lon": 3.06919,
+    "grid": "JO10MI"
+  },
+  "F5NKX": {
+    "lat": 49.061667,
+    "lon": -0.96,
+    "grid": "IN99MB"
+  },
+  "K7CTV": {
+    "lat": 32.48042,
+    "lon": -110.90865,
+    "grid": "DM42NL",
+    "state": "AZ"
+  },
+  "KE5RRN": {
+    "lat": 35.158438,
+    "lon": -106.701029,
+    "grid": "DM65PD",
+    "state": "NM"
+  },
+  "KI5HXK": {
+    "lat": 32.62355,
+    "lon": -97.36267,
+    "grid": "EM12HO",
+    "state": "TX"
+  },
+  "KI5ZFB": {
+    "lat": 30.050023,
+    "lon": -95.56592,
+    "grid": "EM20FB",
+    "state": "TX"
+  },
+  "KL5PF": {
+    "lat": 64.904212,
+    "lon": -147.674294,
+    "grid": "BP64DV",
+    "state": "AK"
+  },
+  "M8KKH": {
+    "lat": 51.145,
+    "lon": 0.79,
+    "grid": "JO01JD"
+  },
+  "N4FMO": {
+    "lat": 28.94054,
+    "lon": -81.939735,
+    "grid": "EL98AW",
+    "state": "FL"
+  },
+  "OH2XO": {
+    "lat": 60.518585,
+    "lon": 24.759316,
+    "grid": "KP20JM"
+  },
+  "PD0RCQ": {
+    "lat": 51.595065,
+    "lon": 4.848769,
+    "grid": "JO21KO"
+  },
+  "PY2YW": {
+    "lat": -23.146667,
+    "lon": -47.126667,
+    "grid": "GG66KU"
+  },
+  "RA4FW": {
+    "lat": 53.202521,
+    "lon": 45.150713,
+    "grid": "LO23NE"
+  },
+  "RN1ON": {
+    "lat": 64.5625,
+    "lon": 40.791667,
+    "grid": "LP04JN"
+  },
+  "UA3ON": {
+    "lat": 50.186667,
+    "lon": 39.54,
+    "grid": "KO90SE"
+  },
+  "UT2MZ": {
+    "lat": 49.0625,
+    "lon": 31.458333,
+    "grid": "KN59RB",
+    "state": "LU"
+  },
+  "WA2HMM": {
+    "lat": 40.882864,
+    "lon": -72.891082,
+    "grid": "FN30NV",
+    "state": "NY"
+  },
+  "WA6WGS": {
+    "lat": 33.72896,
+    "lon": -118.302478,
+    "grid": "DM03UR",
+    "state": "CA"
+  },
+  "WL4ES": {
+    "lat": 61.317886,
+    "lon": -149.534978,
+    "grid": "BP51FH",
+    "state": "AK"
   }
 }
