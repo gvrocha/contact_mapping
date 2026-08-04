@@ -82,8 +82,11 @@ const _entityDisplayUpper = Object.fromEntries(
 const displayName = (raw) => raw ? (_entityDisplayUpper[raw.toUpperCase()] || raw) : raw;
 
 // Countries where state/province is shown in the popup alongside the country name.
+// Alaska and Hawaii are their own DXCC entities (LoTW reports country as
+// "ALASKA" / "HAWAII", not "UNITED STATES") but still carry a US state code.
 const STATE_COUNTRIES = new Set([
-    'UNITED STATES', 'UNITED STATES OF AMERICA', 'CANADA', 'BRAZIL', 'BRASIL',
+    'UNITED STATES', 'UNITED STATES OF AMERICA', 'ALASKA', 'HAWAII',
+    'CANADA', 'BRAZIL', 'BRASIL',
 ]);
 
 const BAND_COLORS = {
@@ -847,8 +850,9 @@ const ENTITY_TO_ISO = {
     'Fiji':'FJ', 'Solomon Islands':'SB', 'Vanuatu':'VU', 'Samoa':'WS',
     'Tonga':'TO', 'Kiribati':'KI', 'Micronesia':'FM', 'Palau':'PW',
     'Marshall Islands':'MH', 'Nauru':'NR', 'Tuvalu':'TV',
-    'Cook Islands':'CK', 'Niue':'NU', 'Hawaii':'US',
+    'Cook Islands':'CK', 'Niue':'NU',
     // DXCC sub-entities that map to a parent country flag
+    'Alaska':'US', 'Hawaii':'US',
     'England':'GB', 'Scotland':'GB', 'Wales':'GB', 'Northern Ireland':'GB',
     'Sicily':'IT', 'Sardinia':'IT',
     'Montserrat':'MS', 'Anguilla':'AI', 'Cayman Islands':'KY',
@@ -1162,10 +1166,18 @@ const US_STATES = [
 // Shared helpers for regional tables (US States, Canada, Europe)
 // ---------------------------------------------------------------------------
 
+// Alaska and Hawaii are separate DXCC entities from the continental "United
+// States" — their LoTW country field reads "ALASKA" / "HAWAII", not "UNITED
+// STATES" — but they're still US states, so the 50-states table needs to
+// recognize them too.
+const US_DXCC_COUNTRIES = new Set(['ALASKA', 'HAWAII']);
+
 const isUS = (qso) => {
     const c = qso.call.toUpperCase();
+    const country = (qso.country || '').toUpperCase();
     return /^(K|W|N|AA|AB|AC|AD|AE|AF|AG|AH|AI|AJ|AK)[0-9]/.test(c)
-        || (qso.country || '').toUpperCase().includes('UNITED STATES');
+        || country.includes('UNITED STATES')
+        || US_DXCC_COUNTRIES.has(country);
 };
 
 const isCanada = (qso) => {
