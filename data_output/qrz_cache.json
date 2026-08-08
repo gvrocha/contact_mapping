@@ -3897,5 +3897,50 @@
     "lon": 25.29,
     "grid": "KN25PL",
     "state": "RO"
+  },
+  "8S2A": {
+    "lat": 66.73044,
+    "lon": 23.176905,
+    "grid": "KP16OR"
+  },
+  "AD0RS": {
+    "lat": 39.728333,
+    "lon": -105.043333,
+    "grid": "DM79LR",
+    "state": "CO"
+  },
+  "K6EGG": {
+    "lat": 34.007107,
+    "lon": -117.657406,
+    "grid": "DM14EA",
+    "state": "CA"
+  },
+  "K8DTJ": {
+    "lat": 42.46339,
+    "lon": -83.44626,
+    "grid": "EN82GL",
+    "state": "MI"
+  },
+  "UA6LQZ": {
+    "lat": 48.895,
+    "lon": 40.373333,
+    "grid": "LN08EV"
+  },
+  "UA8Q": {
+    "lat": 55.437558,
+    "lon": 65.337949,
+    "grid": "MO25QK"
+  },
+  "VE3PKY": {
+    "lat": 43.2576,
+    "lon": -79.7993,
+    "grid": "FN03CG",
+    "state": "ON"
+  },
+  "VE4PDX": {
+    "lat": 49.941057,
+    "lon": -97.052536,
+    "grid": "EN19LW",
+    "state": "MB"
   }
 }
