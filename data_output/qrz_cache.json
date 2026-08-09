@@ -3942,5 +3942,118 @@
     "lon": -97.052536,
     "grid": "EN19LW",
     "state": "MB"
+  },
+  "AG7JV": {
+    "lat": 46.29933,
+    "lon": -119.28229,
+    "grid": "DN06IH",
+    "state": "ME"
+  },
+  "AI4FR": {
+    "lat": 28.395833,
+    "lon": -82.375,
+    "grid": "EL88TJ",
+    "state": "FL"
+  },
+  "EA8DNB": {
+    "lat": 28.181682,
+    "lon": -16.816059,
+    "grid": "IL18OE"
+  },
+  "K0KWH": {
+    "lat": 38.68776,
+    "lon": -104.70003,
+    "grid": "DM78PQ",
+    "state": "CO"
+  },
+  "K0VN": {
+    "lat": 33.616477,
+    "lon": -111.84757,
+    "grid": "DM43BO",
+    "state": "AZ"
+  },
+  "K5VGS": {
+    "lat": 27.715183,
+    "lon": -97.426606,
+    "grid": "EL17GR",
+    "state": "TX"
+  },
+  "KB6JFL": {
+    "lat": 35.386121,
+    "lon": -119.170012,
+    "grid": "DM05JJ",
+    "state": "CA"
+  },
+  "KD2YQS": {
+    "lat": 40.33087,
+    "lon": -74.09333,
+    "grid": "FN20WH",
+    "state": "NJ"
+  },
+  "KF0LJM": {
+    "lat": 39.520833,
+    "lon": -104.791667,
+    "grid": "DM79OM",
+    "state": "CO"
+  },
+  "KI5WTR": {
+    "lat": 35.22563,
+    "lon": -106.69016,
+    "grid": "DM65PF",
+    "state": "NM"
+  },
+  "KJ5DZV": {
+    "lat": 30.06433,
+    "lon": -92.16662,
+    "grid": "EM30WB",
+    "state": "LA"
+  },
+  "KJ5OUL": {
+    "lat": 30.311394,
+    "lon": -95.433846,
+    "grid": "EM20GH",
+    "state": "TX"
+  },
+  "N0NWY": {
+    "lat": 47.161721,
+    "lon": -100.787892,
+    "grid": "DN97OD",
+    "state": "ND"
+  },
+  "N1EDF": {
+    "lat": 42.311484,
+    "lon": -71.328439,
+    "grid": "FN42IH",
+    "state": "MA"
+  },
+  "N5WIN": {
+    "lat": 31.86895,
+    "lon": -96.88934,
+    "grid": "EM11NU",
+    "state": "TX"
+  },
+  "VA3WLD": {
+    "lat": 43.728333,
+    "lon": -79.46,
+    "grid": "FN03GR",
+    "state": "ON"
+  },
+  "W1BIU": {
+    "lat": 43.172756,
+    "lon": -70.603136,
+    "grid": "FN43QE",
+    "state": "ME"
+  },
+  "W5WCA": {
+    "lat": 39.689767,
+    "lon": -104.699167,
+    "grid": "DM79PQ",
+    "state": "CO"
+  },
+  "WA1QFV": {
+    "lat": 41.995419,
+    "lon": -71.276515,
+    "grid": "FN41IX",
+    "state": "MA"
   }
 }
