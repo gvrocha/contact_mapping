@@ -923,7 +923,10 @@ function buildCallsignTable(contacts, qrzCache = {}) {
         const r = byKey[key];
         r.count++;
         if (qso.confirmed) r.qslCount++;
-        if (qso.gridsquare) r.grids.add(qso.gridsquare.toUpperCase());
+        if (qso.gridsquare) {
+            const g = qso.gridsquare.toUpperCase();
+            r.grids.add(g.length > 6 ? g.slice(0, 6) : g);
+        }
         if (qso.band) r.bands.add(qso.band);
         if (qso.mode) r.modes.add(qso.mode);
         if (!r.country && qso.country) r.country = normalizeCountryName(qso.country);
@@ -945,9 +948,9 @@ function buildCallsignTable(contacts, qrzCache = {}) {
     const COLS = [
         { key: 'call',     label: 'Call sign', defaultDir:  1 },
         { key: 'country',  label: 'Country',   defaultDir:  1 },
+        { key: 'grids',    label: 'Grids',     defaultDir: -1 },
         { key: 'count',    label: 'QSOs',      defaultDir: -1 },
         { key: 'qslCount', label: 'QSLs',      defaultDir: -1 },
-        { key: 'grids',    label: 'Grids',     defaultDir: -1 },
         { key: 'bands',    label: 'Bands',     defaultDir: -1 },
         { key: 'modes',    label: 'Modes',     defaultDir: -1 },
         { key: 'firstQso', label: 'First QSO', defaultDir: -1 },
@@ -1034,6 +1037,11 @@ function buildCallsignTable(contacts, qrzCache = {}) {
             tdCountry.textContent = flag ? `${flag} ${countryStr}` : countryStr;
             tr.appendChild(tdCountry);
 
+            const tdGrids = document.createElement('td');
+            tdGrids.className = 'm-date';
+            tdGrids.textContent = [...r.grids].sort().join(' · ') || '—';
+            tr.appendChild(tdGrids);
+
             const tdCount = document.createElement('td');
             tdCount.className = 'band-cell';
             tdCount.textContent = r.count;
@@ -1045,12 +1053,6 @@ function buildCallsignTable(contacts, qrzCache = {}) {
             tdQsl.textContent = r.qslCount || '—';
             tdQsl.style.color = r.qslCount ? '#34d399' : '#4b5563';
             tr.appendChild(tdQsl);
-
-            const tdGrids = document.createElement('td');
-            tdGrids.className = 'band-cell';
-            tdGrids.textContent = r.grids.size || '—';
-            if (r.grids.size) tdGrids.title = [...r.grids].sort().join(', ');
-            tr.appendChild(tdGrids);
 
             const tdBands = document.createElement('td');
             tdBands.className = 'm-date';
