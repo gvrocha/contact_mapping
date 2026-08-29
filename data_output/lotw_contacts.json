@@ -18643,17 +18643,17 @@
     "call": "HG2DX",
     "datetime": "2026-08-29T03:09:00",
     "lotw_upload_datetime": "2026-08-29T03:37:02",
-    "qsl_date": null,
+    "qsl_date": "2026-08-29T05:41:08",
     "band": "40m",
     "mode": "FT8",
-    "dxcc": "",
-    "country": "",
+    "dxcc": "239",
+    "country": "HUNGARY",
     "continent": "EU",
-    "confirmed": false,
-    "gridsquare": "",
+    "confirmed": true,
+    "gridsquare": "JN87TQ",
     "state": "",
-    "cq_zone": "",
-    "itu_zone": ""
+    "cq_zone": "15",
+    "itu_zone": "28"
   },
   {
     "call": "ES5RY",
@@ -18739,16 +18739,16 @@
     "call": "IZ8XJJ",
     "datetime": "2026-08-29T03:22:00",
     "lotw_upload_datetime": "2026-08-29T03:37:02",
-    "qsl_date": null,
+    "qsl_date": "2026-08-29T15:33:04",
     "band": "40m",
     "mode": "FT8",
-    "dxcc": "",
-    "country": "",
+    "dxcc": "248",
+    "country": "ITALY",
     "continent": "EU",
-    "confirmed": false,
-    "gridsquare": "",
+    "confirmed": true,
+    "gridsquare": "JN70BV",
     "state": "",
-    "cq_zone": "",
-    "itu_zone": ""
+    "cq_zone": "15",
+    "itu_zone": "28"
   }
 ]
