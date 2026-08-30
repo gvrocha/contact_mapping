@@ -89,22 +89,19 @@ const STATE_COUNTRIES = new Set([
     'CANADA', 'BRAZIL', 'BRASIL',
 ]);
 
-// Matches pskreporter.info's default band palette (map_control_oln.js
-// `colormapper`, non-altcolor variant) so band coloring reads consistently
-// across both tools.
 const BAND_COLORS = {
-    '160m': '#7cfc00',
-    '80m':  '#e550e5',
-    '60m':  '#00008b',
-    '40m':  '#5959ff',
-    '30m':  '#62d962',
-    '20m':  '#f2c40c',
-    '17m':  '#f2f261',
-    '15m':  '#cca166',
-    '12m':  '#b22222',
-    '10m':  '#ff69b4',
-    '6m':   '#ff0000',
-    '2m':   '#ff1493',
+    '160m': '#c084fc',
+    '80m':  '#f87171',
+    '60m':  '#fb923c',
+    '40m':  '#fbbf24',
+    '30m':  '#bef264',
+    '20m':  '#34d399',
+    '17m':  '#22d3ee',
+    '15m':  '#60a5fa',
+    '12m':  '#818cf8',
+    '10m':  '#e879f9',
+    '6m':   '#f472b6',
+    '2m':   '#94a3b8',
 };
 
 const CONT_ORDER = ['NA','SA','EU','AF','AS','OC','AN'];
@@ -634,325 +631,6 @@ function initMap(entities, contacts, qrzCache = {}, spotlight = {}, options = {}
 }
 
 // ---------------------------------------------------------------------------
-// Alt Map — pskreporter-style QSL map: one pin per confirmed QSO, colored by
-// band, with band/time filter controls.
-// ---------------------------------------------------------------------------
-
-// Classic map-pin silhouette (teardrop + inner dot), filled with the given
-// band color. Drawn directly on canvas — like makeXIcon above — rather than
-// rasterized from SVG, because Chrome's createImageBitmap (which maplibre's
-// map.loadImage uses internally) cannot decode SVG sources.
-function makePinIcon(color, size = 26) {
-    const w = size, h = Math.round(size * 1.4);
-    const canvas = document.createElement('canvas');
-    canvas.width = w; canvas.height = h;
-    const ctx = canvas.getContext('2d');
-    const cx = w / 2;
-    const r  = (w / 2) - 1.5;
-    const cy = r + 1.5;
-    const tipY = h - 1;
-    const splay = 35 * Math.PI / 180; // half-angle of the tail opening
-    const leftX  = cx - r * Math.sin(splay);
-    const rightX = cx + r * Math.sin(splay);
-    const sideY  = cy + r * Math.cos(splay);
-
-    ctx.beginPath();
-    ctx.moveTo(rightX, sideY);
-    ctx.lineTo(cx, tipY);
-    ctx.lineTo(leftX, sideY);
-    ctx.arc(cx, cy, r, Math.PI / 2 + splay, Math.PI / 2 - splay, false);
-    ctx.closePath();
-    ctx.fillStyle = color;
-    ctx.fill();
-    ctx.lineWidth = 1.4;
-    ctx.strokeStyle = '#111827';
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(cx, cy, r * 0.4, 0, Math.PI * 2);
-    ctx.fillStyle = '#111827';
-    ctx.globalAlpha = 0.75;
-    ctx.fill();
-    ctx.globalAlpha = 1;
-
-    return ctx.getImageData(0, 0, w, h);
-}
-
-// pskreporter-style graticule: 20°×10° Maidenhead field lines (rendered as a
-// native maplibre layer, black, so they can sit below the pins layer via
-// beforeId) plus 2-letter field labels (e.g. "CN") centered in each cell.
-// Labels are drawn on a plain canvas overlay, synced to the viewport the same
-// way the Grid coverage tab's overlay is, rather than a maplibre symbol layer
-// — pskreporter's own grid text uses "Georgia", a font the vector-tile glyph
-// server here doesn't have, and canvas text can use any font actually
-// installed in the browser, matching pskreporter exactly.
-function buildGraticuleLines() {
-    const features = [];
-    for (let lon = -180; lon <= 180; lon += 20) {
-        features.push({ type: 'Feature', geometry: { type: 'LineString', coordinates: [[lon, -90], [lon, 90]] } });
-    }
-    for (let lat = -90; lat <= 90; lat += 10) {
-        features.push({ type: 'Feature', geometry: { type: 'LineString', coordinates: [[-180, lat], [180, lat]] } });
-    }
-    return { type: 'FeatureCollection', features };
-}
-
-function drawGraticuleLabels(map, ctx, W, H) {
-    const bounds = map.getBounds();
-    const west  = Math.floor(bounds.getWest()  / 20) * 20;
-    const east  = Math.ceil (bounds.getEast()  / 20) * 20;
-    const south = Math.max(-90, Math.floor(bounds.getSouth() / 10) * 10);
-    const north = Math.min(90,  Math.ceil (bounds.getNorth() / 10) * 10);
-
-    ctx.fillStyle    = '#000000';
-    ctx.font         = '15px Georgia';
-    ctx.textAlign    = 'center';
-    ctx.textBaseline = 'middle';
-    for (let lon = west; lon < east; lon += 20) {
-        for (let lat = south; lat < north; lat += 10) {
-            const label = lonLatToGrid4(lon, lat).slice(0, 2);
-            const c = map.project([lon + 10, lat + 5]);
-            ctx.fillText(label, c.x, c.y);
-        }
-    }
-}
-
-const ALT_MAP_TIME_MS = {
-    all: null,
-    '24h':  86400e3,
-    '7d':   7   * 86400e3,
-    '30d':  30  * 86400e3,
-    '90d':  90  * 86400e3,
-    '180d': 180 * 86400e3,
-    '365d': 365 * 86400e3,
-};
-
-function initAltMap(contacts) {
-    const homeGrid   = (typeof CONFIG !== 'undefined' && CONFIG.homeGrid) ? CONFIG.homeGrid : 'EM69';
-    const homeCoords = maidenheadToLatLon(homeGrid);
-
-    // Only confirmed QSOs (QSLs) with a resolvable gridsquare can be pinned.
-    const points = [];
-    let skippedNoGrid = 0;
-    for (const qso of contacts) {
-        if (!qso.confirmed) continue;
-        const coords = qso.gridsquare ? maidenheadToLatLon(qso.gridsquare) : null;
-        if (!coords) { skippedNoGrid++; continue; }
-        const rawCountry = qso.country || '';
-        const state = STATE_COUNTRIES.has(rawCountry.toUpperCase()) ? (qso.state || '') : '';
-        const country = state ? `${displayName(rawCountry)} (${state})` : (displayName(rawCountry) || rawCountry);
-        points.push({
-            coords, call: qso.call, band: qso.band || 'unknown', mode: qso.mode || '',
-            grid: qso.gridsquare.toUpperCase(), country,
-            datetime: qso.datetime || '', ts: qso.datetime ? Date.parse(qso.datetime) : 0,
-        });
-    }
-
-    const bandSet = new Set(points.map(p => p.band));
-    const activeBands = [
-        ...BAND_ORDER.filter(b => bandSet.has(b)),
-        ...[...bandSet].filter(b => !BAND_ORDER.includes(b)).sort(),
-    ];
-
-    const bandSelect = document.getElementById('altmap-band');
-    const timeSelect = document.getElementById('altmap-time');
-    const countEl    = document.getElementById('altmap-count');
-    const legendEl    = document.getElementById('altmap-legend');
-
-    bandSelect.innerHTML = '<option value="all">all bands</option>' +
-        activeBands.map(b => `<option value="${b}">${b}</option>`).join('');
-
-    const trailingNotes = [];
-    if (skippedNoGrid) {
-        trailingNotes.push(`${skippedNoGrid} confirmed QSO${skippedNoGrid === 1 ? '' : 's'} not shown — no gridsquare`);
-    }
-    trailingNotes.push('Drag the ribbon below, or its edges, to set a time range');
-    legendEl.innerHTML = '<span>Bands:</span>' + activeBands.map(b =>
-        `<span class="legend-item"><span class="legend-swatch" style="background:${BAND_COLORS[b] || '#808080'}"></span> ${b}</span>`
-    ).join('') + `<span style="margin-left:auto">${trailingNotes.join(' · ')}</span>`;
-
-    // Time-range ribbon — the exact same draggable brush component as the
-    // Activity tab's, plotting cumulative QSL count. Dragging it sets the
-    // filter window directly; the "over the last" dropdown just jumps the
-    // brush to a preset window (mirroring Activity's zoom-bar buttons).
-    const qslTimePoints = [...points]
-        .filter(p => p.ts > 0)
-        .sort((a, b) => a.ts - b.ts)
-        .map((p, i) => ({ t: p.ts, v: i + 1 }));
-    const nowTs   = Date.now();
-    const dataMin = qslTimePoints.length ? qslTimePoints[0].t : nowTs - DAY_MS;
-    const dataMax = Math.max(nowTs, ...(qslTimePoints.length ? [qslTimePoints[qslTimePoints.length - 1].t] : [nowTs]));
-
-    // Reassigned once the map/pins layer exists (see map.on('load') below);
-    // a no-op until then so early brush/dropdown interaction can't throw.
-    let applyFilter = () => {};
-
-    const brush = initTimeBrush(document.getElementById('altmap-brush'), {
-        points: qslTimePoints,
-        color: 'rgba(5,150,105,0.55)',
-        dataMin, dataMax,
-        initStart: dataMin, initEnd: dataMax,
-        onChange: () => applyFilter(),
-    });
-
-    timeSelect.addEventListener('change', () => {
-        const span = ALT_MAP_TIME_MS[timeSelect.value];
-        const end  = Date.now();
-        brush.setRange(span ? end - span : dataMin, end);
-    });
-    bandSelect.addEventListener('change', () => applyFilter());
-
-    const map = new maplibregl.Map({
-        container: 'alt-map',
-        style: 'https://tiles.openfreemap.org/styles/liberty',
-        center: [20, 20],
-        zoom: 1.5,
-    });
-    map.addControl(new maplibregl.NavigationControl(), 'top-right');
-
-    // Grid labels ("CN", "DO", …) — plain canvas overlay, positioned above
-    // the maplibre canvas so it can use pskreporter's own font (Georgia).
-    // See buildGraticuleLines / drawGraticuleLabels above for why this is
-    // split between a native line layer and a canvas text layer.
-    const gridToggle = document.getElementById('altmap-grid-toggle');
-    const gridLabelCvs = document.createElement('canvas');
-    gridLabelCvs.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;';
-    document.getElementById('alt-map').appendChild(gridLabelCvs);
-    const gridLabelCtx = gridLabelCvs.getContext('2d');
-
-    function redrawGridLabels() {
-        gridLabelCtx.clearRect(0, 0, gridLabelCvs.width, gridLabelCvs.height);
-        if (gridToggle && gridToggle.checked) {
-            drawGraticuleLabels(map, gridLabelCtx, gridLabelCvs.width, gridLabelCvs.height);
-        }
-    }
-
-    map.on('load', () => {
-        map.addSource('altgrid-lines', { type: 'geojson', data: buildGraticuleLines() });
-
-        const iconIds = {};
-        for (const b of activeBands) {
-            const id = `alt-pin-${b}`;
-            iconIds[b] = id;
-            map.addImage(id, makePinIcon(BAND_COLORS[b] || '#808080'));
-        }
-
-        const features = points.map(p => ({
-            type: 'Feature',
-            geometry: { type: 'Point', coordinates: p.coords },
-            properties: {
-                icon: iconIds[p.band] || iconIds[activeBands[0]],
-                band: p.band, call: p.call, mode: p.mode, grid: p.grid,
-                country: p.country, datetime: p.datetime, ts: p.ts,
-            },
-        }));
-
-        map.addSource('altpoints', { type: 'geojson', data: { type: 'FeatureCollection', features } });
-        map.addLayer({
-            id: 'alt-pins',
-            type: 'symbol',
-            source: 'altpoints',
-            layout: {
-                'icon-image': ['get', 'icon'],
-                'icon-size': 0.75,
-                'icon-anchor': 'bottom',
-                'icon-allow-overlap': true,
-                'icon-ignore-placement': true,
-            },
-        });
-
-        // Inserted below 'alt-pins' (via beforeId) so pins always render on
-        // top of the grid, matching pskreporter's own layer order.
-        map.addLayer({
-            id: 'altgrid-lines',
-            type: 'line',
-            source: 'altgrid-lines',
-            paint: { 'line-color': '#000000', 'line-width': 1 },
-        }, 'alt-pins');
-        const applyGridVisibility = () => {
-            map.setLayoutProperty('altgrid-lines', 'visibility',
-                !gridToggle || gridToggle.checked ? 'visible' : 'none');
-        };
-        if (gridToggle) gridToggle.addEventListener('change', () => { applyGridVisibility(); redrawGridLabels(); });
-        applyGridVisibility();
-
-        // Geodesic arc on hover, matching the Map tab's visual language.
-        const emptyLine = { type: 'FeatureCollection', features: [] };
-        map.addSource('alt-geodesic', { type: 'geojson', data: emptyLine });
-        map.addLayer({
-            id: 'alt-geodesic-line', type: 'line', source: 'alt-geodesic',
-            paint: { 'line-color': '#ffffff', 'line-width': 2.5, 'line-opacity': 0.6 },
-        });
-        const setArc = (coords) => {
-            if (!homeCoords) return;
-            map.getSource('alt-geodesic').setData({
-                type: 'FeatureCollection',
-                features: [{ type: 'Feature', geometry: { type: 'LineString', coordinates: greatCirclePoints(homeCoords, coords) } }],
-            });
-        };
-        const clearArc = () => map.getSource('alt-geodesic').setData(emptyLine);
-
-        const hoverTip = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 16, maxWidth: '240px' });
-
-        map.on('mouseenter', 'alt-pins', (ev) => {
-            const p = ev.features[0].properties;
-            const coords = ev.features[0].geometry.coordinates;
-            map.getCanvas().style.cursor = 'pointer';
-            map.setPaintProperty('alt-geodesic-line', 'line-color', BAND_COLORS[p.band] || '#808080');
-            setArc(coords);
-            const km = homeCoords ? haversineKm(homeCoords, coords) : null;
-            const distStr = km == null ? '' :
-                (distUnit === 'km' ? `${Math.round(km).toLocaleString()} km` : `${Math.round(km * 0.621371).toLocaleString()} mi`);
-            hoverTip.setLngLat(coords)
-                .setHTML(
-                    `<strong>${p.call}</strong> &nbsp;<span style="color:${BAND_COLORS[p.band] || '#9ca3af'}">${p.band}</span>` +
-                    (p.mode ? ` <span style="color:#9ca3af">· ${p.mode}</span>` : '') +
-                    `<br><small>${p.country ? p.country + ' · ' : ''}${p.grid}</small>` +
-                    `<br><small>${fmtDatetime(p.datetime)}</small>` +
-                    (distStr ? `<br><small>${distStr}</small>` : '')
-                ).addTo(map);
-        });
-        map.on('mouseleave', 'alt-pins', () => {
-            map.getCanvas().style.cursor = '';
-            clearArc();
-            hoverTip.remove();
-        });
-
-        applyFilter = () => {
-            const band = bandSelect.value;
-            const [start, end] = brush.getRange();
-
-            const clauses = ['all', ['>=', ['get', 'ts'], start], ['<=', ['get', 'ts'], end]];
-            if (band !== 'all') clauses.push(['==', ['get', 'band'], band]);
-            map.setFilter('alt-pins', clauses);
-
-            const shown = features.reduce((n, f) => {
-                if (band !== 'all' && f.properties.band !== band) return n;
-                if (f.properties.ts < start || f.properties.ts > end) return n;
-                return n + 1;
-            }, 0);
-            if (countEl) countEl.textContent = `${shown} of ${points.length} QSLs shown`;
-        };
-        applyFilter();
-    });
-
-    map.on('render', redrawGridLabels);
-
-    function resize() {
-        map.resize();
-        brush.resize();
-        const mapEl = document.getElementById('alt-map');
-        gridLabelCvs.width  = mapEl.clientWidth;
-        gridLabelCvs.height = mapEl.clientHeight;
-        redrawGridLabels();
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    return { resize };
-}
-
-// ---------------------------------------------------------------------------
 // Scoreboard table
 // ---------------------------------------------------------------------------
 
@@ -1245,10 +923,7 @@ function buildCallsignTable(contacts, qrzCache = {}) {
         const r = byKey[key];
         r.count++;
         if (qso.confirmed) r.qslCount++;
-        if (qso.gridsquare) {
-            const g = qso.gridsquare.toUpperCase();
-            r.grids.add(g.length > 6 ? g.slice(0, 6) : g);
-        }
+        if (qso.gridsquare) r.grids.add(qso.gridsquare.toUpperCase());
         if (qso.band) r.bands.add(qso.band);
         if (qso.mode) r.modes.add(qso.mode);
         if (!r.country && qso.country) r.country = normalizeCountryName(qso.country);
@@ -1270,9 +945,9 @@ function buildCallsignTable(contacts, qrzCache = {}) {
     const COLS = [
         { key: 'call',     label: 'Call sign', defaultDir:  1 },
         { key: 'country',  label: 'Country',   defaultDir:  1 },
-        { key: 'grids',    label: 'Grids',     defaultDir: -1 },
         { key: 'count',    label: 'QSOs',      defaultDir: -1 },
         { key: 'qslCount', label: 'QSLs',      defaultDir: -1 },
+        { key: 'grids',    label: 'Grids',     defaultDir: -1 },
         { key: 'bands',    label: 'Bands',     defaultDir: -1 },
         { key: 'modes',    label: 'Modes',     defaultDir: -1 },
         { key: 'firstQso', label: 'First QSO', defaultDir: -1 },
@@ -1359,11 +1034,6 @@ function buildCallsignTable(contacts, qrzCache = {}) {
             tdCountry.textContent = flag ? `${flag} ${countryStr}` : countryStr;
             tr.appendChild(tdCountry);
 
-            const tdGrids = document.createElement('td');
-            tdGrids.className = 'm-date';
-            tdGrids.textContent = [...r.grids].sort().join(' · ') || '—';
-            tr.appendChild(tdGrids);
-
             const tdCount = document.createElement('td');
             tdCount.className = 'band-cell';
             tdCount.textContent = r.count;
@@ -1375,6 +1045,12 @@ function buildCallsignTable(contacts, qrzCache = {}) {
             tdQsl.textContent = r.qslCount || '—';
             tdQsl.style.color = r.qslCount ? '#34d399' : '#4b5563';
             tr.appendChild(tdQsl);
+
+            const tdGrids = document.createElement('td');
+            tdGrids.className = 'band-cell';
+            tdGrids.textContent = r.grids.size || '—';
+            if (r.grids.size) tdGrids.title = [...r.grids].sort().join(', ');
+            tr.appendChild(tdGrids);
 
             const tdBands = document.createElement('td');
             tdBands.className = 'm-date';
@@ -2342,142 +2018,6 @@ function drawTimeAxis(ctx, start, end, xOf, tickY, labelY, plotLeft, plotRight) 
     }
 }
 
-// Draggable time-range brush: plots a cumulative step series and lets the
-// user select a sub-range by dragging — pan inside the shaded window, resize
-// either edge, or click outside it to re-center a same-width window there.
-// Shared by the Activity tab's zoom brush and the Alt Map's time-range
-// ribbon, so both look and behave identically.
-//
-// onChange(start, end) fires on every user-driven change (drag or click-jump)
-// AND on every external setRange() call, so a caller only needs to react to
-// onChange rather than duplicate range bookkeeping. onUserInteract() fires
-// only for drag/click-jump — not external setRange() — so a caller can tell
-// "the user grabbed the brush" apart from "code moved it" (e.g. to clear a
-// preset button's active state only on manual interaction).
-function initTimeBrush(container, { points, color, dataMin, dataMax, initStart, initEnd, onChange, onUserInteract }) {
-    let visStart = initStart;
-    let visEnd   = initEnd;
-
-    const cvs = document.createElement('canvas');
-    cvs.style.cssText = 'position:absolute;top:0;left:0;cursor:grab;';
-    container.appendChild(cvs);
-
-    const PAD = { l: 46, r: 12 };
-
-    function clampWindow(s, width) {
-        width = Math.min(width, dataMax - dataMin);
-        if (s < dataMin) s = dataMin;
-        if (s + width > dataMax) s = dataMax - width;
-        return s;
-    }
-
-    function draw() {
-        const ctx = cvs.getContext('2d');
-        const W = cvs.width, H = cvs.height;
-        ctx.clearRect(0, 0, W, H);
-        const plotW = W - PAD.l - PAD.r;
-        if (plotW <= 0 || H <= 0) return;
-
-        const maxV = Math.max(stepValueAt(points, dataMax), 1);
-        const xOf  = t => PAD.l + ((t - dataMin) / (dataMax - dataMin)) * plotW;
-        const yOf  = v => 4 + (H - 8) - (v / maxV) * (H - 8);
-
-        const path = stepPath(points, dataMin, dataMax, xOf, yOf);
-        ctx.strokeStyle = color;
-        ctx.lineWidth   = 1;
-        ctx.beginPath();
-        path.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
-        ctx.stroke();
-
-        const selX0 = xOf(visStart), selX1 = xOf(visEnd);
-        ctx.fillStyle = 'rgba(96,165,250,0.18)';
-        ctx.fillRect(selX0, 0, selX1 - selX0, H);
-        ctx.strokeStyle = 'rgba(96,165,250,0.9)';
-        ctx.lineWidth   = 1;
-        ctx.strokeRect(selX0 + 0.5, 0.5, (selX1 - selX0) - 1, H - 1);
-
-        const handleW = 5;
-        ctx.fillStyle = 'rgba(96,165,250,0.9)';
-        ctx.fillRect(selX0 - handleW / 2, 0, handleW, H);
-        ctx.fillRect(selX1 - handleW / 2, 0, handleW, H);
-
-        cvs._geom = { plotW, selX0, selX1 };
-    }
-
-    function applyRange(s, e) {
-        const width = e - s;
-        s = clampWindow(s, width);
-        visStart = s;
-        visEnd   = s + width;
-        draw();
-        if (onChange) onChange(visStart, visEnd);
-    }
-
-    let dragMode = null;   // 'left' | 'right' | 'pan'
-    let dragStartX = 0, dragStartVisStart = 0, dragStartVisEnd = 0;
-
-    function tFromX(x) {
-        const { plotW } = cvs._geom;
-        return dataMin + ((x - PAD.l) / plotW) * (dataMax - dataMin);
-    }
-
-    cvs.addEventListener('pointerdown', (e) => {
-        const rect = cvs.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const { selX0, selX1 } = cvs._geom;
-        const HIT = 8;
-        if (Math.abs(x - selX0) <= HIT)      dragMode = 'left';
-        else if (Math.abs(x - selX1) <= HIT) dragMode = 'right';
-        else if (x > selX0 && x < selX1)     dragMode = 'pan';
-        else {
-            const width  = visEnd - visStart;
-            const center = tFromX(x);
-            if (onUserInteract) onUserInteract();
-            applyRange(center - width / 2, center + width / 2);
-            return;
-        }
-        dragStartX = x;
-        dragStartVisStart = visStart;
-        dragStartVisEnd   = visEnd;
-        cvs.setPointerCapture(e.pointerId);
-        if (onUserInteract) onUserInteract();
-    });
-
-    cvs.addEventListener('pointermove', (e) => {
-        if (!dragMode) return;
-        const rect = cvs.getBoundingClientRect();
-        const x  = e.clientX - rect.left;
-        const dt = tFromX(x) - tFromX(dragStartX);
-        const minSpan = DAY_MS;
-        if (dragMode === 'left') {
-            visStart = Math.max(dataMin, Math.min(dragStartVisStart + dt, visEnd - minSpan));
-        } else if (dragMode === 'right') {
-            visEnd = Math.min(dataMax, Math.max(dragStartVisEnd + dt, visStart + minSpan));
-        } else {
-            const width = dragStartVisEnd - dragStartVisStart;
-            visStart = clampWindow(dragStartVisStart + dt, width);
-            visEnd   = visStart + width;
-        }
-        draw();
-        if (onChange) onChange(visStart, visEnd);
-    });
-
-    window.addEventListener('pointerup', () => { dragMode = null; });
-
-    function resize() {
-        cvs.width  = container.clientWidth;
-        cvs.height = container.clientHeight;
-        draw();
-    }
-    resize();
-
-    return {
-        resize,
-        getRange: () => [visStart, visEnd],
-        setRange: (s, e) => applyRange(s, e),
-    };
-}
-
 function initActivityChart(contacts) {
     const qsoPoints = [...contacts]
         .filter(q => q.datetime)
@@ -2505,6 +2045,10 @@ function initActivityChart(contacts) {
     mainCvs.style.cssText = 'position:absolute;top:0;left:0;';
     mainContainer.appendChild(mainCvs);
 
+    const brushCvs = document.createElement('canvas');
+    brushCvs.style.cssText = 'position:absolute;top:0;left:0;cursor:grab;';
+    brushContainer.appendChild(brushCvs);
+
     const tip = document.createElement('div');
     tip.className = 'g-tip';
     tip.style.cssText = 'position:absolute;display:none;pointer-events:none;z-index:10;';
@@ -2516,18 +2060,25 @@ function initActivityChart(contacts) {
     const fixYToggle = document.getElementById('activity-fixy-toggle');
     if (fixYToggle) fixYToggle.addEventListener('change', () => { drawMain(); });
 
+    function clampWindow(s, width) {
+        width = Math.min(width, dataMax - dataMin);
+        if (s < dataMin) s = dataMin;
+        if (s + width > dataMax) s = dataMax - width;
+        return s;
+    }
+
+    function setRange(s, e) {
+        const width = e - s;
+        s = clampWindow(s, width);
+        visStart = s;
+        visEnd   = s + width;
+        drawMain();
+        drawBrush();
+    }
+
     function clearActiveZoomButton() {
         zoomBar.querySelectorAll('.unit-btn').forEach(b => b.classList.remove('active'));
     }
-
-    const brush = initTimeBrush(brushContainer, {
-        points: qsoPoints,
-        color: 'rgba(217,119,6,0.55)',
-        dataMin, dataMax,
-        initStart: visStart, initEnd: visEnd,
-        onChange: (s, e) => { visStart = s; visEnd = e; drawMain(); },
-        onUserInteract: clearActiveZoomButton,
-    });
 
     function drawMain() {
         const ctx = mainCvs.getContext('2d');
@@ -2585,17 +2136,107 @@ function initActivityChart(contacts) {
         rangeLabel.textContent = `${fmtShortDate(start)} – ${fmtShortDate(end)}`;
     }
 
+    function drawBrush() {
+        const ctx = brushCvs.getContext('2d');
+        const W = brushCvs.width, H = brushCvs.height;
+        ctx.clearRect(0, 0, W, H);
+        const bPad  = { l: PAD.l, r: PAD.r };
+        const plotW = W - bPad.l - bPad.r;
+        if (plotW <= 0 || H <= 0) return;
+
+        const maxV = Math.max(stepValueAt(qsoPoints, dataMax), 1);
+        const xOf  = t => bPad.l + ((t - dataMin) / (dataMax - dataMin)) * plotW;
+        const yOf  = v => 4 + (H - 8) - (v / maxV) * (H - 8);
+
+        const path = stepPath(qsoPoints, dataMin, dataMax, xOf, yOf);
+        ctx.strokeStyle = 'rgba(217,119,6,0.55)';
+        ctx.lineWidth   = 1;
+        ctx.beginPath();
+        path.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
+        ctx.stroke();
+
+        const selX0 = xOf(visStart), selX1 = xOf(visEnd);
+        ctx.fillStyle = 'rgba(96,165,250,0.18)';
+        ctx.fillRect(selX0, 0, selX1 - selX0, H);
+        ctx.strokeStyle = 'rgba(96,165,250,0.9)';
+        ctx.lineWidth   = 1;
+        ctx.strokeRect(selX0 + 0.5, 0.5, (selX1 - selX0) - 1, H - 1);
+
+        const handleW = 5;
+        ctx.fillStyle = 'rgba(96,165,250,0.9)';
+        ctx.fillRect(selX0 - handleW / 2, 0, handleW, H);
+        ctx.fillRect(selX1 - handleW / 2, 0, handleW, H);
+
+        brushCvs._geom = { bPad, plotW, selX0, selX1 };
+    }
+
+    // ------ Brush drag interaction: pan (inside), resize (edges), jump (outside) ------
+    let dragMode = null;   // 'left' | 'right' | 'pan'
+    let dragStartX = 0, dragStartVisStart = 0, dragStartVisEnd = 0;
+
+    function tFromX(x) {
+        const { bPad, plotW } = brushCvs._geom;
+        return dataMin + ((x - bPad.l) / plotW) * (dataMax - dataMin);
+    }
+
+    brushCvs.addEventListener('pointerdown', (e) => {
+        const rect = brushCvs.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const { selX0, selX1 } = brushCvs._geom;
+        const HIT = 8;
+        if (Math.abs(x - selX0) <= HIT)      dragMode = 'left';
+        else if (Math.abs(x - selX1) <= HIT) dragMode = 'right';
+        else if (x > selX0 && x < selX1)     dragMode = 'pan';
+        else {
+            const width  = visEnd - visStart;
+            const center = tFromX(x);
+            clearActiveZoomButton();
+            setRange(center - width / 2, center + width / 2);
+            return;
+        }
+        dragStartX = x;
+        dragStartVisStart = visStart;
+        dragStartVisEnd   = visEnd;
+        brushCvs.setPointerCapture(e.pointerId);
+        clearActiveZoomButton();
+    });
+
+    brushCvs.addEventListener('pointermove', (e) => {
+        if (!dragMode) return;
+        const rect = brushCvs.getBoundingClientRect();
+        const x  = e.clientX - rect.left;
+        const dt = tFromX(x) - tFromX(dragStartX);
+        const minSpan = DAY_MS;
+        if (dragMode === 'left') {
+            visStart = Math.max(dataMin, Math.min(dragStartVisStart + dt, visEnd - minSpan));
+        } else if (dragMode === 'right') {
+            visEnd = Math.min(dataMax, Math.max(dragStartVisEnd + dt, visStart + minSpan));
+        } else {
+            const width = dragStartVisEnd - dragStartVisStart;
+            visStart = clampWindow(dragStartVisStart + dt, width);
+            visEnd   = visStart + width;
+        }
+        drawMain();
+        drawBrush();
+    });
+
+    window.addEventListener('pointerup', () => { dragMode = null; });
+
     // ------ Zoom preset buttons ------
     zoomBar.addEventListener('click', (ev) => {
         const btn = ev.target.closest('.unit-btn');
         if (!btn) return;
         zoomBar.querySelectorAll('.unit-btn').forEach(b => b.classList.toggle('active', b === btn));
         if (btn.dataset.years === 'all') {
-            brush.setRange(dataMin, dataMax);
+            visStart = dataMin;
+            visEnd   = dataMax;
         } else {
             const spanMs = Number(btn.dataset.years) * 365 * DAY_MS;
-            brush.setRange(Math.max(dataMin, dataMax - spanMs), dataMax);
+            visEnd   = dataMax;
+            visStart = Math.max(dataMin, dataMax - spanMs);
         }
+        drawMain();
+        drawBrush();
     });
 
     // ------ Hover tooltip on the main chart ------
@@ -2619,8 +2260,10 @@ function initActivityChart(contacts) {
     function resize() {
         mainCvs.width   = mainContainer.clientWidth;
         mainCvs.height  = mainContainer.clientHeight;
+        brushCvs.width  = brushContainer.clientWidth;
+        brushCvs.height = brushContainer.clientHeight;
         drawMain();
-        brush.resize();
+        drawBrush();
     }
 
     resize();
@@ -2749,7 +2392,6 @@ async function main() {
     });
 
     let globeMap      = null;
-    let altMap        = null;
     let gridMap       = null;
     let activityChart = null;
     document.getElementById('tab-bar').addEventListener('click', (ev) => {
@@ -2760,18 +2402,6 @@ async function main() {
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `tab-${target}`));
         if (target === 'map') {
             if (map) map.resize();
-        } else if (target === 'altmap') {
-            if (!altMap) {
-                requestAnimationFrame(() => requestAnimationFrame(() => {
-                    try {
-                        altMap = initAltMap(contacts);
-                    } catch (err) {
-                        document.getElementById('alt-map').textContent = `Alt map error: ${err.message}`;
-                    }
-                }));
-            } else {
-                altMap.resize();
-            }
         } else if (target === 'globe') {
             if (!globeMap) {
                 requestAnimationFrame(() => requestAnimationFrame(() => {
