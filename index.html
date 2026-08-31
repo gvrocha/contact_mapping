@@ -87,29 +87,6 @@
     }
     .unit-btn.active { border-color: #34d399; color: #34d399; }
 
-    .ctrl-bar {
-      flex: 0 0 auto;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      background: #1f2937;
-      border-bottom: 1px solid #374151;
-      font-size: 0.78rem;
-      color: #9ca3af;
-      flex-wrap: wrap;
-    }
-    .ctrl-select {
-      background: #111827;
-      color: #d1d5db;
-      border: 1px solid #374151;
-      border-radius: 3px;
-      padding: 3px 6px;
-      font-size: 0.78rem;
-      cursor: pointer;
-    }
-    .ctrl-select:hover { border-color: #4b5563; }
-
     #scoreboard {
       flex: 1;
       overflow-y: auto;
@@ -227,7 +204,6 @@
 
   <div id="tab-bar">
     <button class="tab active" data-tab="map">Map</button>
-    <button class="tab" data-tab="altmap">Alt Map</button>
     <button class="tab" data-tab="globe">Globe</button>
     <button class="tab" data-tab="grid">Grid coverage</button>
     <button class="tab" data-tab="activity">Activity</button>
@@ -321,30 +297,6 @@
         <button class="unit-btn active" data-unit="km">km</button><button class="unit-btn" data-unit="mi">mi</button>
       </span>
     </div>
-  </div>
-
-  <div id="tab-altmap" class="tab-panel">
-    <div id="alt-map" style="flex:1;position:relative;min-height:0"></div>
-    <div class="ctrl-bar" style="border-bottom:none;border-top:1px solid #374151">
-      <span>On</span>
-      <select id="altmap-band" class="ctrl-select"></select>
-      <span>over the last</span>
-      <select id="altmap-time" class="ctrl-select">
-        <option value="all" selected>all time</option>
-        <option value="24h">24 hours</option>
-        <option value="7d">7 days</option>
-        <option value="30d">30 days</option>
-        <option value="90d">90 days</option>
-        <option value="180d">6 months</option>
-        <option value="365d">1 year</option>
-      </select>
-      <label style="display:flex;align-items:center;gap:5px;margin-left:12px;cursor:pointer;user-select:none;">
-        <input type="checkbox" id="altmap-grid-toggle" checked style="cursor:pointer"> Show grid
-      </label>
-      <span id="altmap-count" style="margin-left:auto;color:#6b7280"></span>
-    </div>
-    <div id="altmap-brush" style="flex:0 0 64px;position:relative"></div>
-    <div id="altmap-legend" class="ctrl-bar" style="border-bottom:none;border-top:1px solid #374151"></div>
   </div>
 
   <div id="tab-callsigns" class="tab-panel">
@@ -444,6 +396,6 @@
   <script src="vendor/maplibre-gl.js"></script>
   <script src="vendor/globe.gl.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=20260824a"></script>
+  <script src="app.js?v=20260709g"></script>
 </body>
 </html>
