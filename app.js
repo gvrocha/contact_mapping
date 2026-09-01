@@ -636,7 +636,12 @@ function initMap(entities, contacts, qrzCache = {}, spotlight = {}, options = {}
 // ---------------------------------------------------------------------------
 // Alt Map — pskreporter-style QSL map: one pin per confirmed QSO, colored by
 // band, with band/time filter controls.
+//
+// DISABLED for now — commented out rather than deleted so it's easy to
+// re-enable. See index.html for the matching commented-out tab button/panel,
+// and main() below for the commented-out tab-bar wiring.
 // ---------------------------------------------------------------------------
+/*
 
 // Classic map-pin silhouette (teardrop + inner dot), filled with the given
 // band color. Drawn directly on canvas — like makeXIcon above — rather than
@@ -951,6 +956,8 @@ function initAltMap(contacts) {
 
     return { resize };
 }
+
+*/
 
 // ---------------------------------------------------------------------------
 // Scoreboard table
@@ -2749,7 +2756,7 @@ async function main() {
     });
 
     let globeMap      = null;
-    let altMap        = null;
+    // let altMap        = null;   // Alt Map tab disabled — see app.js's "Alt Map" section
     let gridMap       = null;
     let activityChart = null;
     document.getElementById('tab-bar').addEventListener('click', (ev) => {
@@ -2760,7 +2767,7 @@ async function main() {
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `tab-${target}`));
         if (target === 'map') {
             if (map) map.resize();
-        } else if (target === 'altmap') {
+        /* } else if (target === 'altmap') {   // Alt Map tab disabled — see app.js's "Alt Map" section
             if (!altMap) {
                 requestAnimationFrame(() => requestAnimationFrame(() => {
                     try {
@@ -2772,6 +2779,7 @@ async function main() {
             } else {
                 altMap.resize();
             }
+        */
         } else if (target === 'globe') {
             if (!globeMap) {
                 requestAnimationFrame(() => requestAnimationFrame(() => {
