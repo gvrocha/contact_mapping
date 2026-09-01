@@ -8,8 +8,6 @@ __pycache__/
 # Run ./lotw_fetch --full and optionally ./qrz_fetch to regenerate locally.
 data_output/
 
-# Vendored JS/CSS bundles — regenerate with the curl commands in README
-site/vendor/
 
 # macOS
 .DS_Store

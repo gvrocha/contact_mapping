@@ -44,8 +44,25 @@ both GitHub Pages and S3, no manual step required.
 
 **v1.1 is done as of 2026-07-04.**
 
+## Current milestone: v1.2 (in progress)
+Dashboard UI improvements. See `documentation/claude/20260901_altmap_and_grids_handoff.md` for full
+detail on what's below.
+
+- [x] Call sign table: new "Grids" column (unique Maidenhead locators per call sign)
+- [x] `BAND_COLORS` harmonized with pskreporter's own band palette
+- [ ] "Alt Map" tab — pskreporter-style QSL map (per-band pins, Maidenhead grid overlay, draggable
+      time-range brush shared with the Activity tab). **Built but currently disabled** (commented
+      out in both `site/index.html` and `site/app.js`) pending two open design questions — see the
+      handoff doc: replacing the time-range dropdown with explicit from/to fields, and supporting
+      multi-band selection (not just one-or-all).
+
 ## Notes
-- `data_output/`, `.claude/`, `site/vendor/` are gitignored by design (personal data, local tooling config, vendored assets regenerated via README instructions).
+- `data_output/` and `.claude/` are gitignored by design (personal QSO data; local tooling config).
+  `site/vendor/` (MapLibre GL JS, globe.gl, and the globe texture) is **committed directly** —
+  earlier revisions gitignored it with a promise to "regenerate via README instructions" that never
+  actually got written, which would have left a fresh clone with a silently broken map/globe.
+  Committing the built assets (~3.3MB, pinned at MapLibre GL JS v4.7.1 / globe.gl v2.46.1) avoids
+  that trap entirely — no CDN dependency, no drift, works immediately after `git clone`.
 - CI does a full refetch (`--full`) every run rather than incremental, since the GitHub-hosted
   runner has no state persisted between runs. Fine at personal scale; revisit if LoTW history
   grows large enough that this gets slow or hits rate limits.
