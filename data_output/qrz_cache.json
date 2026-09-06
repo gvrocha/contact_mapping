@@ -6467,5 +6467,139 @@
     "lon": -119.172893,
     "grid": "DN01JW",
     "state": "OR"
+  },
+  "CU3AK": {
+    "lat": 38.736503,
+    "lon": -27.064465,
+    "grid": "HM68LR"
+  },
+  "DF3VG": {
+    "lat": 48.52,
+    "lon": 9.373333,
+    "grid": "JN48QM",
+    "state": "BW"
+  },
+  "E78W": {
+    "lat": 44.566147,
+    "lon": 18.609583,
+    "grid": "JN94HN"
+  },
+  "EA8DGI": {
+    "lat": 27.980386,
+    "lon": -15.393193,
+    "grid": "IL27HX"
+  },
+  "F4DIA": {
+    "lat": 46.1875,
+    "lon": 6.291667,
+    "grid": "JN36DE"
+  },
+  "F5RAV": {
+    "lat": 49.270833,
+    "lon": 1.791667,
+    "grid": "JN09VG"
+  },
+  "IK4LFI": {
+    "lat": 44.482017,
+    "lon": 10.450166,
+    "grid": "JN54FL",
+    "state": "RE"
+  },
+  "IT9ISS": {
+    "lat": 38.169417,
+    "lon": 13.307233,
+    "grid": "JM68PE"
+  },
+  "K9OM": {
+    "lat": 28.94,
+    "lon": -80.87,
+    "grid": "EL98NW",
+    "state": "WI"
+  },
+  "LY2TS": {
+    "lat": 55.904551,
+    "lon": 21.838846,
+    "grid": "KO05WV"
+  },
+  "LY5J": {
+    "lat": 54.686667,
+    "lon": 25.206667,
+    "grid": "KO24OQ"
+  },
+  "LY790A": {
+    "lat": 55.270833,
+    "lon": 22.875,
+    "grid": "KO15KG"
+  },
+  "N6GR": {
+    "lat": 32.782981,
+    "lon": -105.956697,
+    "grid": "DM72AS",
+    "state": "NM"
+  },
+  "OK1WCF": {
+    "lat": 50.5625,
+    "lon": 15.875,
+    "grid": "JO70WN"
+  },
+  "OM8FR": {
+    "lat": 49.193139,
+    "lon": 20.446788,
+    "grid": "KN09FE"
+  },
+  "PP6BVM": {
+    "lat": -10.93419,
+    "lon": -37.067915,
+    "grid": "HH19LB",
+    "state": "SE"
+  },
+  "PY2IML": {
+    "lat": -21.855,
+    "lon": -47.46,
+    "grid": "GG68GD",
+    "state": "SP"
+  },
+  "SP4NDY": {
+    "lat": 54.206874,
+    "lon": 21.050595,
+    "grid": "KO04ME",
+    "state": "11"
+  },
+  "SQ2OMK": {
+    "lat": 53.028639,
+    "lon": 18.694536,
+    "grid": "JO93IA"
+  },
+  "SQ4OLI": {
+    "lat": 53.50129,
+    "lon": 19.750218,
+    "grid": "JO93VM"
+  },
+  "TA2CMP": {
+    "lat": 41.478333,
+    "lon": 31.79,
+    "grid": "KN51VL"
+  },
+  "TF8SM": {
+    "lat": 64.07072,
+    "lon": -22.656586,
+    "grid": "HP84QB"
+  },
+  "VA6RR": {
+    "lat": 55.074691,
+    "lon": -117.271661,
+    "grid": "DO15IB",
+    "state": "AB"
+  },
+  "VA7ESH": {
+    "lat": 53.895,
+    "lon": -122.793333,
+    "grid": "CO83OV",
+    "state": "BC"
+  },
+  "XE2SSB": {
+    "lat": 27.067417,
+    "lon": -101.543295,
+    "grid": "DL97FB"
   }
 }
