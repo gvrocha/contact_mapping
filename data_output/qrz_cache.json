@@ -6623,5 +6623,55 @@
     "lon": -111.809934,
     "grid": "DM49CD",
     "state": "UT"
+  },
+  "AA0HJ": {
+    "lat": 39.75547,
+    "lon": -99.336265,
+    "grid": "EM09HS",
+    "state": "KS"
+  },
+  "AA5KB": {
+    "lat": 35.58571,
+    "lon": -97.65653,
+    "grid": "EM15EO",
+    "state": "OK"
+  },
+  "EG3PDA": {
+    "lat": 40.395833,
+    "lon": -3.708333,
+    "grid": "IN80DJ"
+  },
+  "F4GWG": {
+    "lat": 47.811606,
+    "lon": -4.350864,
+    "grid": "IN77TT"
+  },
+  "HH2JR": {
+    "lat": 18.511234,
+    "lon": -72.2825,
+    "grid": "FK38UM"
+  },
+  "KC3WHU": {
+    "lat": 40.541111,
+    "lon": -74.368611,
+    "grid": "FN20TM",
+    "state": "NJ"
+  },
+  "N3HCN": {
+    "lat": 29.895,
+    "lon": -81.376667,
+    "grid": "EL99HV",
+    "state": "FL"
+  },
+  "N4HCN": {
+    "lat": 29.89865,
+    "lon": -81.34305,
+    "grid": "EL99HV",
+    "state": "FL"
+  },
+  "PD7EB": {
+    "lat": 52.020833,
+    "lon": 4.541667,
+    "grid": "JO22GA"
   }
 }
