@@ -24355,17 +24355,17 @@
     "call": "IU5AWQ",
     "datetime": "2026-09-16T02:13:00",
     "lotw_upload_datetime": "2026-09-16T03:32:33",
-    "qsl_date": null,
+    "qsl_date": "2026-09-16T05:55:12",
     "band": "40m",
     "mode": "FT8",
-    "dxcc": "",
-    "country": "",
+    "dxcc": "248",
+    "country": "ITALY",
     "continent": "EU",
-    "confirmed": false,
+    "confirmed": true,
     "gridsquare": "",
     "state": "",
-    "cq_zone": "",
-    "itu_zone": ""
+    "cq_zone": "15",
+    "itu_zone": "28"
   },
   {
     "call": "W7WKR",
