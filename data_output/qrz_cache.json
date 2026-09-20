@@ -7979,5 +7979,123 @@
     "lat": 47.678084,
     "lon": 26.284199,
     "grid": "KN37DQ"
+  },
+  "AD0AA": {
+    "lat": 44.85239,
+    "lon": -93.41941,
+    "grid": "EN34GU",
+    "state": "MN"
+  },
+  "AD9AR": {
+    "lat": 39.691854,
+    "lon": -86.090801,
+    "grid": "EM69WQ",
+    "state": "IN"
+  },
+  "K1TRP": {
+    "lat": 42.03827,
+    "lon": -72.311481,
+    "grid": "FN32UA",
+    "state": "MA"
+  },
+  "K5AWJ": {
+    "lat": 30.09155,
+    "lon": -94.85324,
+    "grid": "EM20NC",
+    "state": "TX"
+  },
+  "K6LTW": {
+    "lat": 38.449076,
+    "lon": -105.182217,
+    "grid": "DM78JK",
+    "state": "CO"
+  },
+  "KC1TRF": {
+    "lat": 44.32707,
+    "lon": -69.86772,
+    "grid": "FN54BH",
+    "state": "ME"
+  },
+  "KF8EDQ": {
+    "lat": 43.44964,
+    "lon": -84.01227,
+    "grid": "EN73XK",
+    "state": "MI"
+  },
+  "KI5F": {
+    "lat": 32.05841,
+    "lon": -88.72688,
+    "grid": "EM52PB",
+    "state": "MS"
+  },
+  "N4SIM": {
+    "lat": 41.295968,
+    "lon": -72.305801,
+    "grid": "FN31UH",
+    "state": "CT"
+  },
+  "NT6K": {
+    "lat": 41.55104,
+    "lon": -120.546675,
+    "grid": "CN91RN",
+    "state": "CA"
+  },
+  "PA4PA": {
+    "lat": 52.1875,
+    "lon": 5.375,
+    "grid": "JO22QE"
+  },
+  "PY5BH": {
+    "lat": -25.613655,
+    "lon": -49.204239,
+    "grid": "GG54JJ",
+    "state": "PR"
+  },
+  "W6Q": {
+    "lat": 41.826943,
+    "lon": -87.855025,
+    "grid": "EN61BT",
+    "state": "IL"
+  },
+  "W9MDM": {
+    "lat": 41.390489,
+    "lon": -87.177025,
+    "grid": "EN61JJ",
+    "state": "IN"
+  },
+  "WC1J": {
+    "lat": 25.889464,
+    "lon": -80.271049,
+    "grid": "EL95UV",
+    "state": "FL"
+  },
+  "WP4TUN": {
+    "lat": 18.145551,
+    "lon": -67.147817,
+    "grid": "FK68KD",
+    "state": "PR"
+  },
+  "WV8U": {
+    "lat": 39.051766,
+    "lon": -84.347377,
+    "grid": "EM79TB",
+    "state": "OH"
+  },
+  "WW2AVG": {
+    "lat": 40.686667,
+    "lon": -105.543333,
+    "grid": "DN70FQ",
+    "state": "CO"
+  },
+  "WW5G": {
+    "lat": 31.424146,
+    "lon": -92.486631,
+    "grid": "EM31SK",
+    "state": "LA"
+  },
+  "YN1ZGN": {
+    "lat": 12.111141,
+    "lon": -86.233905,
+    "grid": "EK62VC"
   }
 }
