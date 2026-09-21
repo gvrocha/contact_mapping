@@ -25459,17 +25459,17 @@
     "call": "T77RN",
     "datetime": "2026-09-19T19:57:00",
     "lotw_upload_datetime": "2026-09-20T15:25:04",
-    "qsl_date": null,
+    "qsl_date": "2026-09-21T14:05:50",
     "band": "17m",
     "mode": "FT8",
-    "dxcc": "",
-    "country": "",
+    "dxcc": "278",
+    "country": "SAN MARINO",
     "continent": "EU",
-    "confirmed": false,
+    "confirmed": true,
     "gridsquare": "",
     "state": "",
-    "cq_zone": "",
-    "itu_zone": ""
+    "cq_zone": "15",
+    "itu_zone": "28"
   },
   {
     "call": "EA2DP",
