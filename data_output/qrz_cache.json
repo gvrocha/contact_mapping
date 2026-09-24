@@ -8352,5 +8352,59 @@
     "lat": -25.605027,
     "lon": 28.394365,
     "grid": "KG44EJ"
+  },
+  "H91FZQ": {},
+  "K0MEZ": {
+    "lat": 39.23576,
+    "lon": -94.65923,
+    "grid": "EM29QF",
+    "state": "MO"
+  },
+  "K3YTL": {
+    "lat": 40.960593,
+    "lon": -75.97949,
+    "grid": "FN20AX",
+    "state": "PA"
+  },
+  "KB8OTK": {
+    "lat": 40.967278,
+    "lon": -80.562379,
+    "grid": "EN90RX",
+    "state": "OH"
+  },
+  "KX8T": {
+    "lat": 39.02262,
+    "lon": -79.932392,
+    "grid": "FM09AA",
+    "state": "WV"
+  },
+  "N8ALB": {
+    "lat": 40.068323,
+    "lon": -82.473268,
+    "grid": "EN80SB",
+    "state": "OH"
+  },
+  "UR1CCT": {
+    "lat": 49.0625,
+    "lon": 31.458333,
+    "grid": "KN59RB"
+  },
+  "W3ENR": {
+    "lat": 38.319474,
+    "lon": -75.219133,
+    "grid": "FM28JH",
+    "state": "MD"
+  },
+  "W5TXX": {
+    "lat": 32.90412,
+    "lon": -96.51656,
+    "grid": "EM12RV",
+    "state": "TX"
+  },
+  "WD9INA": {
+    "lat": 44.9026,
+    "lon": -89.576153,
+    "grid": "EN54FV",
+    "state": "WI"
   }
 }
