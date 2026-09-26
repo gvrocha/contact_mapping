@@ -8406,5 +8406,23 @@
     "lon": -89.576153,
     "grid": "EN54FV",
     "state": "WI"
+  },
+  "KC5JEC": {
+    "lat": 36.741697,
+    "lon": -108.191411,
+    "grid": "DM56VR",
+    "state": "NM"
+  },
+  "PY2RVM": {
+    "lat": -21.29411,
+    "lon": -50.345769,
+    "grid": "GG48TQ",
+    "state": "SP"
+  },
+  "VE6SKY": {
+    "lat": 50.904886,
+    "lon": -113.946793,
+    "grid": "DO30AV",
+    "state": "AB"
   }
 }
