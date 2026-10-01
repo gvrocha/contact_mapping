@@ -8807,5 +8807,130 @@
     "lon": -104.96,
     "grid": "DN70ML",
     "state": "CO"
+  },
+  "AI7XC": {
+    "lat": 46.26673,
+    "lon": -119.44935,
+    "grid": "DN06GG",
+    "state": "WA"
+  },
+  "CO7KD": {
+    "lat": 21.395,
+    "lon": -77.876667,
+    "grid": "FL11BJ"
+  },
+  "K4JGC": {
+    "lat": 30.544552,
+    "lon": -84.196777,
+    "grid": "EM70VN",
+    "state": "FL"
+  },
+  "K4RGN": {
+    "lat": 35.88158,
+    "lon": -78.682373,
+    "grid": "FM05PV",
+    "state": "NC"
+  },
+  "KA5PUD": {
+    "lat": 30.417348,
+    "lon": -95.713319,
+    "grid": "EM20DK",
+    "state": "TX"
+  },
+  "KE2DVU": {
+    "lat": 34.700361,
+    "lon": -76.568145,
+    "grid": "FM14RQ",
+    "state": "NY"
+  },
+  "KF7JRD": {
+    "lat": 40.440621,
+    "lon": -109.522039,
+    "grid": "DN50FK",
+    "state": "UT"
+  },
+  "KG7YC": {
+    "lat": 33.621639,
+    "lon": -112.151686,
+    "grid": "DM33WO",
+    "state": "AZ"
+  },
+  "KQ4JJP": {
+    "lat": 26.68816,
+    "lon": -80.23946,
+    "grid": "EL96VQ",
+    "state": "FL"
+  },
+  "KR4MGG": {
+    "lat": 32.537244,
+    "lon": -85.220329,
+    "grid": "EM72JM",
+    "state": "AL"
+  },
+  "M7EYP": {
+    "lat": 53.762331,
+    "lon": -0.309755,
+    "grid": "IO93US"
+  },
+  "N0KWA": {
+    "lat": 30.532558,
+    "lon": -89.87395,
+    "grid": "EM50BM",
+    "state": "LA"
+  },
+  "N5UG": {
+    "lat": 36.673227,
+    "lon": -96.007928,
+    "grid": "EM16XQ",
+    "state": "OK"
+  },
+  "N5WW": {
+    "lat": 32.935481,
+    "lon": -97.260304,
+    "grid": "EM12IW",
+    "state": "TX"
+  },
+  "NS0Q": {
+    "lat": 47.942753,
+    "lon": -97.029354,
+    "grid": "EN17LW",
+    "state": "ND"
+  },
+  "NU3WJP": {},
+  "VA2KFU": {
+    "lat": 45.61497,
+    "lon": -73.549943,
+    "grid": "FN35FO",
+    "state": "QC"
+  },
+  "VE6AGD": {
+    "lat": 50.9014,
+    "lon": -114.0493,
+    "grid": "DO20XV",
+    "state": "AB"
+  },
+  "W1FAM": {
+    "lat": 42.401361,
+    "lon": -71.587057,
+    "grid": "FN42EJ",
+    "state": "MA"
+  },
+  "W1JHK": {
+    "lat": 42.54385,
+    "lon": -71.61783,
+    "grid": "FN42EN",
+    "state": "MA"
+  },
+  "W7SMR": {
+    "lat": 43.028109,
+    "lon": -108.391824,
+    "grid": "DN53TA",
+    "state": "WY"
+  },
+  "WY8N": {
+    "lat": 35.69684,
+    "lon": -78.730487,
+    "grid": "FM05PQ",
+    "state": "NC"
   }
 }
