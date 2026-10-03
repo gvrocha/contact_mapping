@@ -9115,5 +9115,57 @@
     "lon": -100.376667,
     "grid": "DL90TM",
     "state": "QR"
+  },
+  "HK8HSM": {
+    "lat": 4.8125,
+    "lon": -73.625,
+    "grid": "FJ34ET"
+  },
+  "KC4YLV": {
+    "lat": 39.740358,
+    "lon": -104.818581,
+    "grid": "DM79OR",
+    "state": "CO"
+  },
+  "KG4FVR": {
+    "lat": 30.08801,
+    "lon": -83.535348,
+    "grid": "EM80FC",
+    "state": "FL"
+  },
+  "N2AHT": {
+    "lat": 39.758082,
+    "lon": -75.79046,
+    "grid": "FM29CS",
+    "state": "PA"
+  },
+  "N3VRY": {
+    "lat": 39.617988,
+    "lon": -75.689815,
+    "grid": "FM29DO",
+    "state": "DE"
+  },
+  "VA3FAT": {
+    "lat": 46.327138,
+    "lon": -79.411342,
+    "grid": "FN06HH",
+    "state": "ON"
+  },
+  "VK6BAD": {
+    "lat": -33.252654,
+    "lon": 115.731781,
+    "grid": "OF76UR",
+    "state": "WA"
+  },
+  "W7RPT": {
+    "lat": 35.980158,
+    "lon": -115.059027,
+    "grid": "DM25LX",
+    "state": "NV"
+  },
+  "ZF2OO": {
+    "lat": 19.293668,
+    "lon": -81.381418,
+    "grid": "EK99HH"
   }
 }
