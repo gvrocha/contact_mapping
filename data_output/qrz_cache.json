@@ -9614,5 +9614,58 @@
     "lon": -123.26032,
     "grid": "CN83IH",
     "state": "OR"
+  },
+  "DL2HT": {
+    "lat": 53.425973,
+    "lon": 9.781768,
+    "grid": "JO43VK"
+  },
+  "DL8UVG": {
+    "lat": 51.603333,
+    "lon": 14.373333,
+    "grid": "JO71EO"
+  },
+  "F8RZ": {
+    "lat": 45.46178,
+    "lon": -0.173218,
+    "grid": "IN95VL"
+  },
+  "HB9SNR": {
+    "lat": 46.703021,
+    "lon": 6.997663,
+    "grid": "JN36LQ"
+  },
+  "IK0CHU": {
+    "lat": 42.423308,
+    "lon": 12.14934,
+    "grid": "JN62BK"
+  },
+  "KG7RDR": {
+    "lat": 41.772287,
+    "lon": -112.163453,
+    "grid": "DN31WS",
+    "state": "UT"
+  },
+  "KJ4KFJ": {
+    "lat": 44.762749,
+    "lon": -85.816236,
+    "grid": "EN74CS",
+    "state": "MI"
+  },
+  "OE2GRN": {
+    "lat": 47.403142,
+    "lon": 12.83864,
+    "grid": "JN67KJ"
+  },
+  "PB1PCH": {
+    "lat": 52.375926,
+    "lon": 4.929321,
+    "grid": "JO22LJ"
+  },
+  "W5WNR": {
+    "lat": 30.268252,
+    "lon": -95.425305,
+    "grid": "EM20GG",
+    "state": "TX"
   }
 }
