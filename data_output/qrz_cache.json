@@ -9667,5 +9667,119 @@
     "lon": -95.425305,
     "grid": "EM20GG",
     "state": "TX"
+  },
+  "AA1SU": {
+    "lat": 44.491201,
+    "lon": -73.116124,
+    "grid": "FN34KL",
+    "state": "VT"
+  },
+  "K3TEF": {
+    "lat": 40.145788,
+    "lon": -76.276658,
+    "grid": "FN10UD",
+    "state": "PA"
+  },
+  "KD2TDA": {
+    "lat": 32.425538,
+    "lon": -80.635565,
+    "grid": "EM92QK",
+    "state": "SC"
+  },
+  "KE2CUR": {
+    "lat": 40.78725,
+    "lon": -73.72818,
+    "grid": "FN30DS",
+    "state": "FL"
+  },
+  "KE7HEV": {
+    "lat": 46.061667,
+    "lon": -88.793333,
+    "grid": "EN56OB",
+    "state": "MI"
+  },
+  "KF0YWI": {
+    "lat": 42.506592,
+    "lon": -94.17699,
+    "grid": "EN22VM",
+    "state": "IA"
+  },
+  "KF4AAF": {
+    "lat": 30.266678,
+    "lon": -81.475672,
+    "grid": "EM90GG",
+    "state": "FL"
+  },
+  "KF7PBM": {
+    "lat": 48.366451,
+    "lon": -119.582819,
+    "grid": "DN08FI",
+    "state": "WA"
+  },
+  "KK7VDA": {
+    "lat": 46.54903,
+    "lon": -120.89322,
+    "grid": "CN96NN",
+    "state": "WA"
+  },
+  "KO4MAQ": {
+    "lat": 33.136527,
+    "lon": -87.556069,
+    "grid": "EM63FD",
+    "state": "AL"
+  },
+  "N0BFQ": {
+    "lat": 41.637803,
+    "lon": -93.786006,
+    "grid": "EN31CP",
+    "state": "IA"
+  },
+  "N0F": {
+    "lat": 29.653504,
+    "lon": -82.32719,
+    "grid": "EL89UP",
+    "state": "FL"
+  },
+  "N3VAN": {
+    "lat": 40.52,
+    "lon": -75.376667,
+    "grid": "FN20HM",
+    "state": "PA"
+  },
+  "N5HLM": {
+    "lat": 32.496399,
+    "lon": -93.687401,
+    "grid": "EM32DL",
+    "state": "LA"
+  },
+  "N9CWW": {
+    "lat": 38.15922,
+    "lon": -86.06508,
+    "grid": "EM68XD",
+    "state": "IN"
+  },
+  "VA2ASP": {
+    "lat": 45.6158,
+    "lon": -72.940899,
+    "grid": "FN35MO",
+    "state": "QC"
+  },
+  "WB2MLY": {
+    "lat": 44.549672,
+    "lon": -73.513171,
+    "grid": "FN34FN",
+    "state": "NY"
+  },
+  "WE0D": {
+    "lat": 29.039889,
+    "lon": -81.996435,
+    "grid": "EL99AA",
+    "state": "FL"
+  },
+  "WS2E": {
+    "lat": 41.327326,
+    "lon": -74.805404,
+    "grid": "FN21OH",
+    "state": "PA"
   }
 }
