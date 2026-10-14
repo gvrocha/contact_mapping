@@ -9899,5 +9899,57 @@
     "lon": -102.37645,
     "grid": "DM81TU",
     "state": "TX"
+  },
+  "HI3LER": {
+    "lat": 19.450919,
+    "lon": -70.694722,
+    "grid": "FK49PK"
+  },
+  "K9WDS": {
+    "lat": 31.35505,
+    "lon": -86.47069,
+    "grid": "EM61SI",
+    "state": "AL"
+  },
+  "KU7H": {
+    "lat": 33.6798,
+    "lon": -117.18948,
+    "grid": "DM13JQ",
+    "state": "CA"
+  },
+  "TF5B": {
+    "lat": 65.681523,
+    "lon": -18.107374,
+    "grid": "IP05WQ"
+  },
+  "VK1AX": {
+    "lat": -39.47564,
+    "lon": 147.313395,
+    "grid": "QF30PM",
+    "state": "AC"
+  },
+  "VK2SMP": {
+    "lat": -35.563333,
+    "lon": 149.706667,
+    "grid": "QF44UK",
+    "state": "NS"
+  },
+  "W5DOC": {
+    "lat": 29.533916,
+    "lon": -98.002777,
+    "grid": "EL09XM",
+    "state": "TX"
+  },
+  "WE8R": {
+    "lat": 29.810471,
+    "lon": -81.392677,
+    "grid": "EL99HT",
+    "state": "FL"
+  },
+  "WY7M": {
+    "lat": 44.011751,
+    "lon": -107.959432,
+    "grid": "DN64AA",
+    "state": "WY"
   }
 }
