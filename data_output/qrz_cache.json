@@ -9951,5 +9951,34 @@
     "lon": -107.959432,
     "grid": "DN64AA",
     "state": "WY"
+  },
+  "HI8WJI": {
+    "lat": 18.530258,
+    "lon": -69.811621,
+    "grid": "FK58CM"
+  },
+  "HK1E": {
+    "lat": 11.028393,
+    "lon": -74.85251,
+    "grid": "FK21NA",
+    "state": "AT"
+  },
+  "KM0JPR": {
+    "lat": 46.2851,
+    "lon": -96.13065,
+    "grid": "EN16WG",
+    "state": "MN"
+  },
+  "N9CBW": {
+    "lat": 38.04417,
+    "lon": -85.555572,
+    "grid": "EM78FB",
+    "state": "KY"
+  },
+  "VO1NC": {
+    "lat": 48.026018,
+    "lon": -53.221774,
+    "grid": "GN38JA",
+    "state": "NL"
   }
 }
