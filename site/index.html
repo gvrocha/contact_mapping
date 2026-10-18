@@ -143,7 +143,7 @@
     td.cont { color: #6b7280; font-size: 0.72rem; }
     td.band-cell { text-align: center; font-size: 0.72rem; font-weight: 600; }
 
-    #tab-callsigns, #tab-milestones, #tab-states, #tab-canada,
+    #tab-callsigns, #tab-milestones, #tab-states, #tab-canada, #tab-na,
     #tab-europe, #tab-sa, #tab-af, #tab-as, #tab-oc,
     #tab-gridtable { overflow-y: auto; overflow-x: auto; padding: 20px 24px; }
 
@@ -153,20 +153,20 @@
     .region-count strong { color: #34d399; }
     .region-note { font-size: 0.74rem; color: #4b5563; margin-top: 8px; }
 
-    #callsigns-table, #milestones-table, #states-table, #canada-table,
+    #callsigns-table, #milestones-table, #states-table, #canada-table, #na-table,
     #europe-table, #sa-table, #af-table, #as-table, #oc-table, #grid-table {
       width: 100%; max-width: 1200px; border-collapse: collapse; font-size: 0.82rem;
     }
-    #callsigns-table th, #milestones-table th, #states-table th, #canada-table th,
+    #callsigns-table th, #milestones-table th, #states-table th, #canada-table th, #na-table th,
     #europe-table th, #sa-table th, #af-table th, #as-table th, #oc-table th, #grid-table th {
       text-align: left; padding: 6px 12px; border-bottom: 1px solid #374151;
       font-weight: 600; color: #9ca3af; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em;
     }
-    #callsigns-table td, #milestones-table td, #states-table td, #canada-table td,
+    #callsigns-table td, #milestones-table td, #states-table td, #canada-table td, #na-table td,
     #europe-table td, #sa-table td, #af-table td, #as-table td, #oc-table td, #grid-table td {
       padding: 6px 12px; border-bottom: 1px solid #1f2937;
     }
-    #callsigns-table tr:hover td, #milestones-table tr:hover td, #states-table tr:hover td, #canada-table tr:hover td,
+    #callsigns-table tr:hover td, #milestones-table tr:hover td, #states-table tr:hover td, #canada-table tr:hover td, #na-table tr:hover td,
     #europe-table tr:hover td, #sa-table tr:hover td, #af-table tr:hover td,
     #as-table tr:hover td, #oc-table tr:hover td, #grid-table tr:hover td { background: #1f2937; }
     td.m-label { color: #f9fafb; }
@@ -238,6 +238,7 @@
     <button class="tab" data-tab="table">DXCC</button>
     <button class="tab" data-tab="states">US States</button>
     <button class="tab" data-tab="canada">Canada</button>
+    <button class="tab" data-tab="na">N. America</button>
     <button class="tab" data-tab="europe">Europe</button>
     <button class="tab" data-tab="sa">S. America</button>
     <button class="tab" data-tab="af">Africa</button>
@@ -402,6 +403,14 @@
     <p class="region-note" id="canada-note"></p>
   </div>
 
+  <div id="tab-na" class="tab-panel">
+    <p class="region-count" id="na-summary"></p>
+    <table id="na-table">
+      <thead id="na-head"></thead>
+      <tbody id="na-body"></tbody>
+    </table>
+  </div>
+
   <div id="tab-europe" class="tab-panel">
     <p class="region-count" id="eu-summary"></p>
     <table id="europe-table">
@@ -447,6 +456,6 @@
   <script src="vendor/maplibre-gl.js"></script>
   <script src="vendor/globe.gl.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=20260901a"></script>
+  <script src="app.js?v=20261018a"></script>
 </body>
 </html>
