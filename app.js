@@ -1795,7 +1795,7 @@ function buildRegionTable({ theadId, tbodyId, rows, nameLabel = 'Entity', hasFla
 }
 
 // ---------------------------------------------------------------------------
-// Continent entity tables (Europe, South America, Africa, Asia, Oceania)
+// Continent entity tables (North America, Europe, South America, Africa, Asia, Oceania)
 // ---------------------------------------------------------------------------
 
 // Stable uppercase key: prefers LoTW country field; falls back to prefix lookup
@@ -2826,7 +2826,7 @@ async function main() {
         () => buildMilestones(contacts),
         () => buildUsStates(contacts, qrzCache),
         () => buildCanadaProvinces(contacts, qrzCache),
-        ...['EU', 'SA', 'AF', 'AS', 'OC'].map(c =>
+        ...['NA', 'EU', 'SA', 'AF', 'AS', 'OC'].map(c =>
             () => buildContinentEntities(contacts, refEntities, prefixLookup, c)),
         () => buildGridTable(contacts, qrzCache),
     ];
