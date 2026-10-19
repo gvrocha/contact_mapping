@@ -7,6 +7,8 @@ jaraco.functools==4.5.0
 keyring==25.7.0
 keyrings.alt==5.0.2
 more-itertools==11.1.0
+numpy==2.5.4
 pycryptodomex==3.23.0
 requests==2.34.2
+shapely==2.2.0
 urllib3==2.7.0

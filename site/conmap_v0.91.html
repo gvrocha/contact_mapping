@@ -4,7 +4,111 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DXCC Dashboard v0.91</title>
+  <link rel="stylesheet" href="vendor/maplibre-gl.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #111827;
+      color: #d1d5db;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      flex: 0 0 auto;
+      padding: 10px 16px;
+      background: #1f2937;
+      border-bottom: 1px solid #374151;
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+    header h1 { font-size: 1.05rem; color: #f9fafb; letter-spacing: 0.03em; }
+    #stats { font-size: 0.8rem; color: #9ca3af; }
+
+    #tab-bar {
+      flex: 0 0 auto;
+      display: flex;
+      background: #1f2937;
+      border-bottom: 1px solid #374151;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    #tab-bar::-webkit-scrollbar { display: none; }
+    .tab {
+      padding: 7px 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #6b7280;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+    }
+    .tab:hover { color: #d1d5db; }
+    .tab.active { color: #f9fafb; border-bottom-color: #34d399; }
+
+    .tab-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+    .tab-panel.active { display: flex; }
+
+    #dxcc-map { flex: 1; min-height: 0; }
+
+    .map-legend {
+      flex: 0 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 18px;
+      padding: 6px 12px;
+      background: #1f2937;
+      border-top: 1px solid #374151;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-item strong { color: #f9fafb; font-variant-numeric: tabular-nums; }
+    .legend-swatch {
+      width: 18px; height: 12px; border: 1px solid #6b7280; border-radius: 2px; display: inline-block;
+    }
+    .legend-note { margin-left: auto; color: #6b7280; }
+
+    .maplibregl-popup-content {
+      background: #1f2937; color: #d1d5db; font-size: 0.78rem; padding: 8px 10px;
+      border: 1px solid #374151; border-radius: 4px; box-shadow: 0 2px 8px #0008;
+    }
+    .maplibregl-popup-tip { display: none; }
+    .pop-name { color: #f9fafb; font-weight: 600; margin-bottom: 3px; }
+    .pop-status { font-weight: 600; }
+    .pop-counts { color: #9ca3af; margin-top: 3px; font-variant-numeric: tabular-nums; }
+
+    @media (max-width: 600px) {
+      header { padding: 8px 16px; }
+      .legend-note { margin-left: 0; }
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <h1 id="title">DXCC Dashboard v0.91</h1>
+    <span id="stats">Loading…</span>
+  </header>
+
+  <div id="tab-bar">
+    <button class="tab active" data-tab="dxccmap">DXCC map</button>
+  </div>
+
+  <div id="tab-dxccmap" class="tab-panel active">
+    <div id="dxcc-map"></div>
+    <div class="map-legend" id="dxcc-legend"></div>
+  </div>
+
+  <script src="vendor/maplibre-gl.js"></script>
+  <script src="config.js"></script>
+  <script src="app_v0.91.js?v=20261019a"></script>
 </body>
 </html>

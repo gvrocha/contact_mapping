@@ -17,3 +17,6 @@ deploy.conf
 
 # Local Claude Code tooling config
 .claude/
+
+# Downloaded build inputs (Natural Earth, ADIF spec, QRZ DXCC list)
+.cache/
