@@ -1,22 +1,38 @@
 'use strict';
 
-// v0.91 — DXCC map tab.
+// v0.91 — DXCC map, CQ zones (WAZ) and ITU zones tabs.
 // Served locally from the project root (site/ one level down) or on S3/Pages with
 // the data folders next to the page — same path rule as v0.9.
 const _base = window.location.pathname.includes('/site/') ? '../' : '';
-const GEOMETRY_URL = _base + 'data_reference/dxcc_map.geojson';
-const LOTW_URL     = _base + 'data_output/lotw_contacts.json';
-const QRZ_QSO_URL  = _base + 'data_output/qrz_qso_table.tsv';
+const DXCC_GEOMETRY_URL = _base + 'data_reference/dxcc_map.geojson';
+const CQ_ZONES_URL      = _base + 'data_reference/cq_zones.geojson';
+const ITU_ZONES_URL     = _base + 'data_reference/itu_zones.geojson';
+const LOTW_URL          = _base + 'data_output/lotw_contacts.json';
+const QRZ_QSO_URL       = _base + 'data_output/qrz_qso_table.tsv';
 
-// Status ranks are hierarchical: an entity takes the highest status any of its QSOs reaches.
+// Status is hierarchical: an entity or zone takes the highest status any of its QSOs reaches.
 const STATUS = {
-    lotw:   { rank: 3, label: 'LoTW confirmed', color: '#22c55e' },
-    qrz:    { rank: 2, label: 'QRZ confirmed',  color: '#fb923c' },
-    worked: { rank: 1, label: 'Unconfirmed',    color: '#fed7aa' },
-    none:   { rank: 0, label: 'Not worked',     color: '#ffffff' },
+    lotw:   { label: 'LoTW confirmed', color: '#22c55e' },
+    qrz:    { label: 'QRZ confirmed',  color: '#fb923c' },
+    worked: { label: 'Unconfirmed',    color: '#fed7aa' },
+    none:   { label: 'Not worked',     color: '#ffffff' },
 };
-const WATER_COLOR  = '#cfe8f7';
-const BORDER_COLOR = '#94a3b8';
+const STATUS_ORDER = ['lotw', 'qrz', 'worked', 'none'];
+
+const DXCC_WATER  = '#cfe8f7';
+const DXCC_BORDER = '#94a3b8';
+// Zone maps: black-and-white base so the translucent zone colours read clearly.
+const BW_WATER  = '#ffffff';
+const BW_LAND   = '#e5e7eb';
+const BW_BORDER = '#111827';
+const ZONE_FILL_OPACITY = 0.45;
+
+const ZONE_SETS = {
+    cq:  { title: 'CQ zone',  count: 40, key: 'cqz',  url: CQ_ZONES_URL,  mapId: 'cq-map',  tableId: 'cq-table',
+           legendId: 'cq-legend',  note: '40 CQ zones (WAZ)' },
+    itu: { title: 'ITU zone', count: 90, key: 'ituz', url: ITU_ZONES_URL, mapId: 'itu-map', tableId: 'itu-table',
+           legendId: 'itu-legend', note: '90 ITU zones' },
+};
 
 // ---------------------------------------------------------------------------
 // Data
@@ -32,43 +48,70 @@ function parseTsv(text) {
 }
 
 const minuteKey = (call, dt) => `${(call || '').toUpperCase()}|${(dt || '').slice(0, 16)}`;
+const zoneNum   = z => { const n = parseInt(z, 10); return Number.isFinite(n) && n > 0 ? String(n) : ''; };
 
-// Per-entity tallies from both sources.
-//  - QRZ Logbook: every QSO has a DXCC number; status 'C' = confirmed on QRZ.
-//  - LoTW: confirmed QSOs carry a DXCC number. Unconfirmed ones do not, so they are
-//    matched to a QRZ QSO by call + minute (or by call, when that call maps to one
-//    entity) to find their entity; LoTW QSOs already in the QRZ log are not re-counted.
-function tallyEntities(lotw, qrzRows) {
-    const ent = {};
-    const get = d => (ent[d] ||= { qsos: 0, lotwConf: 0, qrzConf: 0 });
+// One merged QSO list from both sources: {dxcc, cqz, ituz, datetime, lotwConf, qrzConf}.
+//  - Every QRZ Logbook QSO is included; if the same QSO (call + minute) is confirmed on
+//    LoTW, LoTW's entity and zones win (they come from the other station's certificate;
+//    QRZ's come from a profile and disagree on ~4% of QSOs).
+//  - LoTW QSOs missing from the QRZ log are added. Unconfirmed LoTW QSOs carry no entity
+//    or zones, so those are taken from the call's QRZ QSOs when that call has only one value.
+function mergeQsos(lotw, qrzRows) {
+    const lotwByMinute = new Map(lotw.map(q => [minuteKey(q.call, q.datetime), q]));
+    const byCall = new Map();      // call -> {dxcc:Set, cqz:Set, ituz:Set} from QRZ
+    const used = new Set();
+    const out = [];
 
-    const qrzByMinute = new Map();
-    const qrzCallDxcc = new Map();
     for (const r of qrzRows) {
-        if (!r.dxcc) continue;
-        qrzByMinute.set(minuteKey(r.call, r.qso_datetime), r.dxcc);
+        const m  = lotwByMinute.get(minuteKey(r.call, r.qso_datetime));
+        const lc = !!(m && m.confirmed);
+        if (m) used.add(m);
+        const qso = {
+            dxcc: (lc && m.dxcc) || r.dxcc,
+            cqz:  zoneNum((lc && m.cq_zone) || r.cqz),
+            ituz: zoneNum((lc && m.itu_zone) || r.ituz),
+            datetime: r.qso_datetime.replace('Z', ''),
+            lotwConf: lc,
+            qrzConf:  r.app_qrzlog_status === 'C',
+        };
+        out.push(qso);
         const call = r.call.toUpperCase();
-        if (!qrzCallDxcc.has(call)) qrzCallDxcc.set(call, new Set());
-        qrzCallDxcc.get(call).add(r.dxcc);
-        const e = get(r.dxcc);
-        e.qsos++;
-        if (r.app_qrzlog_status === 'C') e.qrzConf++;
+        if (!byCall.has(call)) byCall.set(call, { dxcc: new Set(), cqz: new Set(), ituz: new Set() });
+        for (const k of ['dxcc', 'cqz', 'ituz']) if (qso[k]) byCall.get(call)[k].add(qso[k]);
     }
 
-    let unmatched = 0;
     for (const q of lotw) {
-        const inQrz = qrzByMinute.get(minuteKey(q.call, q.datetime));
-        let dxcc = q.confirmed && q.dxcc ? q.dxcc : inQrz;
-        if (!dxcc) {
-            const set = qrzCallDxcc.get((q.call || '').toUpperCase());
-            if (set && set.size === 1) dxcc = [...set][0];
-        }
-        if (!dxcc) { unmatched++; continue; }
-        const e = get(dxcc);
-        if (!inQrz) e.qsos++;
-        if (q.confirmed) e.lotwConf++;
+        if (used.has(q)) continue;
+        const known = byCall.get((q.call || '').toUpperCase());
+        const only  = k => (known && known[k].size === 1) ? [...known[k]][0] : '';
+        out.push({
+            dxcc: (q.confirmed && q.dxcc) || only('dxcc'),
+            cqz:  zoneNum(q.confirmed && q.cq_zone) || only('cqz'),
+            ituz: zoneNum(q.confirmed && q.itu_zone) || only('ituz'),
+            datetime: q.datetime || '',
+            lotwConf: !!q.confirmed,
+            qrzConf:  false,
+        });
     }
-    return { ent, unmatched };
+    return out;
+}
+
+function tally(qsos, key) {
+    const t = {};
+    let missing = 0;
+    for (const q of qsos) {
+        const k = q[key];
+        if (!k) { missing++; continue; }
+        const e = (t[k] ||= { qsos: 0, lotwConf: 0, qrzConf: 0, first: '', last: '' });
+        e.qsos++;
+        if (q.lotwConf) e.lotwConf++;
+        if (q.qrzConf)  e.qrzConf++;
+        if (q.datetime) {
+            if (!e.first || q.datetime < e.first) e.first = q.datetime;
+            if (!e.last  || q.datetime > e.last)  e.last  = q.datetime;
+        }
+    }
+    return { t, missing };
 }
 
 function statusOf(e) {
@@ -78,132 +121,238 @@ function statusOf(e) {
     return e.qsos > 0 ? 'worked' : 'none';
 }
 
-// ---------------------------------------------------------------------------
-// Map
-// ---------------------------------------------------------------------------
-
-function buildDxccMap(geometry, ent) {
-    for (const f of geometry.features) {
-        const e = ent[String(f.properties.dxcc)];
-        f.properties.status   = statusOf(e);
-        f.properties.qsos     = e ? e.qsos : 0;
-        f.properties.lotwConf = e ? e.lotwConf : 0;
-        f.properties.qrzConf  = e ? e.qrzConf : 0;
+function annotate(features, t, key) {
+    for (const f of features) {
+        const e = t[String(f.properties[key])];
+        Object.assign(f.properties, {
+            status: statusOf(e), qsos: e ? e.qsos : 0,
+            lotwConf: e ? e.lotwConf : 0, qrzConf: e ? e.qrzConf : 0,
+            first: e ? e.first : '', last: e ? e.last : '',
+        });
     }
+}
 
-    const colorExpr = ['match', ['get', 'status'],
-        ...Object.entries(STATUS).flatMap(([k, s]) => [k, s.color]), STATUS.none.color];
+const statusColorExpr = () => ['match', ['get', 'status'],
+    ...STATUS_ORDER.flatMap(k => [k, STATUS[k].color]), STATUS.none.color];
 
+const countsLine = p => p.qsos > 0
+    ? `${p.qsos} QSO${p.qsos === 1 ? '' : 's'} · ${p.lotwConf} LoTW conf. · ${p.qrzConf} QRZ conf.` : '';
+
+const fmtDate = dt => dt ? dt.slice(0, 10) : '';
+
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+// ---------------------------------------------------------------------------
+// Maps
+// ---------------------------------------------------------------------------
+
+function newMap(container, background, attribution, extra = {}) {
     const map = new maplibregl.Map({
-        container: 'dxcc-map',
-        style: {
-            version: 8,
-            sources: {},
-            layers: [{ id: 'water', type: 'background', paint: { 'background-color': WATER_COLOR } }],
-        },
+        container,
+        style: { version: 8, sources: {}, layers: [{ id: 'water', type: 'background', paint: { 'background-color': background } }] },
         bounds: [[-170, -58], [190, 78]],
         maxZoom: 9,
-        hash: true,
         attributionControl: false,
+        ...extra,
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
-    map.addControl(new maplibregl.AttributionControl({
-        compact: true, customAttribution: 'Borders: Natural Earth · DXCC list: ADIF / QRZ',
-    }));
+    map.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: attribution }));
+    return map;
+}
 
+function attachPopup(map, layers, html) {
+    const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 8 });
+    const show = ev => {
+        map.getCanvas().style.cursor = 'pointer';
+        popup.setLngLat(ev.lngLat).setHTML(html(ev.features[0].properties)).addTo(map);
+    };
+    const hide = () => { map.getCanvas().style.cursor = ''; popup.remove(); };
+    for (const layer of layers) {
+        map.on('mousemove', layer, show);
+        map.on('mouseleave', layer, hide);
+    }
+}
+
+const statusHtml = s => `<div class="pop-status" style="color:${s === 'none' ? '#9ca3af' : STATUS[s].color}">${STATUS[s].label}</div>`;
+
+function buildDxccMap(geometry) {
+    const color = statusColorExpr();
+    const map = newMap('dxcc-map', DXCC_WATER, 'Borders: Natural Earth · DXCC list: ADIF / QRZ', { hash: true });
     map.on('load', () => {
         map.addSource('dxcc', { type: 'geojson', data: geometry });
-        map.addLayer({
-            id: 'dxcc-fill', type: 'fill', source: 'dxcc',
+        map.addLayer({ id: 'dxcc-fill', type: 'fill', source: 'dxcc',
+            filter: ['==', ['get', 'kind'], 'area'], paint: { 'fill-color': color } });
+        map.addLayer({ id: 'dxcc-borders', type: 'line', source: 'dxcc',
             filter: ['==', ['get', 'kind'], 'area'],
-            paint: { 'fill-color': colorExpr },
-        });
-        map.addLayer({
-            id: 'dxcc-borders', type: 'line', source: 'dxcc',
-            filter: ['==', ['get', 'kind'], 'area'],
-            paint: { 'line-color': BORDER_COLOR, 'line-width': ['interpolate', ['linear'], ['zoom'], 1, 0.4, 6, 1.2] },
-        });
+            paint: { 'line-color': DXCC_BORDER, 'line-width': ['interpolate', ['linear'], ['zoom'], 1, 0.4, 6, 1.2] } });
         // Entities too small to see as areas get a marker on top.
-        map.addLayer({
-            id: 'dxcc-dots', type: 'circle', source: 'dxcc',
+        map.addLayer({ id: 'dxcc-dots', type: 'circle', source: 'dxcc',
             filter: ['all', ['==', ['get', 'kind'], 'point'], ['get', 'dot']],
-            paint: {
-                'circle-color': colorExpr,
-                'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 3, 6, 6],
-                'circle-stroke-color': '#64748b',
-                'circle-stroke-width': 0.8,
-            },
+            paint: { 'circle-color': color, 'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 3, 6, 6],
+                     'circle-stroke-color': '#64748b', 'circle-stroke-width': 0.8 } });
+        attachPopup(map, ['dxcc-dots', 'dxcc-fill'], p => {
+            const c = countsLine(p);
+            return `<div class="pop-name">${escapeHtml(p.name)}${p.continent ? ` (${p.continent})` : ''} ` +
+                   `<span style="color:#6b7280">#${p.dxcc}</span></div>` + statusHtml(p.status) +
+                   (c ? `<div class="pop-counts">${c}</div>` : '');
         });
-
-        const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 8 });
-        const show = ev => {
-            const f = ev.features[0];
-            const p = f.properties;
-            const s = STATUS[p.status];
-            map.getCanvas().style.cursor = 'pointer';
-            const counts = p.qsos > 0
-                ? `${p.qsos} QSO${p.qsos === 1 ? '' : 's'} · ${p.lotwConf} LoTW conf. · ${p.qrzConf} QRZ conf.`
-                : '';
-            popup.setLngLat(ev.lngLat).setHTML(
-                `<div class="pop-name">${p.name}${p.continent ? ` (${p.continent})` : ''} <span style="color:#6b7280">#${p.dxcc}</span></div>` +
-                `<div class="pop-status" style="color:${p.status === 'none' ? '#9ca3af' : s.color}">${s.label}</div>` +
-                (counts ? `<div class="pop-counts">${counts}</div>` : '')
-            ).addTo(map);
-        };
-        const hide = () => { map.getCanvas().style.cursor = ''; popup.remove(); };
-        for (const layer of ['dxcc-dots', 'dxcc-fill']) {
-            map.on('mousemove', layer, show);
-            map.on('mouseleave', layer, hide);
-        }
     });
     return map;
 }
 
-function renderLegend(geometry) {
+function buildZoneMap(set, zones, base) {
+    const map = newMap(set.mapId, BW_WATER,
+        'Zones: HB9HIL/hamradio-zones-geojson (MIT) · Borders: Natural Earth');
+    map.on('load', () => {
+        map.addSource('base', { type: 'geojson', data: base });
+        map.addLayer({ id: 'base-land', type: 'fill', source: 'base',
+            filter: ['==', ['get', 'kind'], 'area'], paint: { 'fill-color': BW_LAND } });
+        map.addLayer({ id: 'base-borders', type: 'line', source: 'base',
+            filter: ['==', ['get', 'kind'], 'area'], paint: { 'line-color': BW_BORDER, 'line-width': 0.35 } });
+
+        map.addSource('zones', { type: 'geojson', data: zones });
+        map.addLayer({ id: 'zone-fill', type: 'fill', source: 'zones',
+            paint: { 'fill-color': statusColorExpr(),
+                     'fill-opacity': ['case', ['==', ['get', 'status'], 'none'], 0, ZONE_FILL_OPACITY] } });
+        map.addLayer({ id: 'zone-lines', type: 'line', source: 'zones',
+            paint: { 'line-color': '#7c2d12', 'line-width': 1.2, 'line-opacity': 0.8 } });
+
+        for (const f of zones.features) {
+            const el = document.createElement('div');
+            el.className = 'zone-label';
+            el.textContent = f.properties.zone;
+            new maplibregl.Marker({ element: el }).setLngLat(f.properties.label).addTo(map);
+        }
+
+        attachPopup(map, ['zone-fill'], p => {
+            const c = countsLine(p);
+            return `<div class="pop-name">${set.title} ${p.zone}</div>` +
+                   `<div class="pop-desc">${escapeHtml(p.description)}</div>` + statusHtml(p.status) +
+                   (c ? `<div class="pop-counts">${c}</div>` : '');
+        });
+    });
+    return map;
+}
+
+// ---------------------------------------------------------------------------
+// Legends and tables
+// ---------------------------------------------------------------------------
+
+function statusCounts(items) {
     const counts = { lotw: 0, qrz: 0, worked: 0, none: 0 };
-    for (const f of geometry.features) {
-        if (f.properties.kind === 'point') counts[f.properties.status]++;
-    }
-    const total = Object.values(counts).reduce((a, b) => a + b, 0);
-    document.getElementById('dxcc-legend').innerHTML =
-        ['lotw', 'qrz', 'worked', 'none'].map(k =>
-            `<span class="legend-item"><span class="legend-swatch" style="background:${STATUS[k].color}"></span>` +
-            `${STATUS[k].label} <strong>${counts[k]}</strong></span>`
-        ).join('') +
-        `<span class="legend-note">${total} current DXCC entities · each shown at its highest status (LoTW &gt; QRZ &gt; unconfirmed)</span>`;
+    for (const p of items) counts[p.status]++;
     return counts;
+}
+
+// Solid colour a translucent fill shows over white, so legend swatches match the map.
+function overWhite(hex, alpha) {
+    const c = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+    return '#' + c.map(v => Math.round(255 - (255 - v) * alpha).toString(16).padStart(2, '0')).join('');
+}
+
+function renderLegend(id, counts, note, translucent = false) {
+    document.getElementById(id).innerHTML =
+        STATUS_ORDER.map(k => {
+            const bg = translucent ? overWhite(STATUS[k].color, ZONE_FILL_OPACITY) : STATUS[k].color;
+            return `<span class="legend-item"><span class="legend-swatch" style="background:${bg}"></span>` +
+                   `${STATUS[k].label} <strong>${counts[k]}</strong></span>`;
+        }).join('') +
+        `<span class="legend-note">${note} · each shown at its highest status (LoTW &gt; QRZ &gt; unconfirmed)</span>`;
+}
+
+function renderZoneTable(set, zones, missing, onPick) {
+    const rows = zones.features.map(f => f.properties);
+    document.getElementById(set.tableId).innerHTML =
+        `<table class="zone-table"><thead><tr>` +
+        `<th class="num">Zone</th><th>Description</th><th>Status</th>` +
+        `<th class="num">QSOs</th><th class="num">LoTW conf.</th><th class="num">QRZ conf.</th>` +
+        `<th>First QSO</th><th>Last QSO</th></tr></thead><tbody>` +
+        rows.map(p =>
+            `<tr data-zone="${p.zone}" class="${p.status === 'none' ? 'not-worked' : ''}">` +
+            `<td class="num"><strong>${p.zone}</strong></td>` +
+            `<td class="desc">${escapeHtml(p.description)}</td>` +
+            `<td><span class="legend-swatch" style="background:${overWhite(STATUS[p.status].color, ZONE_FILL_OPACITY)}"></span> ${STATUS[p.status].label}</td>` +
+            `<td class="num">${p.qsos || ''}</td><td class="num">${p.lotwConf || ''}</td><td class="num">${p.qrzConf || ''}</td>` +
+            `<td>${fmtDate(p.first)}</td><td>${fmtDate(p.last)}</td></tr>`
+        ).join('') +
+        `</tbody></table>` +
+        (missing ? `<p class="table-note">${missing} QSO${missing === 1 ? '' : 's'} have no ${set.title.replace(' zone', '')} zone in LoTW or QRZ and are not counted.</p>` : '');
+
+    document.querySelectorAll(`#${set.tableId} tbody tr`).forEach(tr =>
+        tr.addEventListener('click', () => onPick(Number(tr.dataset.zone))));
 }
 
 // ---------------------------------------------------------------------------
 // Boot
 // ---------------------------------------------------------------------------
 
+const getJson = url => fetch(url, { cache: 'no-cache' }).then(r => {
+    if (!r.ok) throw new Error(`${url}: ${r.status}`);
+    return r.json();
+});
+
 async function main() {
     const callsign = (typeof CONFIG !== 'undefined' && CONFIG.callsign) ? CONFIG.callsign : '';
     if (callsign) document.getElementById('title').textContent = `${callsign} · DXCC Dashboard v0.91`;
 
-    const [geometry, lotw, qrzRows] = await Promise.all([
-        fetch(GEOMETRY_URL, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(`${GEOMETRY_URL}: ${r.status}`); return r.json(); }),
-        fetch(LOTW_URL, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(`${LOTW_URL}: ${r.status}`); return r.json(); }),
+    const [dxccGeometry, cqZones, ituZones, lotw, qrzRows] = await Promise.all([
+        getJson(DXCC_GEOMETRY_URL), getJson(CQ_ZONES_URL), getJson(ITU_ZONES_URL), getJson(LOTW_URL),
         // The QRZ QSO table is optional: without it, only LoTW statuses are shown.
         fetch(QRZ_QSO_URL, { cache: 'no-cache' }).then(r => r.ok ? r.text() : '').then(t => t ? parseTsv(t) : []).catch(() => []),
     ]);
 
-    const { ent, unmatched } = tallyEntities(lotw, qrzRows);
-    buildDxccMap(geometry, ent);
-    const c = renderLegend(geometry);
+    const qsos = mergeQsos(lotw, qrzRows);
 
-    const worked = c.lotw + c.qrz + c.worked;
+    // DXCC
+    const dx = tally(qsos, 'dxcc');
+    annotate(dxccGeometry.features, dx.t, 'dxcc');
+    const dxCounts = statusCounts(dxccGeometry.features.filter(f => f.properties.kind === 'point').map(f => f.properties));
+    renderLegend('dxcc-legend', dxCounts, '340 current DXCC entities');
+
+    // Zones
+    const zoneData = { cq: cqZones, itu: ituZones };
+    const zoneCounts = {};
+    for (const [kind, set] of Object.entries(ZONE_SETS)) {
+        const z = tally(qsos, set.key);
+        annotate(zoneData[kind].features, z.t, 'zone');
+        zoneCounts[kind] = statusCounts(zoneData[kind].features.map(f => f.properties));
+        renderLegend(set.legendId, zoneCounts[kind], set.note, true);
+        set.missing = z.missing;
+    }
+
+    const worked = c => c.lotw + c.qrz + c.worked;
     document.getElementById('stats').textContent =
-        `${worked} entities worked · ${c.lotw} LoTW confirmed · ${c.lotw + c.qrz} confirmed on LoTW or QRZ` +
+        `${worked(dxCounts)} entities worked (${dxCounts.lotw} LoTW confirmed) · ` +
+        `CQ zones ${worked(zoneCounts.cq)}/40 (${zoneCounts.cq.lotw} LoTW) · ` +
+        `ITU zones ${worked(zoneCounts.itu)}/90 (${zoneCounts.itu.lotw} LoTW)` +
         (qrzRows.length ? '' : ' · QRZ QSO table not found') +
-        (unmatched ? ` · ${unmatched} LoTW QSO${unmatched === 1 ? '' : 's'} with unknown entity` : '');
+        (dx.missing ? ` · ${dx.missing} QSO${dx.missing === 1 ? '' : 's'} with unknown entity` : '');
 
-    document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => {
-        const target = btn.dataset.tab;
+    // Maps are created the first time their tab is shown (MapLibre cannot size a hidden map).
+    const maps = {};
+    const ensureMap = tab => {
+        if (maps[tab]) { maps[tab].resize(); return; }
+        if (tab === 'dxccmap') maps[tab] = buildDxccMap(dxccGeometry);
+        const kind = { cqzones: 'cq', ituzones: 'itu' }[tab];
+        if (kind) {
+            const set = ZONE_SETS[kind];
+            const map = maps[tab] = buildZoneMap(set, zoneData[kind], dxccGeometry);
+            renderZoneTable(set, zoneData[kind], set.missing, zone => {
+                const f = zoneData[kind].features.find(x => x.properties.zone === zone);
+                if (f) map.flyTo({ center: f.properties.label, zoom: Math.max(map.getZoom(), 2.5) });
+            });
+        }
+    };
+
+    const activate = target => {
         document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === target));
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `tab-${target}`));
-    }));
+        ensureMap(target);
+    };
+    document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => activate(btn.dataset.tab)));
+    activate(document.querySelector('.tab.active').dataset.tab);
 }
 
 main().catch(err => {

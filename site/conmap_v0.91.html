@@ -58,6 +58,28 @@
 
     #dxcc-map { flex: 1; min-height: 0; }
 
+    .zone-map { flex: 1 1 58%; min-height: 0; }
+    .zone-label {
+      font-size: 0.72rem; font-weight: 700; color: #111827; pointer-events: none;
+      text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff;
+    }
+    .zone-table-wrap { flex: 1 1 42%; min-height: 0; overflow: auto; padding: 8px 16px 16px; }
+    .zone-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .zone-table th {
+      position: sticky; top: 0; background: #111827; text-align: left; padding: 6px 10px;
+      border-bottom: 1px solid #374151; color: #9ca3af; font-size: 0.7rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+    }
+    .zone-table td { padding: 5px 10px; border-bottom: 1px solid #1f2937; vertical-align: top; }
+    .zone-table td.num, .zone-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .zone-table td.desc { color: #9ca3af; max-width: 520px; }
+    .zone-table tr { cursor: pointer; }
+    .zone-table tr:hover td { background: #1f2937; }
+    .zone-table tr.not-worked td { color: #6b7280; }
+    .zone-table .legend-swatch { vertical-align: -2px; }
+    .table-note { font-size: 0.74rem; color: #6b7280; margin-top: 8px; }
+    .pop-desc { color: #9ca3af; max-width: 320px; margin-bottom: 3px; }
+
     .map-legend {
       flex: 0 0 auto;
       display: flex;
@@ -100,6 +122,8 @@
 
   <div id="tab-bar">
     <button class="tab active" data-tab="dxccmap">DXCC map</button>
+    <button class="tab" data-tab="cqzones">CQ zones (WAZ)</button>
+    <button class="tab" data-tab="ituzones">ITU zones</button>
   </div>
 
   <div id="tab-dxccmap" class="tab-panel active">
@@ -107,8 +131,20 @@
     <div class="map-legend" id="dxcc-legend"></div>
   </div>
 
+  <div id="tab-cqzones" class="tab-panel">
+    <div id="cq-map" class="zone-map"></div>
+    <div class="map-legend" id="cq-legend"></div>
+    <div class="zone-table-wrap" id="cq-table"></div>
+  </div>
+
+  <div id="tab-ituzones" class="tab-panel">
+    <div id="itu-map" class="zone-map"></div>
+    <div class="map-legend" id="itu-legend"></div>
+    <div class="zone-table-wrap" id="itu-table"></div>
+  </div>
+
   <script src="vendor/maplibre-gl.js"></script>
   <script src="config.js"></script>
-  <script src="app_v0.91.js?v=20261019a"></script>
+  <script src="app_v0.91.js?v=20261019c"></script>
 </body>
 </html>
