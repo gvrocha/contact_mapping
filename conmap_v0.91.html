@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DXCC Dashboard v0.91</title>
+  <link rel="stylesheet" href="vendor/maplibre-gl.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #111827;
+      color: #d1d5db;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      flex: 0 0 auto;
+      padding: 10px 16px;
+      background: #1f2937;
+      border-bottom: 1px solid #374151;
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+    header h1 { font-size: 1.05rem; color: #f9fafb; letter-spacing: 0.03em; }
+    #stats { font-size: 0.8rem; color: #9ca3af; }
+
+    #tab-bar {
+      flex: 0 0 auto;
+      display: flex;
+      background: #1f2937;
+      border-bottom: 1px solid #374151;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    #tab-bar::-webkit-scrollbar { display: none; }
+    .tab {
+      padding: 7px 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #6b7280;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+    }
+    .tab:hover { color: #d1d5db; }
+    .tab.active { color: #f9fafb; border-bottom-color: #34d399; }
+
+    .tab-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+    .tab-panel.active { display: flex; }
+
+    #dxcc-map { flex: 1; min-height: 0; }
+
+    .zone-map { flex: 1 1 58%; min-height: 0; }
+    .zone-label {
+      font-size: 0.72rem; font-weight: 700; color: #111827; pointer-events: none;
+      text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff;
+    }
+    .zone-table-wrap { flex: 1 1 42%; min-height: 0; overflow: auto; padding: 8px 16px 16px; }
+    .zone-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .zone-table th {
+      position: sticky; top: 0; background: #111827; text-align: left; padding: 6px 10px;
+      border-bottom: 1px solid #374151; color: #9ca3af; font-size: 0.7rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+    }
+    .zone-table td { padding: 5px 10px; border-bottom: 1px solid #1f2937; vertical-align: top; }
+    .zone-table td.num, .zone-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .zone-table td.desc { color: #9ca3af; max-width: 520px; }
+    .zone-table tr { cursor: pointer; }
+    .zone-table tr:hover td { background: #1f2937; }
+    .zone-table tr.not-worked td { color: #6b7280; }
+    .zone-table .legend-swatch { vertical-align: -2px; }
+    .table-note { font-size: 0.74rem; color: #6b7280; margin-top: 8px; }
+    .pop-desc { color: #9ca3af; max-width: 320px; margin-bottom: 3px; }
+
+    .map-legend {
+      flex: 0 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 18px;
+      padding: 6px 12px;
+      background: #1f2937;
+      border-top: 1px solid #374151;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-item strong { color: #f9fafb; font-variant-numeric: tabular-nums; }
+    .legend-swatch {
+      width: 18px; height: 12px; border: 1px solid #6b7280; border-radius: 2px; display: inline-block;
+    }
+    .legend-note { margin-left: auto; color: #6b7280; }
+
+    .maplibregl-popup-content {
+      background: #1f2937; color: #d1d5db; font-size: 0.78rem; padding: 8px 10px;
+      border: 1px solid #374151; border-radius: 4px; box-shadow: 0 2px 8px #0008;
+    }
+    .maplibregl-popup-tip { display: none; }
+    .pop-name { color: #f9fafb; font-weight: 600; margin-bottom: 3px; }
+    .pop-status { font-weight: 600; }
+    .pop-counts { color: #9ca3af; margin-top: 3px; font-variant-numeric: tabular-nums; }
+
+    @media (max-width: 600px) {
+      header { padding: 8px 16px; }
+      .legend-note { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 id="title">DXCC Dashboard v0.91</h1>
+    <span id="stats">Loading…</span>
+  </header>
+
+  <div id="tab-bar">
+    <button class="tab active" data-tab="dxccmap">DXCC map</button>
+    <button class="tab" data-tab="cqzones">CQ zones (WAZ)</button>
+    <button class="tab" data-tab="ituzones">ITU zones</button>
+  </div>
+
+  <div id="tab-dxccmap" class="tab-panel active">
+    <div id="dxcc-map"></div>
+    <div class="map-legend" id="dxcc-legend"></div>
+  </div>
+
+  <div id="tab-cqzones" class="tab-panel">
+    <div id="cq-map" class="zone-map"></div>
+    <div class="map-legend" id="cq-legend"></div>
+    <div class="zone-table-wrap" id="cq-table"></div>
+  </div>
+
+  <div id="tab-ituzones" class="tab-panel">
+    <div id="itu-map" class="zone-map"></div>
+    <div class="map-legend" id="itu-legend"></div>
+    <div class="zone-table-wrap" id="itu-table"></div>
+  </div>
+
+  <script src="vendor/maplibre-gl.js"></script>
+  <script src="config.js"></script>
+  <script src="app_v0.91.js?v=20261019c"></script>
+</body>
+</html>
