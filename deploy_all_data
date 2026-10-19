@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Push the data files to both sites (GitHub Pages, then S3). Site code is untouched;
+# use gh_deploy_site / aws_deploy_site for that.
+set -euo pipefail
+
+DIR="$(cd "$(dirname "$0")" && pwd)"
+
+echo "=== Step 1/2: Deploy data to GitHub Pages ==="
+"${DIR}/gh_deploy_data"
+
+echo ""
+echo "=== Step 2/2: Deploy data to w7gvr.com (S3) ==="
+"${DIR}/aws_deploy_data"
+
+echo ""
+echo "=== Done. Data is live on both sites. ==="

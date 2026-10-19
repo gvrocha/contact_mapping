@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Push only the data files to the gh-pages branch (site code untouched).
+# Use gh_deploy_site to deploy site code changes.
+set -euo pipefail
+
+DIR="$(cd "$(dirname "$0")" && pwd)"
+BRANCH="gh-pages"
+WORKTREE_DIR="$(mktemp -d)"
+cd "${DIR}"
+
+cleanup() {
+    git worktree remove "${WORKTREE_DIR}" --force 2>/dev/null || true
+}
+trap cleanup EXIT
+
+echo "Preparing ${BRANCH} worktree..."
+# Sync local branch to remote so our push is always a fast-forward.
+# CI also pushes to this branch, so the local pointer may be stale.
+git fetch origin "${BRANCH}" 2>/dev/null || true
+if ! git show-ref --verify --quiet "refs/remotes/origin/${BRANCH}"; then
+    echo "No ${BRANCH} branch on origin yet — run ./gh_deploy_site first." >&2
+    exit 1
+fi
+git branch -f "${BRANCH}" "origin/${BRANCH}"
+git worktree add "${WORKTREE_DIR}" "${BRANCH}"
+
+echo "Syncing data into ${BRANCH}..."
+mkdir -p "${WORKTREE_DIR}/data_output" "${WORKTREE_DIR}/data_reference"
+cp "${DIR}/data_output/lotw_contacts.json" "${WORKTREE_DIR}/data_output/lotw_contacts.json"
+if [ -f "${DIR}/data_output/qrz_cache.json" ]; then
+    cp "${DIR}/data_output/qrz_cache.json" "${WORKTREE_DIR}/data_output/qrz_cache.json"
+fi
+cp "${DIR}/data_reference/dxcc_entities.json" "${WORKTREE_DIR}/data_reference/dxcc_entities.json"
+
+cd "${WORKTREE_DIR}"
+git add -A
+if git diff --cached --quiet; then
+    echo "No data changes to deploy."
+else
+    git commit -m "Deploy data $(date -u +'%Y-%m-%dT%H:%M:%SZ')" --quiet
+    git push origin "${BRANCH}"
+fi
+
+echo "Done. Data updated at https://gvrocha.github.io/contact_mapping/"

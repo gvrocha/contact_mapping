@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Fetch all data: LoTW contacts, QRZ call-sign enrichment, QRZ Logbook QSO table,
+# then export the TSV tables. Deploying is separate (gh_deploy_data / deploy_all_data).
+#
+# Usage:
+#   ./fetch_all_data          # incremental fetches
+#   ./fetch_all_data --full   # re-download everything from scratch
+set -euo pipefail
+
+DIR="$(cd "$(dirname "$0")" && pwd)"
+
+FULL=""
+if [[ "${1:-}" == "--full" ]]; then
+    FULL="--full"
+fi
+
+echo "=== Step 1/4: Fetch LoTW data ${FULL:-(incremental)} ==="
+"${DIR}/lotw_fetch" ${FULL}
+
+echo ""
+echo "=== Step 2/4: Fetch QRZ enrichment ${FULL:-(incremental)} ==="
+"${DIR}/qrz_fetch" ${FULL}
+
+echo ""
+echo "=== Step 3/4: Fetch QRZ Logbook ${FULL:-(incremental)} ==="
+"${DIR}/qrz_logbook_fetch" ${FULL}
+
+echo ""
+echo "=== Step 4/4: Export TSV tables ==="
+"${DIR}/export_tsv"
+
+echo ""
+echo "=== Done. Deploy with ./deploy_all_data (or gh_deploy_data / aws_deploy_data). ==="

@@ -16,7 +16,7 @@ MVP = "other hams can use this to publish their own contacts."
 
 - [x] `setup` script (venv + deps + DXCC reference build in one command)
 - [x] `LICENSE` file (MIT)
-- [x] GitHub Pages deploy path: `gh_pages_deploy` pushes to a `gh-pages` branch; GitHub auto-enabled Pages on push
+- [x] GitHub Pages deploy path: `gh_deploy_site` (renamed from `gh_pages_deploy`) pushes to a `gh-pages` branch; GitHub auto-enabled Pages on push
 - [x] README: documents both deploy paths (Pages + S3) and a "forking this for your own callsign" walkthrough
 - [x] Pages build verified live: https://gvrocha.github.io/contact_mapping/ (first build silently errored — GitHub's default Jekyll processing choking on a non-Jekyll site; fixed by adding `.nojekyll` to the `gh-pages` branch)
 

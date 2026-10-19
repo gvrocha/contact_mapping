@@ -51,12 +51,21 @@ python3 -m http.server 8000
 
 ## Publishing your own dashboard
 
-Two deploy paths — pick whichever fits, or use both.
+Two deploy paths — pick whichever fits, or use both. Each has a `*_deploy_site` script
+(site code + data) and a `*_deploy_data` script (data only).
+
+To refresh everything and push the new data to both sites:
+
+```bash
+./fetch_all_data      # LoTW + QRZ + QRZ Logbook, then TSV export (add --full to re-download)
+./deploy_all_data     # data-only deploy to GitHub Pages and S3
+```
 
 ### GitHub Pages (no AWS account needed)
 
 ```bash
-./gh_pages_deploy
+./gh_deploy_site    # full deploy: site code + data
+./gh_deploy_data    # data-only refresh, after ./fetch_all_data
 ```
 
 Pushes `site/` plus your generated `data_output/`/`data_reference/` JSON to a `gh-pages`
@@ -64,8 +73,8 @@ branch. First time: enable it in your fork's **Settings → Pages → Source: De
 branch → `gh-pages` / (root)**. Your dashboard will be live at
 `https://<your-username>.github.io/<repo-name>/`.
 
-Re-run `./gh_pages_deploy` any time you refresh your data (after `./lotw_fetch`) or change
-the site.
+Re-run `./gh_deploy_site` when you change the site; `./gh_deploy_data` is enough after a
+data refresh.
 
 ### S3 (if you already have an AWS account)
 
@@ -85,14 +94,16 @@ cp deploy.conf.example deploy.conf
 2. Edit `site/config.js` with your callsign and home grid.
 3. Run `./lotw_fetch --full` (prompts for LoTW credentials once, stored in your OS keychain).
 4. Optionally run `./qrz_fetch` for coordinate enrichment on unconfirmed QSOs.
-5. Deploy with `./gh_pages_deploy` (easiest, no AWS account) or the S3 scripts above.
+5. Deploy with `./gh_deploy_site` (easiest, no AWS account) or the S3 scripts above.
 
 ## Project structure
 
 ```
 contact_mapping/
 ├── setup                          # One-time: venv + deps + DXCC reference build
-├── gh_pages_deploy                # Deploy to GitHub Pages (no AWS account needed)
+├── fetch_all_data                 # Fetch LoTW + QRZ + QRZ Logbook, export TSVs
+├── deploy_all_data                # Data-only deploy to GitHub Pages and S3
+├── gh_deploy_site / gh_deploy_data    # Deploy to GitHub Pages (no AWS account needed)
 ├── aws_deploy_site / aws_deploy_data  # Deploy to S3 (needs deploy.conf)
 ├── deploy.conf.example            # Copy to deploy.conf and fill in your S3 bucket
 ├── LICENSE

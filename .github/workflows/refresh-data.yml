@@ -46,7 +46,7 @@ jobs:
         run: git fetch origin gh-pages:gh-pages
 
       - name: Deploy to GitHub Pages
-        run: ./gh_pages_deploy
+        run: ./gh_deploy_site
 
       - name: Deploy data to S3
         env:
