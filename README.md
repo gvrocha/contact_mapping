@@ -98,6 +98,7 @@ contact_mapping/
 ├── LICENSE
 ├── code/
 │   ├── lotw_fetch.py              # LoTW → JSON data pipeline
+│   ├── qrz_logbook_fetch.py       # QRZ Logbook → qrz_qso_table.tsv (QSO-level columns only)
 │   ├── build_dxcc_reference.py    # Builds DXCC entity reference from CTY.DAT
 │   └── requirements.txt
 ├── data_output/                   # Generated data (gitignored — personal QSO logs)
