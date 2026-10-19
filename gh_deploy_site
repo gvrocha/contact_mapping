@@ -23,15 +23,22 @@ else
 fi
 
 echo "Syncing site + data into ${BRANCH}..."
-rsync -a --delete --exclude ".git" "${DIR}/site/" "${WORKTREE_DIR}/"
+# Data folders are excluded from --delete so files this run cannot regenerate
+# (e.g. qrz_qso_table.tsv when run from CI) are kept.
+rsync -a --delete --exclude ".git" --exclude "data_output/" --exclude "data_reference/" \
+    "${DIR}/site/" "${WORKTREE_DIR}/"
 touch "${WORKTREE_DIR}/.nojekyll"
 
-mkdir -p "${WORKTREE_DIR}/data_output" "${WORKTREE_DIR}/data_reference"
-cp "${DIR}/data_output/lotw_contacts.json" "${WORKTREE_DIR}/data_output/lotw_contacts.json"
-if [ -f "${DIR}/data_output/qrz_cache.json" ]; then
-    cp "${DIR}/data_output/qrz_cache.json" "${WORKTREE_DIR}/data_output/qrz_cache.json"
-fi
-cp "${DIR}/data_reference/dxcc_entities.json" "${WORKTREE_DIR}/data_reference/dxcc_entities.json"
+# shellcheck source=code/deploy_data_files.sh
+source "${DIR}/code/deploy_data_files.sh"
+for f in "${DATA_FILES[@]}"; do
+    if [ -f "${DIR}/${f}" ]; then
+        mkdir -p "$(dirname "${WORKTREE_DIR}/${f}")"
+        cp "${DIR}/${f}" "${WORKTREE_DIR}/${f}"
+    else
+        echo "  skipping ${f} (not found locally)"
+    fi
+done
 
 cd "${WORKTREE_DIR}"
 git add -A

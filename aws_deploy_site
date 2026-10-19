@@ -23,15 +23,16 @@ aws s3 sync "${DIR}/site/" "${BUCKET}/" \
     --delete
 
 # Data files (served alongside the site)
-aws s3 cp "${DIR}/data_output/lotw_contacts.json" "${BUCKET}/data_output/lotw_contacts.json" \
-    --region "${REGION}"
-
-aws s3 cp "${DIR}/data_reference/dxcc_entities.json" "${BUCKET}/data_reference/dxcc_entities.json" \
-    --region "${REGION}"
-
-if [ -f "${DIR}/data_output/qrz_cache.json" ]; then
-    aws s3 cp "${DIR}/data_output/qrz_cache.json" "${BUCKET}/data_output/qrz_cache.json" \
-        --region "${REGION}"
-fi
+# shellcheck source=code/deploy_data_files.sh
+source "${DIR}/code/deploy_data_files.sh"
+for f in "${DATA_FILES[@]}"; do
+    if [ ! -f "${DIR}/${f}" ]; then
+        echo "  skipping ${f} (not found locally)"
+        continue
+    fi
+    type=()
+    case "${f}" in *.geojson) type=(--content-type "application/geo+json") ;; esac
+    aws s3 cp "${DIR}/${f}" "${BUCKET}/${f}" --region "${REGION}" "${type[@]}"
+done
 
 echo "Done. Site live at ${PUBLIC_URL}"
