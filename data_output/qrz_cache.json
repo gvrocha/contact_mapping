@@ -10419,5 +10419,35 @@
     "lon": -94.144478,
     "grid": "EM26WE",
     "state": "AR"
+  },
+  "K4J": {
+    "lat": 40.27,
+    "lon": -74.71,
+    "grid": "FN20PG",
+    "state": "NJ"
+  },
+  "K5MGY": {
+    "lat": 32.638696,
+    "lon": -97.111357,
+    "grid": "EM12KP",
+    "state": "TX"
+  },
+  "KE2FP": {
+    "lat": 40.897938,
+    "lon": -74.086555,
+    "grid": "FN20WV",
+    "state": "NJ"
+  },
+  "W9HT/VP9": {
+    "lat": 39.979167,
+    "lon": -86.125,
+    "grid": "EM69WX",
+    "state": "IN"
+  },
+  "WZ4K": {
+    "lat": 37.093218,
+    "lon": -76.53723,
+    "grid": "FM17RC",
+    "state": "VA"
   }
 }
