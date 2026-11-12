@@ -36238,5 +36238,21 @@
     "state": "TN",
     "cq_zone": "04",
     "itu_zone": "08"
+  },
+  {
+    "call": "WA4CB",
+    "datetime": "2026-11-12T14:01:00",
+    "lotw_upload_datetime": "2026-11-12T14:03:32",
+    "qsl_date": "2026-11-12T14:03:32",
+    "band": "30m",
+    "mode": "FT8",
+    "dxcc": "291",
+    "country": "UNITED STATES OF AMERICA",
+    "continent": "NA",
+    "confirmed": true,
+    "gridsquare": "EM54DV",
+    "state": "MS",
+    "cq_zone": "04",
+    "itu_zone": "08"
   }
 ]
