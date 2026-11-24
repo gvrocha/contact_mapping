@@ -432,6 +432,22 @@
     "itu_zone": "27"
   },
   {
+    "call": "C8K",
+    "datetime": "2026-11-18T03:43:00",
+    "lotw_upload_datetime": "2026-11-18T04:28:03",
+    "qsl_date": "2026-11-24T00:50:54",
+    "band": "30m",
+    "mode": "FT8",
+    "dxcc": "181",
+    "country": "MOZAMBIQUE",
+    "continent": "AF",
+    "confirmed": true,
+    "gridsquare": "KG64OR",
+    "state": "",
+    "cq_zone": "37",
+    "itu_zone": "53"
+  },
+  {
     "call": "CT7BRV",
     "datetime": "2026-11-18T04:06:00",
     "lotw_upload_datetime": "2026-11-18T04:28:03",
@@ -462,22 +478,6 @@
     "state": "",
     "cq_zone": "13",
     "itu_zone": "14"
-  },
-  {
-    "call": "C8K",
-    "datetime": "2026-11-18T03:43:00",
-    "lotw_upload_datetime": "2026-11-18T04:28:03",
-    "qsl_date": null,
-    "band": "30m",
-    "mode": "FT8",
-    "dxcc": "",
-    "country": "",
-    "continent": "AF",
-    "confirmed": false,
-    "gridsquare": "",
-    "state": "",
-    "cq_zone": "",
-    "itu_zone": ""
   },
   {
     "call": "N7FAN",
@@ -10995,17 +10995,17 @@
     "call": "AD0AA",
     "datetime": "2026-09-20T01:08:00",
     "lotw_upload_datetime": "2026-09-20T16:10:38",
-    "qsl_date": null,
+    "qsl_date": "2026-11-24T01:50:14",
     "band": "40m",
     "mode": "FT8",
-    "dxcc": "",
-    "country": "",
+    "dxcc": "291",
+    "country": "UNITED STATES OF AMERICA",
     "continent": "NA",
-    "confirmed": false,
-    "gridsquare": "",
-    "state": "",
-    "cq_zone": "",
-    "itu_zone": ""
+    "confirmed": true,
+    "gridsquare": "EN34GU",
+    "state": "MN",
+    "cq_zone": "04",
+    "itu_zone": "07"
   },
   {
     "call": "WW2AVG",
@@ -22320,6 +22320,22 @@
     "itu_zone": "06"
   },
   {
+    "call": "K3ZK",
+    "datetime": "2026-08-23T01:17:00",
+    "lotw_upload_datetime": "2026-08-23T03:45:07",
+    "qsl_date": "2026-11-24T03:04:47",
+    "band": "40m",
+    "mode": "FT8",
+    "dxcc": "291",
+    "country": "UNITED STATES OF AMERICA",
+    "continent": "NA",
+    "confirmed": true,
+    "gridsquare": "FN21AE",
+    "state": "PA",
+    "cq_zone": "05",
+    "itu_zone": "08"
+  },
+  {
     "call": "KF9UG",
     "datetime": "2026-08-23T01:10:00",
     "lotw_upload_datetime": "2026-08-23T03:45:07",
@@ -22334,22 +22350,6 @@
     "state": "IN",
     "cq_zone": "04",
     "itu_zone": "08"
-  },
-  {
-    "call": "K3ZK",
-    "datetime": "2026-08-23T01:17:00",
-    "lotw_upload_datetime": "2026-08-23T03:45:07",
-    "qsl_date": null,
-    "band": "40m",
-    "mode": "FT8",
-    "dxcc": "",
-    "country": "",
-    "continent": "NA",
-    "confirmed": false,
-    "gridsquare": "",
-    "state": "",
-    "cq_zone": "",
-    "itu_zone": ""
   },
   {
     "call": "N9XFX",
