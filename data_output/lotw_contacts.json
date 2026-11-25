@@ -643,17 +643,17 @@
     "call": "F5HNQ",
     "datetime": "2026-11-17T13:12:00",
     "lotw_upload_datetime": "2026-11-17T13:34:02",
-    "qsl_date": null,
+    "qsl_date": "2026-11-25T19:48:53",
     "band": "15m",
     "mode": "FT8",
-    "dxcc": "",
-    "country": "",
+    "dxcc": "227",
+    "country": "FRANCE",
     "continent": "EU",
-    "confirmed": false,
-    "gridsquare": "",
+    "confirmed": true,
+    "gridsquare": "IN98WI",
     "state": "",
-    "cq_zone": "",
-    "itu_zone": ""
+    "cq_zone": "14",
+    "itu_zone": "27"
   },
   {
     "call": "F5HNQ",
@@ -2560,6 +2560,22 @@
     "itu_zone": "08"
   },
   {
+    "call": "N1NRL",
+    "datetime": "2026-10-23T02:18:00",
+    "lotw_upload_datetime": "2026-10-23T03:22:32",
+    "qsl_date": "2026-10-23T03:44:06",
+    "band": "30m",
+    "mode": "FT8",
+    "dxcc": "291",
+    "country": "UNITED STATES OF AMERICA",
+    "continent": "NA",
+    "confirmed": true,
+    "gridsquare": "FN41JR",
+    "state": "MA",
+    "cq_zone": "05",
+    "itu_zone": "08"
+  },
+  {
     "call": "CT9/DF7EE",
     "datetime": "2026-10-23T02:14:00",
     "lotw_upload_datetime": "2026-10-23T03:22:32",
@@ -2604,22 +2620,6 @@
     "confirmed": true,
     "gridsquare": "FN03",
     "state": "NY",
-    "cq_zone": "05",
-    "itu_zone": "08"
-  },
-  {
-    "call": "N1NRL",
-    "datetime": "2026-10-23T02:18:00",
-    "lotw_upload_datetime": "2026-10-23T03:22:32",
-    "qsl_date": "2026-10-23T03:44:06",
-    "band": "30m",
-    "mode": "FT8",
-    "dxcc": "291",
-    "country": "UNITED STATES OF AMERICA",
-    "continent": "NA",
-    "confirmed": true,
-    "gridsquare": "FN41JR",
-    "state": "MA",
     "cq_zone": "05",
     "itu_zone": "08"
   },
@@ -3600,6 +3600,22 @@
     "itu_zone": "37"
   },
   {
+    "call": "CO2XN",
+    "datetime": "2026-10-18T17:12:00",
+    "lotw_upload_datetime": "2026-10-18T18:04:35",
+    "qsl_date": "2026-11-25T15:26:39",
+    "band": "15m",
+    "mode": "FT8",
+    "dxcc": "70",
+    "country": "CUBA",
+    "continent": "NA",
+    "confirmed": true,
+    "gridsquare": "EL83TD",
+    "state": "",
+    "cq_zone": "08",
+    "itu_zone": "11"
+  },
+  {
     "call": "TI5LUA",
     "datetime": "2026-10-18T17:09:00",
     "lotw_upload_datetime": "2026-10-18T18:04:35",
@@ -3618,22 +3634,6 @@
   {
     "call": "TI5LUA",
     "datetime": "2026-10-18T17:10:00",
-    "lotw_upload_datetime": "2026-10-18T18:04:35",
-    "qsl_date": null,
-    "band": "15m",
-    "mode": "FT8",
-    "dxcc": "",
-    "country": "",
-    "continent": "NA",
-    "confirmed": false,
-    "gridsquare": "",
-    "state": "",
-    "cq_zone": "",
-    "itu_zone": ""
-  },
-  {
-    "call": "CO2XN",
-    "datetime": "2026-10-18T17:12:00",
     "lotw_upload_datetime": "2026-10-18T18:04:35",
     "qsl_date": null,
     "band": "15m",
@@ -8080,6 +8080,22 @@
     "itu_zone": "04"
   },
   {
+    "call": "N5WW",
+    "datetime": "2026-10-01T02:29:00",
+    "lotw_upload_datetime": "2026-10-01T02:55:37",
+    "qsl_date": "2026-11-25T04:04:15",
+    "band": "40m",
+    "mode": "FT8",
+    "dxcc": "291",
+    "country": "UNITED STATES OF AMERICA",
+    "continent": "NA",
+    "confirmed": true,
+    "gridsquare": "EM12",
+    "state": "TX",
+    "cq_zone": "04",
+    "itu_zone": "07"
+  },
+  {
     "call": "N0KWA",
     "datetime": "2026-10-01T02:31:00",
     "lotw_upload_datetime": "2026-10-01T02:55:37",
@@ -8130,22 +8146,6 @@
   {
     "call": "KQ4JJP",
     "datetime": "2026-10-01T02:27:00",
-    "lotw_upload_datetime": "2026-10-01T02:55:37",
-    "qsl_date": null,
-    "band": "40m",
-    "mode": "FT8",
-    "dxcc": "",
-    "country": "",
-    "continent": "NA",
-    "confirmed": false,
-    "gridsquare": "",
-    "state": "",
-    "cq_zone": "",
-    "itu_zone": ""
-  },
-  {
-    "call": "N5WW",
-    "datetime": "2026-10-01T02:29:00",
     "lotw_upload_datetime": "2026-10-01T02:55:37",
     "qsl_date": null,
     "band": "40m",
@@ -17632,22 +17632,6 @@
     "itu_zone": "08"
   },
   {
-    "call": "II7MGBT",
-    "datetime": "2026-09-02T01:45:00",
-    "lotw_upload_datetime": "2026-09-02T03:45:32",
-    "qsl_date": null,
-    "band": "30m",
-    "mode": "FT8",
-    "dxcc": "",
-    "country": "",
-    "continent": "EU",
-    "confirmed": false,
-    "gridsquare": "",
-    "state": "",
-    "cq_zone": "",
-    "itu_zone": ""
-  },
-  {
     "call": "N1NRL",
     "datetime": "2026-09-02T01:47:00",
     "lotw_upload_datetime": "2026-09-02T03:45:32",
@@ -17662,6 +17646,22 @@
     "state": "MA",
     "cq_zone": "05",
     "itu_zone": "08"
+  },
+  {
+    "call": "II7MGBT",
+    "datetime": "2026-09-02T01:45:00",
+    "lotw_upload_datetime": "2026-09-02T03:45:32",
+    "qsl_date": null,
+    "band": "30m",
+    "mode": "FT8",
+    "dxcc": "",
+    "country": "",
+    "continent": "EU",
+    "confirmed": false,
+    "gridsquare": "",
+    "state": "",
+    "cq_zone": "",
+    "itu_zone": ""
   },
   {
     "call": "YO6LM",
